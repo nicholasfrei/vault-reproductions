@@ -31,6 +31,10 @@ The goal is to help you stand up scenarios quickly, learn how Vault behaves in r
 
 ### Secrets engine scenarios
 
+- [secrets-artifactory/Artifactory Plugin Registration.sh](secrets-artifactory/Artifactory%20Plugin%20Registration.sh)
+	- Amazon Linux setup script for Vault Enterprise + JFrog Artifactory secrets plugin registration.
+	- Includes plugin checksum validation and flattened plugin directory layout to avoid execution path errors.
+
 - [secrets-ldap/setup ldap secrets engine repro.md](secrets-ldap/setup%20ldap%20secrets%20engine%20repro.md)
 	- OpenLDAP + Vault LDAP secrets engine setup focused on bind account and static-role password rotation timing.
 
