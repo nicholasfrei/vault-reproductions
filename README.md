@@ -15,7 +15,7 @@ The goal is to help you stand up scenarios quickly, learn how Vault behaves in r
 
 ### Authentication scenarios
 
-- [auth-dynamic-policy/Userpass Entity Metadata Dynamic Policy Repro.md](auth-dynamic-policy/Userpass%20Entity%20Metadata%20Dynamic%20Policy%20Repro.md)
+- [auth-userpass/Userpass Entity Metadata Dynamic Policy Repro.md](auth-userpass/Userpass%20Entity%20Metadata%20Dynamic%20Policy%20Repro.md)
 	- Local reproduction for dynamic policy templating using entity metadata.
 	- Demonstrates immediate access changes on active tokens when entity metadata changes.
 
