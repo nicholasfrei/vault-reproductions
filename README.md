@@ -15,6 +15,10 @@ The goal is to help you stand up scenarios quickly, learn how Vault behaves in r
 
 ### Authentication scenarios
 
+- [auth-dynamic-policy/Userpass Entity Metadata Dynamic Policy Repro.md](auth-dynamic-policy/Userpass%20Entity%20Metadata%20Dynamic%20Policy%20Repro.md)
+	- Local reproduction for dynamic policy templating using entity metadata.
+	- Demonstrates immediate access changes on active tokens when entity metadata changes.
+
 - [auth-kubernetes/Create Kubernetes Users and Login.sh](auth-kubernetes/Create%20Kubernetes%20Users%20and%20Login.sh)
 	- Creates Kubernetes service accounts, configures Vault Kubernetes auth, and tests login flow.
 	- Useful for evaluating how Vault creates and maps identities during Kubernetes auth.
