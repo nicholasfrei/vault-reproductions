@@ -1,0 +1,111 @@
+# 1. ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openldap-bootstrap
+  namespace: vault
+data:
+  custom-bootstrap.ldif: |
+    dn: ou=People,dc=example,dc=org
+    objectClass: organizationalUnit
+    ou: People
+
+    dn: cn=vault-bind,ou=People,dc=example,dc=org
+    objectClass: inetOrgPerson
+    cn: vault-bind
+    sn: BindAccount
+    userPassword: initial-password
+    description: Service Account for Vault Static Role Rotation by Vault
+
+---
+# 2. Deployment (FIXED)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openldap
+  namespace: vault
+  labels:
+    app: openldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openldap
+  template:
+    metadata:
+      labels:
+        app: openldap
+    spec:
+      # --- Init Container ---
+      # Copies LDIF from Read-Only ConfigMap to the Writable Shared Volume
+      initContainers:
+      - name: init-copy-ldif
+        image: busybox:1.36.1
+        command: ['sh', '-c', 'cp /tmp/configmap/custom-bootstrap.ldif /data/99-custom.ldif']
+        volumeMounts:
+        - name: bootstrap-source
+          mountPath: /tmp/configmap
+        - name: bootstrap-writable
+          mountPath: /data
+
+      # --- Main Container ---
+      containers:
+      - name: openldap
+        image: osixia/openldap:1.5.0
+        
+        # [THE FIX]
+        # 1. Copy files from the staging mount (/tmp/staging) to the actual OpenLDAP bootstrap folder.
+        # 2. Run the standard OpenLDAP entrypoint (/container/tool/run).
+        # This allows OpenLDAP to "delete" the files in the bootstrap folder without crashing,
+        # because that folder is now just local files, not a locked Volume Mount.
+        command: 
+        - /bin/sh
+        - -c
+        - |
+          echo "Copying bootstrap files..."
+          cp /tmp/staging/*.ldif /container/service/slapd/assets/config/bootstrap/ldif/custom/
+          echo "Starting OpenLDAP..."
+          exec /container/tool/run
+
+        ports:
+        - containerPort: 389
+          name: ldap
+        env:
+        - name: LDAP_ORGANISATION
+          value: "Vault Test Org"
+        - name: LDAP_DOMAIN
+          value: "example.org"
+        - name: LDAP_ADMIN_PASSWORD
+          value: "admin"
+        - name: LDAP_CONFIG_PASSWORD
+          value: "admin"
+        - name: LDAP_LOG_LEVEL
+          value: "256"
+
+        volumeMounts:
+        # Mount the volume to a STAGING directory, not the final destination.
+        - name: bootstrap-writable
+          mountPath: /tmp/staging
+
+      volumes:
+      - name: bootstrap-source
+        configMap:
+          name: openldap-bootstrap
+      - name: bootstrap-writable
+        emptyDir: {}
+
+---
+# 3. Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: openldap-service
+  namespace: vault
+spec:
+  selector:
+    app: openldap
+  ports:
+  - protocol: TCP
+    port: 389
+    targetPort: 389
+    name: ldap
