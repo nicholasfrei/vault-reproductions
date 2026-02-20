@@ -1,15 +1,11 @@
 # Vault Reproductions
 
-This repository is a practical lab for Vault admins who need quick, serviceable environments to test behavior, validate assumptions, and reproduce edge cases.
-
-The goal is to help you stand up scenarios quickly, learn how Vault behaves in real integrations, and troubleshoot nuanced issues before they affect production.
+This repository is a vault (wink) of various scenarios I've worked with during my time as a Senior Support Engineer. The goal is to share various scripts, guides, and reproductions for different Vault plugins. Some of these are based on real support cases or incidents, while others are smaller scripts to assist with learning Vault. 
 
 ## What this project is for
 
-- Spin up focused Vault test environments quickly
-- Reproduce auth and secrets engine behavior with minimal setup overhead
-- Validate expected vs actual behavior for support cases and internal testing
 - Build repeatable scenarios for learning and troubleshooting
+- Assist in quickly spinning up environments to test specific behaviors
 
 ## Available scenarios
 
@@ -65,12 +61,6 @@ The goal is to help you stand up scenarios quickly, learn how Vault behaves in r
 
 ## How to use this repository
 
-1. Choose a scenario based on the behavior you want to test.
-2. Open the scenario script/guide and review prerequisites.
-3. Run the setup exactly as written.
-4. Validate behavior with the included verification steps.
-5. Re-run with small changes to isolate nuanced behavior.
-
-## Intended audience
-
-Vault administrators, support engineers, and platform engineers who need fast, reproducible Vault integration environments.
+1. Find the scenario or plugin you're interested in.
+2. Follow the instructions in the file.
+3. Viola. 
