@@ -44,6 +44,20 @@ The goal is to help you stand up scenarios quickly, learn how Vault behaves in r
 - [secrets-oracle-db/Oracle Database Plugin Setup.md](secrets-oracle-db/Oracle%20Database%20Plugin%20Setup.md)
 	- Rapid Oracle environment setup for testing Vault database plugin behavior with dynamic and static credentials.
 
+- PostgreSQL database plugin scenarios
+	- [secrets-postgresql-db/PostgreSQL Database Secrets Engine Repro.md](secrets-postgresql-db/PostgreSQL%20Database%20Secrets%20Engine%20Repro.md)
+		- PostgreSQL + Vault database secrets engine setup covering dynamic credentials, static role rotation, and custom password policies.
+		- Useful for validating credential lifecycle, lease revocation, and rotation timing behavior.
+	- [secrets-postgresql-db/PostgreSQL Static Role Denial-of-Service Repro.md](secrets-postgresql-db/PostgreSQL%20Static%20Role%20Denial-of-Service%20Repro.md)
+		- Reproduces static role rotation pressure when the backing PostgreSQL target is unavailable/decommissioned.
+		- Useful for incident response drills and understanding cleanup/recovery patterns for stale static roles.
+
+### Vault MCP Server
+- [vault-mcp-server/Vault MCP Server Setup.md](vault-mcp-server/Vault%20MCP%20Server%20Setup.md)
+	- Connects `vault-mcp-server` to an existing Kubernetes Vault cluster via port-forward.
+	- Covers binary install, policy and token creation, and VS Code / Claude Desktop MCP client configuration.
+	- Includes a policy file scoped to KV v2, mount management, and PKI operations.
+
 ### Kubernetes/platform behavior
 
 - [kubernetes/LivenessProbe KB.md](kubernetes/LivenessProbe%20KB.md)
