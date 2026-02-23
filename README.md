@@ -54,6 +54,11 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 	- Covers binary install, policy and token creation, and VS Code / Claude Desktop MCP client configuration.
 	- Includes a policy file scoped to KV v2, mount management, and PKI operations.
 
+### Initialize
+
+- [setup/Setup PGP Keys for Vault.sh](setup/Setup%20PGP%20Keys%20for%20Vault.sh)
+	- Generates PGP key pairs, copies public keys into the Vault pod, and runs vault operator init with PGP-encrypted unseal keys. Targets vault-0 in namespace vault (configurable).
+
 ### Kubernetes/platform behavior
 
 - [kubernetes/LivenessProbe KB.md](kubernetes/LivenessProbe%20KB.md)
