@@ -1,17 +1,10 @@
 #!/bin/bash
 # Kubernetes Authentication Setup for Vault
 #
-# This script demonstrates:
-# - Creating multiple Kubernetes ServiceAccounts for testing
-# - Configuring Vault's Kubernetes auth method
-# - Testing user logins with Vault using K8s ServiceAccount tokens
-#
 # Prerequisites:
 # - kubectl configured and connected to your cluster
 # - Vault pod running in the cluster (defaults to vault-0 in vault namespace)
 # - Appropriate permissions to create namespaces, ServiceAccounts, and ClusterRoleBindings
-#
-# Note: This script uses Kubernetes 1.24+ token Secret approach for long-lived tokens
 
 set -e
 
