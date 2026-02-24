@@ -12,6 +12,7 @@ KUBE_CONTEXT="vault"
 DELETE_NAMESPACE=true
 DELETE_MINIKUBE_PROFILE=true
 DELETE_INIT_JSON=true
+DELETE_INIT_PGP=true
 # ---------------------------------
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -82,6 +83,33 @@ if [[ "$DELETE_INIT_JSON" == true ]]; then
     echo "init.json not found; skipping."
   fi
 fi
+
+if [[ "$DELETE_INIT_PGP" == true ]]; then
+  # ============================================================
+  echo ""
+  echo "=== Removing init-pgp output file ==="
+  # ============================================================
+
+  INIT_PGP_PATH="$SCRIPT_DIR/init-pgp.txt"
+  echo "Removing init-pgp output file (if present)..."
+  if [[ -f "$INIT_PGP_PATH" ]]; then
+    rm -f "$INIT_PGP_PATH"
+    echo "Removed: $INIT_PGP_PATH"
+  else
+    echo "init-pgp.txt not found; skipping."
+  fi
+
+  PGP_KEYS_DIR="$SCRIPT_DIR/pgp-keys"
+  if [[ -d "$PGP_KEYS_DIR" ]]; then
+    rm -rf "$PGP_KEYS_DIR"
+    echo "Removed directory: $PGP_KEYS_DIR"
+  else
+    echo "pgp-keys directory not found; skipping."
+  fi
+
+
+fi
+
 
 # ============================================================
 echo ""
