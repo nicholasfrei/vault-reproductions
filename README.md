@@ -7,6 +7,32 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 - Build repeatable scenarios for learning and troubleshooting
 - Quickly spin up environments to test specific Vault behaviors
 
+## Prerequisites
+
+- Homebrew
+- kubectl
+- helm
+- minikube
+- docker (Docker Desktop or Docker Engine)
+- jq
+
+### Additional tools used by specific scenarios
+
+- gpg 
+- unzip + wget/curl
+- ldapsearch + nc 
+- psql 
+- sqlplus 
+
+
+### Quick install (macOS via Homebrew)
+
+```bash
+brew install jq kubectl helm minikube vault gnupg wget
+```
+
+If you do not use Homebrew, install equivalent packages with your OS package manager.
+
 ## Available scenarios
 
 ### Authentication Mounts
