@@ -59,6 +59,12 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 - [setup/Setup PGP Keys for Vault.sh](setup/Setup%20PGP%20Keys%20for%20Vault.sh)
 	- Generates PGP key pairs, copies public keys into the Vault pod, and runs vault operator init with PGP-encrypted unseal keys. Targets vault-0 in namespace vault (configurable).
 
+- [setup/Initialize and Unseal Vault Cluster.sh](setup/Initialize%20and%20Unseal%20Vault%20Cluster.sh)
+	- Installs Vault via Helm (HA + Raft, 3 pods), initializes with 5 total key shares and threshold 3, saves init output to `init.json`, unseals all nodes, and logs into `vault-0` with the root token.
+
+- [setup/Cleanup Vault Sandbox.sh](setup/Cleanup%20Vault%20Sandbox.sh)
+	- Cleans up sandbox state between runs by uninstalling the Vault Helm release, deleting the `vault` namespace, deleting the Minikube `vault` profile, and removing `setup/init.json`.
+
 ### Kubernetes/platform behavior
 
 - [kubernetes/LivenessProbe KB.md](kubernetes/LivenessProbe%20KB.md)
