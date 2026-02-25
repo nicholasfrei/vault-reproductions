@@ -1,10 +1,8 @@
 # CMPv2 PKI Integration Repro (Vault)
 
-This is a markdown-only, minimal runbook for reproducing Vault PKI CMPv2 behavior and proxy viability.
+This came from a case where a customer wanted to validate Vault PKI CMPv2 through an unencrypted proxy. Their use case involved 5G RAN devices, which commonly use CMPv2 for automated certificate enrollment and renewal, and needed to reach Vault through an HTTP proxy rather than directly over HTTPS.
 
 ## Goal
-
-Validate two things:
 
 1. Vault CMPv2 is configured and issues certificates.
 2. CMPv2 IR works both:
@@ -14,15 +12,14 @@ Validate two things:
 ## Prerequisites
 
 - Kubernetes Vault deployment already running
-- Proxy scenario already deployed from the Kubernetes proxy behavior folder
+- Proxy scenario already deployed — see [kubernetes/proxy-tls-behavior/Vault Proxy TLS Behavior Repro.md](../kubernetes/proxy-tls-behavior/Vault%20Proxy%20TLS%20Behavior%20Repro.md)
 - OpenSSL 3.x with `openssl cmp` available
-- Admin token with permissions for auth + PKI config
 
 ## Step 1: Configure CMPv2 on Vault PKI
 
 Create/verify the required components:
 
-- PKI mount at `pki/`
+- PKI secrets mount enabled at `pki/`
 - dedicated cert auth mount at `cmp-cert/`
 - CMP role at `pki/roles/cmp-role`
 - CMP config at `pki/config/cmp`
@@ -154,5 +151,3 @@ issuer=CN=CMP Root CA
 - Vault CMPv2 IR succeeded directly over HTTPS.
 - Vault CMPv2 IR also succeeded through proxy HTTP ingress with HTTPS upstream to Vault.
 - This demonstrates technical viability of proxy HTTP -> Vault HTTPS for CMP IR in this lab.
-- Vault does not need its own unencrypted listener if a front proxy accepts HTTP and forwards to Vault over HTTPS
-- In this reproduction, CMPv2 IR succeeded in both direct and proxied paths.
