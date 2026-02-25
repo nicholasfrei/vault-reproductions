@@ -93,6 +93,10 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [kubernetes/LivenessProbe KB.md](kubernetes/LivenessProbe%20KB.md)
 	- Demonstrates automatic Vault pod recovery when TLS certificates expire, using Kubernetes liveness probes.
 
+- [kubernetes/proxy-tls-behavior/Vault Proxy TLS Behavior Repro.md](kubernetes/proxy-tls-behavior/Vault%20Proxy%20TLS%20Behavior%20Repro.md)
+	- Reproduces HTTP client traffic into a local proxy with TLS-only Vault upstream.
+	- Validates that Vault can stay TLS-only while a front proxy handles plaintext listener and HTTPS re-encryption.
+
 ## How to use this repository
 
 1. Find the scenario or plugin you're interested in.

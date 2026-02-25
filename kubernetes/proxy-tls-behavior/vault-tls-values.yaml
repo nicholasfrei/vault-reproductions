@@ -1,0 +1,72 @@
+global:
+  tlsDisable: false
+
+server:
+  affinity: ""
+  extraEnvironmentVars:
+    VAULT_CACERT: /vault/tls/ca.crt
+  volumeMounts:
+    - mountPath: /vault/kube-ca
+      name: tls-certificates
+      readOnly: true
+    - mountPath: /vault/plugins
+      name: plugins
+    - mountPath: /vault/tls
+      name: vault-server-tls
+      readOnly: true
+  volumes:
+    - name: tls-certificates
+      secret:
+        secretName: kube-ca
+    - name: plugins
+    - name: vault-server-tls
+      secret:
+        secretName: vault-server-tls
+  livenessProbe:
+    enabled: true
+    execCommand:
+      - /bin/sh
+      - -ec
+      - vault status
+  readinessProbe:
+    enabled: true
+    path: /v1/sys/health?standbyok=true&perfstandbyok=true
+
+  ha:
+    enabled: true
+    replicas: 3
+    apiAddr: https://vault-active.vault.svc.cluster.local:8200
+    clusterAddr: https://$(HOSTNAME).vault-internal.vault.svc.cluster.local:8201
+    raft:
+      enabled: true
+      config: |
+        ui = true
+        raw_storage_endpoint = true
+        service_registration "kubernetes" {}
+
+        listener "tcp" {
+          address                 = "[::]:8200"
+          cluster_address         = "[::]:8201"
+          tls_disable             = 0
+          tls_cert_file           = "/vault/tls/tls.crt"
+          tls_key_file            = "/vault/tls/tls.key"
+          tls_client_ca_file      = "/vault/tls/ca.crt"
+        }
+
+        storage "raft" {
+          path = "/vault/data"
+          node_id = "HOSTNAME"
+
+          retry_join {
+            leader_api_addr = "https://vault-0.vault-internal:8200"
+            leader_ca_cert_file = "/vault/tls/ca.crt"
+          }
+          retry_join {
+            leader_api_addr = "https://vault-1.vault-internal:8200"
+            leader_ca_cert_file = "/vault/tls/ca.crt"
+          }
+          retry_join {
+            leader_api_addr = "https://vault-2.vault-internal:8200"
+            leader_ca_cert_file = "/vault/tls/ca.crt"
+          }
+        }
