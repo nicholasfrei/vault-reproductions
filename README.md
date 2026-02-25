@@ -62,6 +62,10 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [secrets-oracle-db/Oracle Database Plugin Setup.md](secrets-oracle-db/Oracle%20Database%20Plugin%20Setup.md)
 	- Rapid Oracle environment setup for testing Vault database plugin behavior with dynamic and static credentials.
 
+- [secrets-pki-cmpv2/CMPv2 PKI Integration Guide.md](secrets-pki-cmpv2/CMPv2%20PKI%20Integration%20Guide.md)
+	- Markdown-only runbook for Vault PKI CMPv2 integration and proxy behavior validation.
+	- Includes concrete expected output blocks from a successful direct + proxied CMP IR repro.
+
 - PostgreSQL database plugin scenarios
 	- [secrets-postgresql-db/PostgreSQL Database Secrets Engine Repro.md](secrets-postgresql-db/PostgreSQL%20Database%20Secrets%20Engine%20Repro.md)
 		- PostgreSQL + Vault database secrets engine setup covering dynamic credentials, static role rotation, and custom password policies.

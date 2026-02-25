@@ -10,8 +10,39 @@ data:
 
       client_max_body_size 10m;
 
-      # Optional hardening: only allow CMP API path through the plaintext listener.
-      location /v1/cmp {
+      # Optional hardening (currently disabled): allow only Vault PKI CMPv2 API paths.
+      # Keep this block for future re-enable if strict path filtering is required.
+      #
+      # location = /v1/pki/cmp {
+      #   proxy_pass https://vault.vault.svc.cluster.local:8200;
+      #   proxy_http_version 1.1;
+      #
+      #   proxy_ssl_server_name on;
+      #   proxy_ssl_name vault.vault.svc.cluster.local;
+      #   proxy_ssl_verify on;
+      #   proxy_ssl_trusted_certificate /etc/nginx/vault-ca/ca.crt;
+      #
+      #   proxy_set_header Host vault.vault.svc.cluster.local;
+      #   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      #   proxy_set_header X-Forwarded-Proto http;
+      # }
+      #
+      # location ~ ^/v1/pki/roles/[^/]+/cmp$ {
+      #   proxy_pass https://vault.vault.svc.cluster.local:8200;
+      #   proxy_http_version 1.1;
+      #
+      #   proxy_ssl_server_name on;
+      #   proxy_ssl_name vault.vault.svc.cluster.local;
+      #   proxy_ssl_verify on;
+      #   proxy_ssl_trusted_certificate /etc/nginx/vault-ca/ca.crt;
+      #
+      #   proxy_set_header Host vault.vault.svc.cluster.local;
+      #   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      #   proxy_set_header X-Forwarded-Proto http;
+      # }
+
+      # Generic forwarding (used when strict path filtering is disabled).
+      location / {
         proxy_pass https://vault.vault.svc.cluster.local:8200;
         proxy_http_version 1.1;
 
@@ -30,9 +61,10 @@ data:
         return 200 "ok\n";
       }
 
-      location / {
-        return 403;
-      }
+      # Hardened default deny (disabled while generic forwarding is enabled).
+      # location / {
+      #   return 403;
+      # }
     }
 ---
 apiVersion: apps/v1

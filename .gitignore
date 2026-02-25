@@ -1,3 +1,5 @@
 init.json
 init-pgp.txt
 pgp-keys/
+*.pem
+*.der
