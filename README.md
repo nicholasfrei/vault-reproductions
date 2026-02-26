@@ -50,6 +50,11 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Useful for evaluating how Vault creates and maps identities during Kubernetes auth.
 	- Includes behavior validation related to entities and aliases.
 
+- [auth-jwt/jwt-authentication-setup-and-login.sh](auth-jwt/jwt-authentication-setup-and-login.sh)
+	- Configures Vault JWT auth with a local RSA key pair and issuer binding.
+	- Creates per-user JWT roles, signs demo JWTs, and validates login for each configured user.
+	- Optionally creates and reads a KV v2 demo secret to confirm post-login policy access.
+
 ### Secrets Engines
 - [secrets-artifactory/artifactory-plugin-registration.sh](secrets-artifactory/artifactory-plugin-registration.sh)
 	- Amazon Linux setup script for Vault Enterprise + JFrog Artifactory secrets plugin registration.
