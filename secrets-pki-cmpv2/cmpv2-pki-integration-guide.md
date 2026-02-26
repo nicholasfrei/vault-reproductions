@@ -12,7 +12,7 @@ This came from a case where a customer wanted to validate Vault PKI CMPv2 throug
 ## Prerequisites
 
 - Kubernetes Vault deployment already running
-- Proxy scenario already deployed — see [kubernetes/proxy-tls-behavior/Vault Proxy TLS Behavior Repro.md](../kubernetes/proxy-tls-behavior/Vault%20Proxy%20TLS%20Behavior%20Repro.md)
+- Proxy scenario already deployed — see [kubernetes/proxy-tls-behavior/vault-proxy-tls-behavior-repro.md](../kubernetes/proxy-tls-behavior/vault-proxy-tls-behavior-repro.md)
 - OpenSSL 3.x with `openssl cmp` available
 
 ## Step 1: Configure CMPv2 on Vault PKI
