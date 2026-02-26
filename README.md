@@ -101,6 +101,10 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Reproduces HTTP client traffic into a local proxy with TLS-only Vault upstream.
 	- Validates that Vault can stay TLS-only while a front proxy handles plaintext listener and HTTPS re-encryption.
 
+- [kubernetes/vso-k8s-auth-static-dynamic/vso-k8s-auth-static-dynamic-repro.md](kubernetes/vso-k8s-auth-static-dynamic/vso-k8s-auth-static-dynamic-repro.md)
+	- Reproduces Vault Secrets Operator sync flows for static KV v2 secrets and dynamic database credentials using Vault Kubernetes authentication.
+	- Includes policy and role setup, secret rotation verification, and failure injection by breaking/restoring Kubernetes auth role bindings.
+
 ## How to use this repository
 
 1. Find the scenario or plugin you're interested in.
