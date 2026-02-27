@@ -88,13 +88,13 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 ### Vault Setup
 
-- [setup/initialize-and-unseal-vault-cluster.sh](setup/initialize-and-unseal-vault-cluster.sh)
+- [setup/init.sh](setup/init.sh)
 	- Installs Vault via Helm (HA + Raft, 3 pods), initializes with 5 total key shares and threshold 3, saves init output to `init.json`, unseals all nodes, and logs into `vault-0` with the root token.
 
 - [setup/setup-pgp-keys-for-vault.sh](setup/setup-pgp-keys-for-vault.sh)
 	- Generates PGP key pairs, copies public keys into the Vault pod, and runs `vault operator init` with PGP-encrypted unseal keys. Targets `vault-0` in namespace `vault` (configurable).
 
-- [setup/cleanup-vault-sandbox.sh](setup/cleanup-vault-sandbox.sh)
+- [setup/cleanup.sh](setup/cleanup.sh)
 	- Cleans up sandbox state between runs: uninstalls the Vault Helm release, deletes the `vault` namespace, deletes the Minikube `vault` profile, and removes `setup/init.json`.
 
 ### Kubernetes / Platform Behavior
