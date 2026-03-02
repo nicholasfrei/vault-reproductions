@@ -110,6 +110,8 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Reproduces Vault Secrets Operator sync flows for static KV v2 secrets and dynamic database credentials using Vault Kubernetes authentication.
 	- Includes policy and role setup, secret rotation verification, and failure injection by breaking/restoring Kubernetes auth role bindings.
 
+### Telemetry
+
 - [telemetry/vault-telemetry-grafana-repro.md](telemetry/vault-telemetry-grafana-repro.md)
 	- Configures Vault telemetry with Prometheus scraping and a local Grafana dashboard using `kube-prometheus-stack`.
 	- Includes end-to-end setup and validation steps for metrics targets, Prometheus queries, and Grafana access.
