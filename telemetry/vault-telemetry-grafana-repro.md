@@ -174,6 +174,18 @@ If data returns for these queries, Vault telemetry is wired correctly.
 ![Prometheus graph for vault_barrier_put over the last 5 minutes](prometheus-vault-barrier-put-last-5m.png)
 _Screenshot: Prometheus dashboard graph showing `vault_barrier_put` for the last 5 minutes._
 
+## 7) Import Vault dashboards from this repro
+
+- `telemetry/dashboards/core.json`
+- `telemetry/dashboards/storage.json`
+- `telemetry/dashboards/leases.json`
+
+In Grafana:
+
+1. Go to **Dashboards** -> **New** -> **Import**.
+2. Upload each JSON file above.
+3. Select your Prometheus data source when prompted.
+
 ## Cleanup (optional)
 
 ```bash
