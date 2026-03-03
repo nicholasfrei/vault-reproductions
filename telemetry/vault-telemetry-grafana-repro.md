@@ -136,7 +136,7 @@ Then open:
 - http://localhost:9090/targets
 
 Look for a target related to Vault and confirm state is `UP`.
-![Prometheus targets page showing Vault target UP](prometheus-targets-vault-up.png)
+![Prometheus targets page showing Vault target UP](images/prometheus-targets-vault-up.png)
 _Screenshot: Prometheus `/targets` view confirming Vault is up._
 
 ## 5) Access local Grafana
@@ -171,7 +171,7 @@ Use **Explore** and run queries like:
 
 If data returns for these queries, Vault telemetry is wired correctly.
 
-![Prometheus graph for vault_barrier_put over the last 5 minutes](prometheus-vault-barrier-put-last-5m.png)
+![Prometheus graph for vault_barrier_put over the last 5 minutes](images/prometheus-vault-barrier-put-last-5m.png)
 _Screenshot: Prometheus dashboard graph showing `vault_barrier_put` for the last 5 minutes._
 
 ## 7) Import Vault dashboards from this repro
