@@ -41,23 +41,14 @@ path "kv/*" {
 }
 
 # kv-v2
-path "kv-v2/" {
+path "kv-v2/metadata/" {
   capabilities = ["read", "list"]
 }
 
-path "kv-v2/*" {
+path "kv-v2/metadata/*" {
   capabilities = ["read", "list"]
 }
 
-# kvv2
-path "kvv2/metadata/" {
-  capabilities = ["read", "list"]
-}
-
-path "kvv2/metadata/*" {
-  capabilities = ["read", "list"]
-}
-
-path "kvv2/data/*" {
+path "kv-v2/data/*" {
   capabilities = ["read"]
 }
