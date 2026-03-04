@@ -106,6 +106,12 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [setup/cleanup.sh](setup/cleanup.sh)
 	- Cleans up sandbox state between runs: uninstalls the Vault Helm release, deletes the `vault` namespace, deletes the Minikube `vault` profile, and removes `setup/init.json`.
 
+### Linux / Platform Behavior
+
+- [linux/vault-logrotate-kb.md](linux/vault-logrotate-kb.md)
+	- Practical Linux/systemd-focused guidance for Vault logrotate configuration and troubleshooting.
+	- Includes directive-by-directive explanations, safer rotation recommendations, and validation steps.
+
 ### Kubernetes / Platform Behavior
 
 - [kubernetes/liveness-probe-kb.md](kubernetes/liveness-probe-kb.md)
