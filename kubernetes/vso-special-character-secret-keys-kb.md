@@ -133,6 +133,10 @@ a valid config key must consist of alphanumeric characters, '-', '_' or '.'
 
 ## Transformation Template Findings
 
+Reference material used for this testing:
+
+- [VSO Secret Transformation Documentation](https://developer.hashicorp.com/vault/docs/deploy/kubernetes/vso/secret-transformation)
+
 ### What was tested
 
 A generic transformation approach such as:
