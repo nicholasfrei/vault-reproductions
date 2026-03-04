@@ -71,6 +71,10 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Markdown-only runbook for Vault PKI CMPv2 integration and proxy behavior validation.
 	- Includes concrete expected output blocks from a successful direct + proxied CMP IR repro.
 
+- [secrets-rabbitmq-db/rabbitmq-secrets-engine-repro.md](secrets-rabbitmq-db/rabbitmq-secrets-engine-repro.md)
+	- Simple RabbitMQ + Vault secrets engine runbook for dynamic credential issuance and lease revocation validation.
+	- Assumes an already-operational Vault cluster in Kubernetes and uses a local RabbitMQ container for testing.
+
 - PostgreSQL database plugin scenarios
 	- [secrets-postgresql-db/postgresql-database-secrets-engine-repro.md](secrets-postgresql-db/postgresql-database-secrets-engine-repro.md)
 		- PostgreSQL + Vault database secrets engine setup covering dynamic credentials, static role rotation, and custom password policies.
