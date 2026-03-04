@@ -80,6 +80,9 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Simple RabbitMQ + Vault secrets engine runbook for dynamic credential issuance and lease revocation validation.
 	- Assumes an already-operational Vault cluster in Kubernetes and uses a local RabbitMQ container for testing.
 
+- [secrets-aws/aws-secrets-engine-upgrade-findings-kb.md](secrets-aws/aws-secrets-engine-upgrade-findings-kb.md)
+    - Discusses real-life errors faced by enterprise customers found in v1.19.x for `sts_endpoint`, `iam_endpoint`, and rotation schedule/window(s).
+
 - PostgreSQL database plugin scenarios
 	- [secrets-postgresql-db/postgresql-database-secrets-engine-repro.md](secrets-postgresql-db/postgresql-database-secrets-engine-repro.md)
 		- PostgreSQL + Vault database secrets engine setup covering dynamic credentials, static role rotation, and custom password policies.
