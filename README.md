@@ -2,10 +2,30 @@
 
 This repository is a vault (wink) of various scenarios I've worked with during my time as a Senior Support Engineer. The goal is to share various scripts, guides, and reproductions for different Vault plugins. Some of these are based on real support cases or incidents, while others are smaller scripts to assist with learning Vault. 
 
+## Table of contents
+
+- [Prerequisites](#prerequisites)
+  - [Additional tools used by specific scenarios](#additional-tools-used-by-specific-scenarios)
+  - [Quick install (via Homebrew)](#quick-install-via-homebrew)
+- [Scenarios](#available-scenarios)
+  - [Authentication Mounts](#authentication-mounts)
+  - [Secrets Engines](#secrets-engines)
+  - [Vault MCP Server](#vault-mcp-server)
+  - [Vault Setup](#vault-setup)
+  - [Linux / Platform Behavior](#linux--platform-behavior)
+  - [Kubernetes / Platform Behavior](#kubernetes--platform-behavior)
+  - [Telemetry](#telemetry)
+
 ## What this project is for
 
 - Build repeatable scenarios for learning and troubleshooting
 - Quickly spin up environments to test specific Vault behaviors
+
+## How to use this repository
+
+1. Find the scenario or plugin you're interested in.
+2. Follow the instructions in the file.
+3. Voilà.
 
 ## Prerequisites
 
@@ -83,6 +103,9 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [secrets-aws/aws-secrets-engine-upgrade-findings-kb.md](secrets-aws/aws-secrets-engine-upgrade-findings-kb.md)
     - Discusses real-life errors faced by enterprise customers found in v1.19.x for `sts_endpoint`, `iam_endpoint`, and rotation schedule/window(s).
 
+- [secrets-totp/totp-secrets-engine-repro.md](secrets-totp/totp-secrets-engine-repro.md)
+	- Reproduction runbook for the Vault TOTP secrets engine, including setup and validation flow.
+
 - PostgreSQL database plugin scenarios
 	- [secrets-postgresql-db/postgresql-database-secrets-engine-repro.md](secrets-postgresql-db/postgresql-database-secrets-engine-repro.md)
 		- PostgreSQL + Vault database secrets engine setup covering dynamic credentials, static role rotation, and custom password policies.
@@ -101,7 +124,7 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 ### Vault Setup
 
 - [setup/init.sh](setup/init.sh)
-	- Installs Vault via Helm (HA + Raft, 3 pods), initializes with 5 total key shares and threshold 3, saves init output to `init.json`, unseals all nodes, and logs into `vault-0` with the root token.
+	- Installs Vault via Helm (HA + Raft, 3 pods), initializes with 5 total key shares and threshold 3, saves init output to `setup/init.json`, unseals all nodes, and logs into `vault-0` with the root token.
 
 - [setup/setup-pgp-keys-for-vault.sh](setup/setup-pgp-keys-for-vault.sh)
 	- Generates PGP key pairs, copies public keys into the Vault pod, and runs `vault operator init` with PGP-encrypted unseal keys. Targets `vault-0` in namespace `vault` (configurable).
@@ -137,9 +160,3 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [telemetry/vault-telemetry-grafana-repro.md](telemetry/vault-telemetry-grafana-repro.md)
 	- Configures Vault telemetry with Prometheus scraping and a local Grafana dashboard using `kube-prometheus-stack`.
 	- Includes end-to-end setup and validation steps for metrics targets, Prometheus queries, and Grafana access.
-
-## How to use this repository
-
-1. Find the scenario or plugin you're interested in.
-2. Follow the instructions in the file.
-3. Voilà.
