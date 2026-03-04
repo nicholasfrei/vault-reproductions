@@ -25,10 +25,10 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 - sqlplus 
 
 
-### Quick install (macOS via Homebrew)
+### Quick install (via Homebrew)
 
 ```bash
-brew install jq kubectl helm minikube vault gnupg wget
+brew install jq kubectl helm minikube gnupg wget
 ```
 
 If you do not use Homebrew, install equivalent packages with your OS package manager.
