@@ -7,6 +7,8 @@
 # "cannot execute files outside of configured plugin directory" error.
 # ==============================================================================
 
+set -euo pipefail
+
 # 1. Configuration - UPDATE THESE
 export VAULT_LICENSE="<your-license-key>"
 export PLUGIN_VER="1.8.8"

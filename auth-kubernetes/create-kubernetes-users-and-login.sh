@@ -6,7 +6,7 @@
 # - Vault pod running in the cluster (defaults to vault-0 in vault namespace)
 # - Appropriate permissions to create namespaces, ServiceAccounts, and ClusterRoleBindings
 
-set -e
+set -euo pipefail
 
 # --- Configuration ---
 NAMESPACE="user-test-ns"           # K8s namespace for test ServiceAccounts

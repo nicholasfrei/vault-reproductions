@@ -12,6 +12,8 @@
 # - VAULT_ADDR and VAULT_TOKEN environment variables set
 # - Appropriate permissions to enable auth methods and create policies
 
+set -euo pipefail
+
 # Set namespace (optional - comment out if not using namespaces)
 export VAULT_NAMESPACE="test"
 
