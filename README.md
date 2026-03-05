@@ -4,20 +4,15 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 
 ## Table of contents
 
-- [Vault Reproductions](#vault-reproductions)
-	- [Table of contents](#table-of-contents)
-	- [How to use this repository](#how-to-use-this-repository)
-	- [Prerequisites](#prerequisites)
-		- [Additional tools used by specific scenarios](#additional-tools-used-by-specific-scenarios)
-		- [Quick install (via Homebrew)](#quick-install-via-homebrew)
-	- [Available scenarios](#available-scenarios)
-		- [Authentication Mounts](#authentication-mounts)
-		- [Secrets Engines](#secrets-engines)
-		- [Vault MCP Server](#vault-mcp-server)
-		- [Vault Setup](#vault-setup)
-		- [Linux / Platform Behavior](#linux--platform-behavior)
-		- [Kubernetes / Platform Behavior](#kubernetes--platform-behavior)
-		- [Telemetry](#telemetry)
+- [Prerequisites](#prerequisites)
+- [Available scenarios](#available-scenarios)
+	- [Authentication Mounts](#authentication-mounts)
+	- [Secrets Engines](#secrets-engines)
+	- [Vault MCP Server](#vault-mcp-server)
+	- [Vault Setup](#vault-setup)
+	- [Linux / Platform Behavior](#linux--platform-behavior)
+	- [Kubernetes / Platform Behavior](#kubernetes--platform-behavior)
+	- [Telemetry](#telemetry)
 
 ## How to use this repository
 
