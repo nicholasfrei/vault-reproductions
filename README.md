@@ -139,6 +139,10 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Practical Linux/systemd-focused guidance for Vault logrotate configuration and troubleshooting.
 	- Includes directive-by-directive explanations, safer rotation recommendations, and validation steps.
 
+- [Merkle Corruption Reindex KB](linux/vault-replication-merkle-corruption-reindex-kb.md)
+	- Runbook for resolving PR/DR replication stuck in `merkle-diff`/`merkle-sync` due to corrupted primary merkle trees.
+	- Covers primary-first reindex strategy, write-lock expectations, validation checkpoints, and rollback cautions.
+
 ### Kubernetes / Platform Behavior
 
 - [Liveness Probe KB](kubernetes/liveness-probe-kb.md)
