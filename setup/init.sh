@@ -144,16 +144,41 @@ while true; do
 done
 
 info "Checking if Vault is already initialized..."
-# vault status exits 2 when sealed, 1 on error -- capture JSON before piping to avoid pipefail
-VAULT_STATUS_JSON="$(kubectl exec "$INIT_POD" -n "$NAMESPACE" -- vault status -format=json </dev/null 2>/dev/null || true)"
-if [[ "$(jq -r '.initialized' <<< "$VAULT_STATUS_JSON")" == "true" ]]; then
+# vault operator init -status exits:
+#   0 -> already initialized
+#   2 -> not initialized yet
+#   1 -> error talking to Vault
+if kubectl exec "$INIT_POD" -n "$NAMESPACE" -- vault operator init -status </dev/null >/dev/null 2>&1; then
   warn "Vault is already initialized. This script only handles first-time initialization."
+  warn "If you expected a fresh cluster, remove the existing Vault data and rerun."
   exit 1
+else
+  INIT_STATUS_RC=$?
+  if [[ "$INIT_STATUS_RC" -ne 2 ]]; then
+    warn "Unable to determine initialization status (exit code: $INIT_STATUS_RC)."
+    warn "Check pod logs with: kubectl logs -n $NAMESPACE $INIT_POD"
+    exit 1
+  fi
 fi
 
 info "Initializing Vault (shares=$KEY_SHARES, threshold=$KEY_THRESHOLD)..."
-kubectl exec "$INIT_POD" -n "$NAMESPACE" -- \
-  vault operator init -format=json -key-shares="$KEY_SHARES" -key-threshold="$KEY_THRESHOLD" </dev/null > "$OUTPUT_FILE"
+INIT_ERR_FILE="$(mktemp)"
+if ! kubectl exec "$INIT_POD" -n "$NAMESPACE" -- \
+  vault operator init -format=json -key-shares="$KEY_SHARES" -key-threshold="$KEY_THRESHOLD" </dev/null > "$OUTPUT_FILE" 2>"$INIT_ERR_FILE"; then
+  if grep -qi "Vault is already initialized" "$INIT_ERR_FILE"; then
+    rm -f "$OUTPUT_FILE"
+    warn "Vault became initialized before this command completed."
+    warn "Use the existing unseal keys/root token, or reset cluster data and rerun."
+    rm -f "$INIT_ERR_FILE"
+    exit 1
+  fi
+
+  warn "Vault initialization failed."
+  cat "$INIT_ERR_FILE" >&2
+  rm -f "$INIT_ERR_FILE"
+  exit 1
+fi
+rm -f "$INIT_ERR_FILE"
 chmod 600 "$OUTPUT_FILE"
 
 section "Parsing init output"
