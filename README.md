@@ -4,17 +4,20 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 
 ## Table of contents
 
-- [Prerequisites](#prerequisites)
-  - [Additional tools used by specific scenarios](#additional-tools-used-by-specific-scenarios)
-  - [Quick install (via Homebrew)](#quick-install-via-homebrew)
-- [Scenarios](#available-scenarios)
-  - [Authentication Mounts](#authentication-mounts)
-  - [Secrets Engines](#secrets-engines)
-  - [Vault MCP Server](#vault-mcp-server)
-  - [Vault Setup](#vault-setup)
-  - [Linux / Platform Behavior](#linux--platform-behavior)
-  - [Kubernetes / Platform Behavior](#kubernetes--platform-behavior)
-  - [Telemetry](#telemetry)
+- [Vault Reproductions](#vault-reproductions)
+	- [Table of contents](#table-of-contents)
+	- [How to use this repository](#how-to-use-this-repository)
+	- [Prerequisites](#prerequisites)
+		- [Additional tools used by specific scenarios](#additional-tools-used-by-specific-scenarios)
+		- [Quick install (via Homebrew)](#quick-install-via-homebrew)
+	- [Available scenarios](#available-scenarios)
+		- [Authentication Mounts](#authentication-mounts)
+		- [Secrets Engines](#secrets-engines)
+		- [Vault MCP Server](#vault-mcp-server)
+		- [Vault Setup](#vault-setup)
+		- [Linux / Platform Behavior](#linux--platform-behavior)
+		- [Kubernetes / Platform Behavior](#kubernetes--platform-behavior)
+		- [Telemetry](#telemetry)
 
 ## How to use this repository
 
@@ -152,6 +155,10 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [kubernetes/vso-special-character-secret-keys-kb.md](kubernetes/vso-special-character-secret-keys-kb.md)
 	- Documents VSO sync failures when KV keys include Kubernetes-invalid characters such as `@`.
 	- Includes a runnable repro, expected vs observed behavior, and workaround/architecture guidance.
+
+- [kubernetes/vso-aks-udp-dns-race-kb.md](kubernetes/vso-aks-udp-dns-race-kb.md)
+	- Documents intermittent VSO DNS timeout failures in AKS (`read udp ... :53: i/o timeout`) after initial successful reconciles. This was a customer incident where all application pods lost connectivity to Vault after a certain period of time, and the root cause was traced back to VSO DNS timeouts due to AKS UDP conntrack behavior.
+	- Covers UDP conntrack race hypothesis, validation commands, and mitigations (LocalDNS and/or shorter refresh intervals).
 
 ### Telemetry
 
