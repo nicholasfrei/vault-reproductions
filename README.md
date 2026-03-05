@@ -16,20 +16,18 @@ This repository is a vault (wink) of various scenarios I've worked with during m
   - [Kubernetes / Platform Behavior](#kubernetes--platform-behavior)
   - [Telemetry](#telemetry)
 
-## What this project is for
-
-- Build repeatable scenarios for learning and troubleshooting
-- Quickly spin up environments to test specific Vault behaviors
-
 ## How to use this repository
 
-1. Find the scenario or plugin you're interested in.
-2. Follow the instructions in the file.
-3. Voilà.
+1. Find the plugin you're interested in.
+2. Reference various KB's or Runbook's based on your need.
+3. Follow the instructions in the file.
+4. Voilà.
 
 ## Prerequisites
 
-- Homebrew
+Many of these runbooks require the following utilities/tools to work
+
+- homebrew
 - kubectl
 - helm
 - minikube
