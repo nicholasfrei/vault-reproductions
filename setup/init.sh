@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -euo pipefail
 
 # Installs a 3-node Vault HA cluster with Raft via Helm, then initializes,
@@ -11,16 +12,16 @@ HELM_CHART="hashicorp/vault"
 HELM_REPO_NAME="hashicorp"
 HELM_REPO_URL="https://helm.releases.hashicorp.com"
 MINIKUBE_PROFILE="vault"
-VAULT_VERSION="1.20.2"
-VAULT_REPLICAS=3
-KEY_SHARES=5
-KEY_THRESHOLD=3
+KEY_SHARES=1
+KEY_THRESHOLD=1
 WAIT_TIMEOUT="180s"
 HELM_TIMEOUT="10m"
 # ---------------------------------
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUTPUT_FILE="$SCRIPT_DIR/init.json"
+VAULT_VERSION=""
+VAULT_REPLICAS=""
 
 info() { echo "INFO: $*"; }
 warn() { echo "WARN: $*"; }
@@ -28,6 +29,30 @@ section() {
   echo ""
   echo "=== $* ==="
 }
+
+if [[ -t 0 ]]; then
+  read -r -p "Enter Vault Version (i.e. 1.21.1): " user_vault_version
+  if [[ -z "${user_vault_version// }" ]]; then
+    warn "Vault version is required."
+    exit 1
+  fi
+  VAULT_VERSION="$user_vault_version"
+
+  read -r -p "Enter Vault replica count: " user_vault_replicas
+  if [[ -z "${user_vault_replicas// }" ]]; then
+    warn "Vault replica count is required."
+    exit 1
+  fi
+  VAULT_REPLICAS="$user_vault_replicas"
+else
+  warn "Non-interactive shell detected; Vault version and replica count prompts require user input."
+  exit 1
+fi
+
+if ! [[ "$VAULT_REPLICAS" =~ ^[0-9]+$ ]] || (( VAULT_REPLICAS < 1 )); then
+  warn "Invalid replica count: '$VAULT_REPLICAS'. Must be a positive integer."
+  exit 1
+fi
 
 if (( KEY_THRESHOLD > KEY_SHARES )); then
   warn "Invalid key settings: KEY_THRESHOLD ($KEY_THRESHOLD) cannot exceed KEY_SHARES ($KEY_SHARES)."
@@ -49,7 +74,7 @@ done
 
 section "Starting local Kubernetes cluster"
 info "Starting minikube profile: $MINIKUBE_PROFILE..."
-minikube start -p "$MINIKUBE_PROFILE"
+minikube start -p "$MINIKUBE_PROFILE" --memory=2g --cpus=2
 
 info "Using kube context: $(kubectl config current-context 2>/dev/null || echo "<none>")"
 if ! kubectl get --raw=/version >/dev/null 2>&1; then
@@ -100,7 +125,7 @@ INIT_POD="${PODS[0]}"
 info "Waiting for all pods to be created..."
 for pod in "${PODS[@]}"; do
   until kubectl get pod -n "$NAMESPACE" "$pod" >/dev/null 2>&1; do sleep 2; done
-  echo "  $pod: created"
+  info "  $pod: created"
 done
 
 section "Vault initialization"
@@ -120,15 +145,15 @@ done
 
 info "Checking if Vault is already initialized..."
 # vault status exits 2 when sealed, 1 on error -- capture JSON before piping to avoid pipefail
-VAULT_STATUS_JSON="$(kubectl exec -i "$INIT_POD" -n "$NAMESPACE" -- vault status -format=json 2>/dev/null || true)"
+VAULT_STATUS_JSON="$(kubectl exec "$INIT_POD" -n "$NAMESPACE" -- vault status -format=json </dev/null 2>/dev/null || true)"
 if [[ "$(jq -r '.initialized' <<< "$VAULT_STATUS_JSON")" == "true" ]]; then
   warn "Vault is already initialized. This script only handles first-time initialization."
   exit 1
 fi
 
 info "Initializing Vault (shares=$KEY_SHARES, threshold=$KEY_THRESHOLD)..."
-kubectl exec -i "$INIT_POD" -n "$NAMESPACE" -- \
-  vault operator init -format=json -key-shares="$KEY_SHARES" -key-threshold="$KEY_THRESHOLD" > "$OUTPUT_FILE"
+kubectl exec "$INIT_POD" -n "$NAMESPACE" -- \
+  vault operator init -format=json -key-shares="$KEY_SHARES" -key-threshold="$KEY_THRESHOLD" </dev/null > "$OUTPUT_FILE"
 chmod 600 "$OUTPUT_FILE"
 
 section "Parsing init output"
@@ -149,7 +174,7 @@ section "Unsealing Vault nodes"
 
 info "Unsealing $INIT_POD..."
 for key in "${UNSEAL_KEYS[@]}"; do
-  kubectl exec -i "$INIT_POD" -n "$NAMESPACE" -- vault operator unseal "$key" >/dev/null
+  kubectl exec "$INIT_POD" -n "$NAMESPACE" -- vault operator unseal "$key" >/dev/null
   sleep 2
 done
 
@@ -169,12 +194,12 @@ for pod in "${PODS[@]:1}"; do
 
   sleep 2
   info "Joining $pod to Raft cluster..."
-  kubectl exec -i "$pod" -n "$NAMESPACE" -- vault operator raft join "http://$INIT_POD.vault-internal:8200"
+  kubectl exec "$pod" -n "$NAMESPACE" -- vault operator raft join "http://$INIT_POD.vault-internal:8200" </dev/null
 
   sleep 3
   info "Unsealing $pod..."
   for key in "${UNSEAL_KEYS[@]}"; do
-    kubectl exec -i "$pod" -n "$NAMESPACE" -- vault operator unseal "$key" >/dev/null
+    kubectl exec "$pod" -n "$NAMESPACE" -- vault operator unseal "$key" >/dev/null
     sleep 2
   done
 done
@@ -183,15 +208,16 @@ section "Readiness checks and login"
 
 info "Waiting for all Vault pods to become Ready..."
 for pod in "${PODS[@]}"; do
-  kubectl wait -n "$NAMESPACE" --for=condition=Ready "pod/$pod" --timeout="$WAIT_TIMEOUT"
+  kubectl wait -n "$NAMESPACE" --for=condition=Ready "pod/$pod" --timeout="$WAIT_TIMEOUT" >/dev/null
 done
 
 info "Logging in on $INIT_POD with root token..."
-kubectl exec -i "$INIT_POD" -n "$NAMESPACE" -- vault login "$ROOT_TOKEN" >/dev/null
-kubectl exec -i "$INIT_POD" -n "$NAMESPACE" -- vault token lookup >/dev/null
+kubectl exec "$INIT_POD" -n "$NAMESPACE" -- vault login "$ROOT_TOKEN" </dev/null >/dev/null 2>&1
+info "Login successful on $INIT_POD."
 
 section "Done"
 
 info "Completed successfully."
 info "Init output saved to: $OUTPUT_FILE"
 info "$INIT_POD login completed with root token."
+exit 0
