@@ -148,6 +148,9 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [Liveness Probe KB](kubernetes/liveness-probe-kb.md)
 	- Demonstrates automatic Vault pod recovery when TLS certificates expire, using Kubernetes liveness probes.
 
+- [Vault Raft Quorum Break and Restore Runbook](kubernetes/vault-raft-quorum-break-and-restore-runbook.md)
+	- Reproduces quorum-loss by scaling a Vault StatefulSet down to one pod, then restores service with single-node raft peer recovery and scale-out validation.
+
 - [Vault Proxy TLS Behavior Repro](kubernetes/proxy-tls-behavior/vault-proxy-tls-behavior-repro.md)
 	- Reproduces HTTP client traffic into a local proxy with TLS-only Vault upstream.
 	- Validates that Vault can stay TLS-only while a front proxy handles plaintext listener and HTTPS re-encryption.
