@@ -23,25 +23,22 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 
 ## Prerequisites
 
-Many of these runbooks require the following utilities/tools to work
+Most runbooks use these core tools:
 
-- homebrew
-- kubectl
-- helm
-- minikube
-- docker (Docker Desktop or Docker Engine)
-- jq
+- Homebrew (or any package manager)
+- `kubectl`, `helm`, `minikube`
+- Docker (`Docker Desktop` or Docker Engine)
+- `jq`
 
-### Additional tools used by specific scenarios
+Some scenarios also require:
 
-- gpg 
-- unzip + wget/curl
-- ldapsearch + nc 
-- psql 
-- sqlplus 
+- `gpg`
+- `unzip` and `wget`/`curl`
+- `ldapsearch` and `nc`
+- `psql`
+- `sqlplus`
 
-
-### Quick install (via Homebrew)
+### Quick install (Homebrew)
 
 ```bash
 brew install jq kubectl helm minikube gnupg wget
