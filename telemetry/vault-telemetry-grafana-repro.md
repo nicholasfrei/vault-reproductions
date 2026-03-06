@@ -177,7 +177,7 @@ _Screenshot: Prometheus dashboard graph showing `vault_barrier_put` for the last
 
 ## 7) (Optional) Seed KV data to validate secret counts
 
-Use this step to create known counts so you can validate the KV count telemetry quickly.
+Use this step to create known counts so you can validate the KV count telemetry quickly. Referencing secret count by namespace/mount is a common question in support as many customers want to keep track of their secret sprawl and storage usage. 
 
 ```bash
 kubectl exec -n vault vault-0 -- sh -lc '
