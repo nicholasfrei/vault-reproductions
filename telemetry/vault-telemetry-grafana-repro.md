@@ -77,6 +77,7 @@ server:
       service_registration "kubernetes" {}
       telemetry {
         prometheus_retention_time = "30s"
+        usage_gauge_period = "1m"
         disable_hostname = true
       }
 
@@ -174,7 +175,61 @@ If data returns for these queries, Vault telemetry is wired correctly.
 ![Prometheus graph for vault_barrier_put over the last 5 minutes](images/prometheus-vault-barrier-put-last-5m.png)
 _Screenshot: Prometheus dashboard graph showing `vault_barrier_put` for the last 5 minutes._
 
-## 7) Import Vault dashboards from this repro
+## 7) (Optional) Seed KV data to validate secret counts
+
+Use this step to create known counts so you can validate the KV count telemetry quickly.
+
+```bash
+kubectl exec -n vault vault-0 -- sh -lc '
+for i in $(seq 1 1000); do
+  key=$(printf "secret-%04d" "$i")
+  vault kv put "kv-one/$key" value="v-$i" >/dev/null
+done
+
+for i in $(seq 1 591); do
+  key=$(printf "secret-%04d" "$i")
+  vault kv put "kv-two/$key" value="v-$i" >/dev/null
+done
+'
+```
+
+Run these checks to confirm the seeded counts:
+
+```bash
+kubectl exec -n vault vault-0 -- sh -lc 'vault kv list -format=json kv-one | jq "length"'
+kubectl exec -n vault vault-0 -- sh -lc 'vault kv list -format=json kv-two | jq "length"'
+```
+
+Expected output:
+
+```bash
+1000
+591
+```
+
+## 8) View KV secret count metrics in Grafana
+
+Use Grafana Explore with Prometheus data source to find all KV secret count series.
+
+```bash
+vault_secret_kv_count
+```
+
+If you want grouped totals by namespace and mount, use:
+
+```bash
+sum by (namespace, mount_point) (vault_secret_kv_count)
+```
+
+Success criteria:
+
+- You see one series per KV mount/namespace combination.
+- The values match your expected key counts (for example `1000` and `591` in this repro).
+
+![Grafana Explore showing vault_secret_kv_count values](images/vault-secret-kv-count-grafana.png)
+_Screenshot: Grafana Explore showing `vault_secret_kv_count` values for KV mounts._
+
+## 9) Import Vault dashboards from this repro
 
 - `telemetry/dashboards/core.json`
 - `telemetry/dashboards/storage.json`
