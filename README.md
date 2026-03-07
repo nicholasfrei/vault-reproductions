@@ -164,3 +164,41 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [Vault Telemetry Grafana Repro](telemetry/vault-telemetry-grafana-repro.md)
 	- Configures Vault telemetry with Prometheus scraping and a local Grafana dashboard using `kube-prometheus-stack`.
 	- Includes end-to-end setup and validation steps for metrics targets, Prometheus queries, and Grafana access.
+
+
+## TODO Runbooks / KBs to Add
+
+- **Replication (Enterprise)**
+  - [ ] Performance Replication setup, failover, and common troubleshooting patterns.
+  - [ ] DR Replication setup, promotion workflow, failback workflow, and resync behavior.
+  - [ ] Secondary stuck behind WAL / replication lag diagnosis and recovery.
+  - [ ] Region loss simulation and service restoration timeline runbook.
+
+- **Seal / Unseal**
+  - [ ] Multi-seal and Seal HA runbook (config patterns, startup order, and failure modes).
+  - [ ] Auto-unseal migration (Shamir -> KMS/HSM) with rollback considerations.
+
+- **Raft / Storage**
+  - [ ] Integrated storage autopilot behavior, dead server cleanup, and peer replacement.
+  - [ ] Snapshot/restore validation runbook (single cluster and cross-cluster restore checks).
+
+- **Auth Methods**
+  - [ ] OIDC auth deep-dive repro (groups claim mapping, bound claims, and redirect URI issues).
+  - [ ] AppRole hardening and incident-response runbook (secret-id rotation and token cleanup).
+	- Also lease explosion with approle (this is a common ent issue that we run into)
+
+- **Secrets Engines**
+  - [ ] KV v2 soft-delete/destroy/undelete behavior and recovery expectations.
+  - [ ] Secret mount recovery / restore 
+
+- **PKI**
+  - [ ] Intermediate rotation, CRL/OCSP behavior (tidy, etc), and outage mitigation runbook.
+
+- **Namespaces (Enterprise)**
+  - [ ] Parent/child namespace policy inheritance and token scope gotchas.
+
+- **Audit / Security**
+  - [ ] Audit device performance impact and log integrity validation checklist.
+
+- **Kubernetes**
+  - [ ] Vault injector webhook troubleshooting (cert rotation, startup ordering, and mutation failures).
