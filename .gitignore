@@ -3,3 +3,4 @@ init-pgp.txt
 pgp-keys/
 *.pem
 *.der
+.cursor/
