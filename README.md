@@ -206,3 +206,7 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 - **Kubernetes**
   - [ ] Vault injector webhook troubleshooting (cert rotation, startup ordering, and mutation failures).
+
+- **Terraform / Vault Provider**
+	- [ ] Terraform Vault provider setup and authentication patterns (token, AppRole, JWT/OIDC, Kubernetes auth).
+	- [ ] Terraform Vault provider troubleshooting runbook (namespace issues, token expiry, policy denies, and state drift handling).
