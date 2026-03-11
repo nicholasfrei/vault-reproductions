@@ -10,6 +10,7 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 	- [Secrets Engines](#secrets-engines)
 	- [Vault MCP Server](#vault-mcp-server)
 	- [Vault Setup](#vault-setup)
+	- [Seal / Unseal](#seal--unseal)
 	- [Linux / Platform Behavior](#linux--platform-behavior)
 	- [Kubernetes / Platform Behavior](#kubernetes--platform-behavior)
 	- [Telemetry](#telemetry)
@@ -128,6 +129,12 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 - [Vault Sandbox Cleanup Script](setup/cleanup.sh)
 	- Cleans up sandbox state between runs: uninstalls the Vault Helm release, deletes the `vault` namespace, deletes the Minikube `vault` profile, and removes `setup/init.json`.
+
+### Seal / Unseal
+
+- [Transit Auto-Unseal Runbook](seal-transit/transit-auto-unseal-runbook.md)
+	- Local reproduction for Vault transit-based auto-unseal using two dev servers (transit + auto-unseal).
+	- Includes a mock HCL config file (`vault-transit-auto-unseal.hcl`) and step-by-step startup, init, restart, and validation flow.
 
 ### Linux / Platform Behavior
 
