@@ -235,3 +235,7 @@ For production, replace:
 - File storage with your real storage backend.
 - Inlined token in HCL with a more secure secret delivery mechanism (env var, secret manager, or Vault Agent template).
 
+### References
+
+- [Transit Seal Best Practices](https://developer.hashicorp.com/vault/docs/configuration/seal/transit-best-practices)
+- [Transit Seal Configuration](https://developer.hashicorp.com/vault/docs/configuration/seal/transit)
