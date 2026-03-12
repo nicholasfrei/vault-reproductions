@@ -52,7 +52,7 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 ### Study / Exam Prep
 
-- [Vault Professional Exam: What to Expect](vault-professional-cert/vault-professional-guide.md)
+- [Vault Professional Exam: What to Expect](vault-professional-cert/vault-professional-exam-guide.md)
 	- Experience-based guide covering likely question/lab themes, high-value prep strategy, and a roadmap for mock lab runbooks.
 
 ### Authentication Mounts
