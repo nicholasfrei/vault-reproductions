@@ -6,6 +6,7 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 
 - [Prerequisites](#prerequisites)
 - [Available scenarios](#available-scenarios)
+	- [Study / Exam Prep](#study--exam-prep)
 	- [Authentication Mounts](#authentication-mounts)
 	- [Secrets Engines](#secrets-engines)
 	- [Vault MCP Server](#vault-mcp-server)
@@ -48,6 +49,11 @@ brew install jq kubectl helm minikube gnupg wget
 If you do not use Homebrew, install equivalent packages with your OS package manager.
 
 ## Available scenarios
+
+### Study / Exam Prep
+
+- [Vault Professional Exam: What to Expect](vault-professional-cert/vault-professional-guide.md)
+	- Experience-based guide covering likely question/lab themes, high-value prep strategy, and a roadmap for mock lab runbooks.
 
 ### Authentication Mounts
 - [Userpass Entity Metadata Dynamic Policy Repro](auth-userpass/userpass-entity-metadata-dynamic-policy-repro.md)
