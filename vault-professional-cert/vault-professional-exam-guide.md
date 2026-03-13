@@ -101,6 +101,7 @@ Practice checklist:
 For those of you who will take the exam in the future, feel free to reference the following materials for preparation. The exam focuses heavily on creating configuration files from scratch, so (TODO) I will add some specific labs that are designed to be as close to the exam experience as possible. In the meantime, the following materials are good references for the topics covered in the exam:
 
 - Transit auto-unseal baseline: [seal-transit/transit-auto-unseal-runbook.md](../seal-transit/transit-auto-unseal-runbook.md)
+- Lab 2 AppRole + wrapping + PostgreSQL walkthrough: [vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md](./lab-02-approle-wrapping-and-postgresql.md)
 - PGP recovery key setup helper: [setup/setup-pgp-keys-for-vault.sh](../setup/setup-pgp-keys-for-vault.sh)
 - PostgreSQL secrets engine baseline: [secrets-postgresql-db/postgresql-database-secrets-engine-repro.md](../secrets-postgresql-db/postgresql-database-secrets-engine-repro.md)
 - Replication concepts and recovery context: [linux/vault-replication-merkle-corruption-reindex-kb.md](../linux/vault-replication-merkle-corruption-reindex-kb.md)
@@ -110,8 +111,6 @@ Proposed additions:
 
 1. vault-professional-cert/lab-01-transit-auto-unseal-and-node-join.md
    - Transit seal config, init/unseal, node join validation
-2. vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md
-   - AppRole, response wrapping, JSON output, DB engine validation
 3. vault-professional-cert/lab-03-vault-agent-approle-templating.md
    - Agent auto-auth and template rendering walkthrough
 4. vault-professional-cert/lab-04-pr-replication-path-filtering.md
