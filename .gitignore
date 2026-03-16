@@ -4,3 +4,4 @@ pgp-keys/
 *.pem
 *.der
 .cursor/
+vault.hclic
