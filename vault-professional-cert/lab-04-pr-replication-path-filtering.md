@@ -89,8 +89,6 @@ On the **secondary** cluster, enable performance replication in secondary mode a
 vault write -f sys/replication/performance/secondary/enable token="<paste-token-from-primary>"
 ```
 
-Now join the secondary to the primary.
-
 Verify status from both sides:
 
 ```bash
@@ -117,10 +115,10 @@ Confirm:
 
 In this lab you will:
 
-- Replicate only paths under `secret/data/app/` (KV v2 example)
-- Exclude other application or system paths
+- Deny replication for selected KV v2 endpoints
+- Show that non-denied app paths continue to replicate
 
-First, create some test data on the **primary**:
+First, we will create some test data on the **primary**:
 
 ```bash
 vault secrets enable -path=secret kv-v2 || true
@@ -128,23 +126,24 @@ vault secrets enable -path=secret kv-v2 || true
 vault kv put secret/app/frontend api_key="frontend-123" env="dev"
 vault kv put secret/app/backend api_key="backend-456" env="dev"
 vault kv put secret/ops/internal note="should-not-be-replicated"
+vault kv put secret/internal/service token="should-not-be-replicated"
 ```
-
-Apply a paths filter so that only `secret/data/app/*` is replicated.
+Apply a paths filter in `deny` mode for a couple of endpoints.
+For KV v2, use API paths under `secret/data/...` in the filter.
 
 See the official API docs for reference:  
-`Performance replication: create paths filter` (system/replication/performance#create-paths-filter).
+`Performance replication: create paths filter` ([docs](https://developer.hashicorp.com/vault/api-docs/system/replication/replication-performance#create-paths-filter)).
 
 ```bash
-vault write sys/replication/performance/primary/paths-filter \
-  mode="include" \
-  paths='["secret/data/app/*"]'
+vault write sys/replication/performance/primary/paths-filter/filter \
+  mode="deny" \
+  paths="secret/data/ops/*,secret/data/internal/*"
 ```
 
 Verify the filter configuration:
 
 ```bash
-vault read -format=json sys/replication/performance/primary/paths-filter \
+vault read -format=json sys/replication/performance/primary/paths-filter/filter \
   | tee /tmp/pr-primary-paths-filter.json
 ```
 
@@ -155,7 +154,7 @@ vault read -format=json sys/replication/performance/primary/paths-filter \
 On the **secondary**, confirm the following behavior:
 
 1. The secrets under `secret/app/` are replicated.
-2. The secret under `secret/ops/internal` is **not** replicated.
+2. The secrets under denied paths are **not** replicated.
 
 On the secondary:
 
@@ -165,8 +164,9 @@ vault secrets enable -path=secret kv-v2 || true
 vault kv get secret/app/frontend
 vault kv get secret/app/backend
 
-# This read should fail (for example: 404 or permission error)
+# These reads should fail (for example: 404 or permission error)
 vault kv get secret/ops/internal || echo "As expected: secret/ops/internal not present on secondary"
+vault kv get secret/internal/service || echo "As expected: secret/internal/service not present on secondary"
 ```
 
 You can also re-check the replication status endpoint, which is used in the exam guide checklist:
@@ -193,6 +193,7 @@ To reset the environment after practice:
 vault kv delete secret/app/frontend
 vault kv delete secret/app/backend
 vault kv delete secret/ops/internal
+vault kv delete secret/internal/service
 ```
 
 - Optionally, disable the `secret` mount and clear the paths filter:
