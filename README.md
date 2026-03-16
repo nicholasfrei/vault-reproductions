@@ -104,6 +104,10 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [AWS Secrets Engine Upgrade Findings KB](secrets-aws/aws-secrets-engine-upgrade-findings-kb.md)
     - Discusses real-life errors faced by enterprise customers found in v1.19.x for `sts_endpoint`, `iam_endpoint`, and rotation schedule/window(s).
 
+- [KV v1 Secret Recovery Runbook](secrets-kv/kv-v1-secret-recovery-runbook.md)
+	- Step-by-step reproduction for Vault Enterprise secret recovery using a loaded Raft snapshot.
+	- Covers secret deletion/overwrite simulation, snapshot load status checks, `vault recover`, and cleanup.
+
 - [TOTP Secrets Engine Repro](secrets-totp/totp-secrets-engine-repro.md)
 	- Reproduction runbook for the Vault TOTP secrets engine, including setup and validation flow.
 
