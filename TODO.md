@@ -16,7 +16,6 @@
   - AppRole hardening and IR: secret-id rotation, token cleanup, lease explosion (common Enterprise issue).
 - **Secrets Engines**
   - KV v2: soft-delete/destroy/undelete behavior and recovery.
-  - Secret mount recovery / restore.
 - **PKI**
   - Intermediate rotation, CRL/OCSP (tidy, etc.), outage mitigation.
 - **Namespaces (Enterprise)**
