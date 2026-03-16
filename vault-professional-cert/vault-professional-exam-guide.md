@@ -111,8 +111,9 @@ Generic resources:
 Mock lab resources:
 
 - Lab 2: AppRole + wrapping + PostgreSQL walkthrough: [vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md](./lab-02-approle-wrapping-and-postgresql.md)
+- Lab 4: Performance replication with path filtering: [vault-professional-cert/lab-04-pr-replication-path-filtering.md](./lab-04-pr-replication-path-filtering.md)
 
-Proposed additions:
+Future additions:
 
 1. vault-professional-cert/lab-01-transit-auto-unseal-and-node-join.md
    - Transit seal config, init/unseal, node join validation
