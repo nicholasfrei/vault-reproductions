@@ -15,6 +15,7 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 	- [Linux / Platform Behavior](#linux--platform-behavior)
 	- [Kubernetes / Platform Behavior](#kubernetes--platform-behavior)
 	- [Telemetry](#telemetry)
+- [TODO / Roadmap](#todo--roadmap)
 
 ## How to use this repository
 
@@ -183,43 +184,6 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Includes end-to-end setup and validation steps for metrics targets, Prometheus queries, and Grafana access.
 
 
-## TODO Runbooks / KBs to Add
+## TODO / Roadmap
 
-- **Replication (Enterprise)**
-  - [ ] Performance Replication setup, failover, and common troubleshooting patterns.
-  - [ ] DR Replication setup, promotion workflow, failback workflow, and resync behavior.
-  - [ ] Secondary stuck behind WAL / replication lag diagnosis and recovery.
-  - [ ] Region loss simulation and service restoration timeline runbook.
-
-- **Seal / Unseal**
-  - [ ] Multi-seal and Seal HA runbook (config patterns, startup order, and failure modes).
-  - [ ] Auto-unseal migration (Shamir -> KMS/HSM) with rollback considerations.
-
-- **Raft / Storage**
-  - [ ] Integrated storage autopilot behavior, dead server cleanup, and peer replacement.
-  - [ ] Snapshot/restore validation runbook (single cluster and cross-cluster restore checks).
-
-- **Auth Methods**
-  - [ ] OIDC auth deep-dive repro (groups claim mapping, bound claims, and redirect URI issues).
-  - [ ] AppRole hardening and incident-response runbook (secret-id rotation and token cleanup).
-	- Also lease explosion with approle (this is a common ent issue that we run into)
-
-- **Secrets Engines**
-  - [ ] KV v2 soft-delete/destroy/undelete behavior and recovery expectations.
-  - [ ] Secret mount recovery / restore 
-
-- **PKI**
-  - [ ] Intermediate rotation, CRL/OCSP behavior (tidy, etc), and outage mitigation runbook.
-
-- **Namespaces (Enterprise)**
-  - [ ] Parent/child namespace policy inheritance and token scope gotchas.
-
-- **Audit / Security**
-  - [ ] Audit device performance impact and log integrity validation checklist.
-
-- **Kubernetes**
-  - [ ] Vault injector webhook troubleshooting (cert rotation, startup ordering, and mutation failures).
-
-- **Terraform / Vault Provider**
-	- [ ] Terraform Vault provider setup and authentication patterns (token, AppRole, JWT/OIDC, Kubernetes auth).
-	- [ ] Terraform Vault provider troubleshooting runbook (namespace issues, token expiry, policy denies, and state drift handling).
+Planned runbooks and KBs are tracked in [TODO.md](TODO.md).
