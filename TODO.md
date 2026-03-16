@@ -28,7 +28,10 @@
 - **Terraform / Vault Provider**
   - Provider setup and auth patterns (token, AppRole, JWT/OIDC, Kubernetes).
   - Troubleshooting: namespaces, token expiry, policy denies, state drift.
-- **Golang Custom Plugin Development** (AI generated ideas to help create a list and dive deeper into golang. Some of these ideas will be added to the repository as custom plugins in the future. I will work on these features outside of this repository and implement them in my own time.)
+- **Golang Custom Plugin Development**
+  > *Disclaimer:* These are AI-generated ideas to explore Go and Vault plugins. Some of these ideas will be added to the repository as custom plugins in the future. I will work on these features outside 
+of this repository and implement them in my own time.
+
   - **WASM secret transformer** — Transform/redact secrets at read time via configured WASM module. (Go plugin architecture, wazero, sandboxing; field masking, format conversion, tenant-specific shaping.)
   - **Ephemeral DB credential bridge** — Short-lived creds for Turso/LibSQL/PocketBase-style backends; revoke on lease expiry. (HTTP clients, lease management; edge/serverless DB access.)
   - **Temporal identity auth** — mTLS → validated workload identity → SPIFFE-style doc or scoped token. (X.509, trust chains, custom auth; bridge legacy mTLS to workload identity.)
