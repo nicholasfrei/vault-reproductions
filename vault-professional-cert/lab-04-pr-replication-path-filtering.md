@@ -121,12 +121,8 @@ In this lab you will:
 First, we will create some test data on the **primary**:
 
 ```bash
+vault secrets enable -path=denied kv-v2 || true
 vault secrets enable -path=secret kv-v2 || true
-
-vault kv put secret/app/frontend api_key="frontend-123" env="dev"
-vault kv put secret/app/backend api_key="backend-456" env="dev"
-vault kv put secret/ops/internal note="should-not-be-replicated"
-vault kv put secret/internal/service token="should-not-be-replicated"
 ```
 Apply a paths filter in `deny` mode for a couple of endpoints.
 For KV v2, use API paths under `secret/data/...` in the filter.
@@ -135,17 +131,32 @@ See the official API docs for reference:
 `Performance replication: create paths filter` ([docs](https://developer.hashicorp.com/vault/api-docs/system/replication/replication-performance#create-paths-filter)).
 
 ```bash
-vault write sys/replication/performance/primary/paths-filter/filter \
+vault write sys/replication/performance/primary/paths-filter/pr-secondary \
   mode="deny" \
-  paths="secret/data/ops/*,secret/data/internal/*"
+  paths="denied/"
 ```
 
 Verify the filter configuration:
 
 ```bash
-vault read -format=json sys/replication/performance/primary/paths-filter/filter \
+vault read -format=json sys/replication/performance/primary/paths-filter/pr-secondary \
   | tee /tmp/pr-primary-paths-filter.json
 ```
+
+Now write fresh test data **after** the filter is active:
+
+```bash
+# Allowed path (should replicate)
+vault kv put secret/app api_key="allowed-789" env="dev"
+
+# Denied paths (should NOT replicate)
+vault kv put denied/ops note="blocked-by-filter"
+vault kv put denied/internal token="blocked-by-filter"
+```
+
+Important:
+- Data written before filter creation may already exist on the secondary.
+- Validate filter behavior using the `postfilter` keys written after the filter is configured.
 
 ---
 
@@ -154,31 +165,38 @@ vault read -format=json sys/replication/performance/primary/paths-filter/filter 
 On the **secondary**, confirm the following behavior:
 
 1. The secrets under `secret/app/` are replicated.
-2. The secrets under denied paths are **not** replicated.
+2. Fresh secrets written under denied paths after filter activation are **not** replicated.
+
+If you do not have a secondary auth method enabled, you will need to generate a root token for the PR secondary.
+
+Optional recovery flow on the **secondary**:
+
+```bash
+# Start a new attempt and record Nonce
+vault operator generate-root -init
+
+# Submit the key share using the nonce from the init output
+vault operator generate-root -nonce="<nonce-from-init>" "<unseal_key_from_primary_cluster>"
+
+# Decode the encoded token using OTP from the init output
+vault operator generate-root \
+  -decode="<encoded-token-from-previous-step>" \
+  -otp="<otp-from-init>"
+
+# Login with the decoded root token
+vault login <new-root-token>
+vault token lookup
+```
 
 On the secondary:
 
 ```bash
-vault secrets enable -path=secret kv-v2 || true
-
-vault kv get secret/app/frontend
-vault kv get secret/app/backend
+# These reads should succeed and show the replicated secrets
+vault kv get secret/app
 
 # These reads should fail (for example: 404 or permission error)
-vault kv get secret/ops/internal || echo "As expected: secret/ops/internal not present on secondary"
-vault kv get secret/internal/service || echo "As expected: secret/internal/service not present on secondary"
-```
-
-You can also re-check the replication status endpoint, which is used in the exam guide checklist:
-
-```bash
-vault read -format=json sys/replication/performance/status
-```
-
-In the **primary** terminal:
-
-```bash
-vault read -format=json sys/replication/performance/status
+vault kv get denied/ops
+vault kv get denied/internal 
 ```
 
 ---
@@ -190,18 +208,19 @@ To reset the environment after practice:
 - In the **primary** terminal, delete the test secrets:
 
 ```bash
-vault kv delete secret/app/frontend
-vault kv delete secret/app/backend
-vault kv delete secret/ops/internal
-vault kv delete secret/internal/service
+vault kv delete secret/app
+
+vault kv delete denied/ops
+vault kv delete denied/internal
 ```
 
 - Optionally, disable the `secret` mount and clear the paths filter:
 
 ```bash
 vault secrets disable secret || true
+vault secrets disable denied || true
 
-vault delete sys/replication/performance/primary/paths-filter || true
+vault delete sys/replication/performance/primary/paths-filter/pr-secondary || true
 ```
 
 - Tear down the clusters according to how you created them (Helm uninstall, namespace delete, or Minikube profile cleanup), consistent with your local lab conventions.
