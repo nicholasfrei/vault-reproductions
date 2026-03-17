@@ -1,8 +1,6 @@
 # TODO Runbooks / KBs to Add
 
 - **Replication (Enterprise)**
-  - Performance Replication: setup, failover, common troubleshooting.
-  - DR Replication: setup, promotion/failback workflow, resync behavior.
   - Secondary stuck behind WAL / replication lag: diagnosis and recovery.
   - Region loss simulation and service restoration timeline.
 - **Seal / Unseal**

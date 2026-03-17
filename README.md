@@ -9,6 +9,7 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 	- [Study / Exam Prep](#study--exam-prep)
 	- [Authentication Mounts](#authentication-mounts)
 	- [Secrets Engines](#secrets-engines)
+	- [Replication](#replication)
 	- [Vault MCP Server](#vault-mcp-server)
 	- [Vault Setup](#vault-setup)
 	- [Seal / Unseal](#seal--unseal)
@@ -119,6 +120,16 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 		- Reproduces static role rotation pressure when the backing PostgreSQL target is unavailable or decommissioned.
 		- Useful for incident response drills and understanding cleanup/recovery patterns for stale static roles.
 
+### Replication
+
+- [Vault Enterprise Replication Runbook (PR + DR)](replication/vault-enterprise-replication-pr-dr-runbook.md)
+	- Troubleshooting guide for already-configured Performance Replication and Disaster Recovery replication clusters.
+	- Covers merkle sync/diff issues, failover/failback commands, and merkle corruption remediations.
+
+- [Merkle Corruption Reindex KB](replication/vault-replication-merkle-corruption-reindex-kb.md)
+	- KB for resolving PR/DR replication stuck in `merkle-diff`/`merkle-sync` due to corrupted primary merkle trees.
+	- Covers primary-first reindex strategy, write-lock expectations, validation checkpoints, and rollback cautions.
+
 ### Vault MCP Server
 
 - [Vault MCP Server Setup](vault-mcp-server/vault-mcp-server-setup.md)
@@ -152,10 +163,6 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [Vault Logrotate KB](linux/vault-logrotate-kb.md)
 	- Practical Linux/systemd-focused guidance for Vault logrotate configuration and troubleshooting.
 	- Includes directive-by-directive explanations, safer rotation recommendations, and validation steps.
-
-- [Merkle Corruption Reindex KB](linux/vault-replication-merkle-corruption-reindex-kb.md)
-	- Runbook for resolving PR/DR replication stuck in `merkle-diff`/`merkle-sync` due to corrupted primary merkle trees.
-	- Covers primary-first reindex strategy, write-lock expectations, validation checkpoints, and rollback cautions.
 
 ### Kubernetes / Platform Behavior
 

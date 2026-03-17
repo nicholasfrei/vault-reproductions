@@ -2,7 +2,7 @@
 
 ## Problem Statement / Introduction
 
-This KB is based on a real support-case for a Global Fortune 500 Corporation where Performance Replication (PR) and Disaster Recovery (DR) secondaries stayed in `merkle-diff` or `merkle-sync` for an extended period (several months). The customer had spent months troubleshooting the issue before they reached out. They had attempted reindexing the secondaries (PR and DR) but were unable to resolve the issue. 
+This KB is based on a real support-case for a Global Fortune 500 Corporation where Performance Replication (PR) and Disaster Recovery (DR) secondaries stayed in `merkle-diff` or `merkle-sync` for an extended period (several months). The customer had spent months troubleshooting the issue before they reached out. They had attempted reindexing the secondaries (PR and DR) but were unable to resolve the issue.
 
 The key issue was corruption on the primary in both merkle trees:
 
