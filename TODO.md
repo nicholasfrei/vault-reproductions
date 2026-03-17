@@ -1,5 +1,7 @@
 # TODO Runbooks / KBs to Add
 
+- **Sentinel Policies**
+  - EGP & RGP governing policies: common examples and understanding
 - **Replication (Enterprise)**
   - Secondary stuck behind WAL / replication lag: diagnosis and recovery.
   - Region loss simulation and service restoration timeline.
