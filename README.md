@@ -82,6 +82,10 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Demonstrates the fix with `bound_claims_type="glob"` and wildcard `namespace_path` patterns.
 	- Includes case-sensitivity checks, token-claim decoding, and cleanup commands.
 
+- [Token Role `allowed_policies` vs `allowed_policies_glob` KB](auth-token/token-role-allowed-policies-glob-kb.md)
+	- Covers token role failures where requested token policies are not a subset of `allowed_policies` or `allowed_policies_glob`.
+	- Clarifies that token roles support glob patterns (not regex) and includes practical examples.
+
 ### Secrets Engines
 - [Artifactory Plugin Registration Script](secrets-artifactory/artifactory-plugin-registration.sh)
 	- Amazon Linux setup script for Vault Enterprise + JFrog Artifactory secrets plugin registration.
