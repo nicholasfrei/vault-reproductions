@@ -38,14 +38,14 @@ Goal: Enable AppRole and create a role that can be used with **response wrapping
 2. **Create a simple AppRole policy** (e.g., `approle-demo`) It exists just to demonstrate that the role can have policies attached:
 
    ```bash
-   cat > approle-demo.hcl <<EOF
-   path "secret/data/approle-demo" {
-     capabilities = ["read", "list"]
-   }
-   EOF
+    cat > approle-demo.hcl <<EOF
+    path "secret/data/approle-demo" {
+      capabilities = ["read", "list"]
+    }
+    EOF
 
-   vault policy write approle-demo approle-demo.hcl
-   vault policy read approle-demo
+    vault policy write approle-demo approle-demo.hcl
+    vault policy read approle-demo
    ```
 
 3. **Create the AppRole** bound to this policy:
@@ -79,7 +79,7 @@ Goal: Use **response wrapping** with `-wrap-ttl` and persist the **wrapped** res
 1. **Generate a wrapped `secret_id`**:
 
    ```bash
-   vault write -wrap-ttl=5m -format=json \
+   vault write -f -wrap-ttl=5m -format=json \
      auth/approle/role/app-db-role/secret-id \
      > approle-secret-id-wrapped.json
    ```

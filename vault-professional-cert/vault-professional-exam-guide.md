@@ -100,7 +100,11 @@ Practice checklist:
 
 For those of you who will take the exam in the future, feel free to reference the following materials for preparation. The exam focuses heavily on creating configuration files from scratch, so (TODO) I will add some specific labs that are designed to be as close to the exam experience as possible. In the meantime, the following materials are good references for the topics covered in the exam:
 
-Generic resources:
+External Resources:
+
+- Udemy Course: [HashiCorp Certified Vault Operations Professional](https://ibm-learning.udemy.com/course/hashicorp-certified-vault-operations-professional/)
+
+Generic Resources:
 
 - Transit auto-unseal baseline: [seal-transit/transit-auto-unseal-runbook.md](../seal-transit/transit-auto-unseal-runbook.md)
 - PGP recovery key setup helper: [setup/setup-pgp-keys-for-vault.sh](../setup/setup-pgp-keys-for-vault.sh)
@@ -108,7 +112,7 @@ Generic resources:
 - Replication concepts and recovery context: [replication/vault-replication-merkle-corruption-reindex-kb.md](../replication/vault-replication-merkle-corruption-reindex-kb.md)
 - Namespace and policy-heavy examples: [auth-userpass/userpass-entity-metadata-dynamic-policy-repro.md](../auth-userpass/userpass-entity-metadata-dynamic-policy-repro.md)
 
-Mock lab resources:
+Mock lab Resources:
 
 - Lab 2: AppRole + wrapping + PostgreSQL walkthrough: [vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md](./lab-02-approle-wrapping-and-postgresql.md)
 - Lab 4: Performance replication with path filtering: [vault-professional-cert/lab-04-pr-replication-path-filtering.md](./lab-04-pr-replication-path-filtering.md)
