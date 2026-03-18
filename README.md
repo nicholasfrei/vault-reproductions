@@ -5,8 +5,7 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 ## Table of contents
 
 - [Prerequisites](#prerequisites)
-- [Available scenarios](#available-scenarios)
-	- [Study / Exam Prep](#study--exam-prep)
+- [Available Docs](#available-docs)
 	- [Authentication Mounts](#authentication-mounts)
 	- [Secrets Engines](#secrets-engines)
 	- [Replication](#replication)
@@ -16,12 +15,13 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 	- [Linux / Platform Behavior](#linux--platform-behavior)
 	- [Kubernetes / Platform Behavior](#kubernetes--platform-behavior)
 	- [Telemetry](#telemetry)
+	- [Vault Professional Exam Prep](#vault-professional-exam-prep)
 - [TODO / Roadmap](#todo--roadmap)
 
 ## How to use this repository
 
 1. Find the plugin you're interested in.
-2. Reference various KB's or Runbook's based on your need.
+2. Reference various KBs or Runbooks based on your need.
 3. Follow the instructions in the file.
 4. Voilà.
 
@@ -50,21 +50,7 @@ brew install jq kubectl helm minikube gnupg wget
 
 If you do not use Homebrew, install equivalent packages with your OS package manager.
 
-## Available scenarios
-
-### Study / Exam Prep
-
-- [Vault Professional Exam: What to Expect](vault-professional-cert/vault-professional-exam-guide.md)
-	- Experience-based guide covering likely question/lab themes, high-value prep strategy, and a roadmap for mock lab runbooks.
-
-- [Lab 2: AppRole + response wrapping + database secrets engine](vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md)
-	- Hands-on runbook for AppRole login with wrapped `secret_id`, JSON output capture, and PostgreSQL dynamic credentials validation.
-
-- [Lab 4: Performance replication with path filtering](vault-professional-cert/lab-04-pr-replication-path-filtering.md)
-	- Practical PR setup and verification flow focused on primary/secondary behavior and path filter validation.
-
-- [Lab 5: Policies, namespaces, and KV v2 operations](vault-professional-cert/lab-05-policy-kvv2-namespaces.md)
-	- Traditional runbook to practice namespace-aware login context, policy inheritance boundaries, and KV v2 path precision tests.
+## Available Docs
 
 ### Authentication Mounts
 - [Userpass Entity Metadata Dynamic Policy Repro](auth-userpass/userpass-entity-metadata-dynamic-policy-repro.md)
@@ -121,6 +107,10 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [KV v1 Secret Recovery Runbook](secrets-kv/kv-v1-secret-recovery-runbook.md)
 	- Step-by-step reproduction for Vault Enterprise secret recovery using a loaded Raft snapshot.
 	- Covers secret deletion/overwrite simulation, snapshot load status checks, `vault recover`, and cleanup.
+
+- [KV v2 Soft-Delete, Destroy, Undelete, and Recovery Runbook](secrets-kv/kv-v2-soft-delete-destroy-undelete-recovery-runbook.md)
+	- Step-by-step lifecycle validation for KV v2 versioned secrets.
+	- Covers soft-delete, undelete, permanent destroy behavior, optional metadata delete, and cleanup.
 
 - [TOTP Secrets Engine Repro](secrets-totp/totp-secrets-engine-repro.md)
 	- Reproduction runbook for the Vault TOTP secrets engine, including setup and validation flow.
@@ -206,6 +196,20 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [Vault Telemetry Grafana Repro](telemetry/vault-telemetry-grafana-repro.md)
 	- Configures Vault telemetry with Prometheus scraping and a local Grafana dashboard using `kube-prometheus-stack`.
 	- Includes end-to-end setup and validation steps for metrics targets, Prometheus queries, and Grafana access.
+
+### Vault Professional Exam Prep
+
+- [Vault Professional Exam Guide](vault-professional-cert/vault-professional-exam-guide.md)
+	- Experience-based guide covering likely question/lab themes, high-value prep strategy, and a roadmap for mock lab runbooks.
+
+	- [Lab 2: AppRole + response wrapping + database secrets engine](vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md)
+		- Hands-on runbook for AppRole login with wrapped `secret_id`, JSON output capture, and PostgreSQL dynamic credentials validation.
+
+	- [Lab 4: Performance replication with path filtering](vault-professional-cert/lab-04-pr-replication-path-filtering.md)
+		- Practical PR setup and verification flow focused on primary/secondary behavior and path filter validation.
+
+	- [Lab 5: Policies, namespaces, and KV v2 operations](vault-professional-cert/lab-05-policy-kvv2-namespaces.md)
+		- Traditional runbook to practice namespace-aware login context, policy inheritance boundaries, and KV v2 path precision tests.
 
 
 ## TODO / Roadmap

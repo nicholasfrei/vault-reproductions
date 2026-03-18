@@ -23,6 +23,11 @@
 - **Terraform / Vault Provider**
   - Provider setup and auth patterns (token, AppRole, JWT/OIDC, Kubernetes).
   - Troubleshooting: namespaces, token expiry, policy denies, state drift.
+- **Leases**
+  - Vault lease lifecycle and cleanup: orphaned leases, irreconcilable leases, expired but not cleaned up, and how to identify and resolve these issues.
+  - Lease Explosion
+
+
 - **Golang Custom Plugin Development**
   > *Disclaimer:* These are AI-generated ideas to explore Go and Vault plugins. Some of these ideas will be added to the repository as custom plugins in the future. I will work on these features outside 
 of this repository and implement them in my own time.
