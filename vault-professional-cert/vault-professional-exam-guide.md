@@ -9,6 +9,18 @@ This guide is to be used for preparation for the Vault Professional Exam.
 - 1 hybrid scenario with a lab and multiple-choice questions
 - 4 hours = total exam time
 
+## Official Exam Objective Rubric
+
+HashiCorp Vault Operations Professional exam content list: [Exam content list - Vault Operations Professional](https://developer.hashicorp.com/vault/tutorials/ops-pro-cert/ops-pro-review)
+
+- 1. Server configuration: secret engines, hardening, auto-unseal, raft storage, auth methods, init/generate-root/rekey/rotate
+- 2. Monitoring: telemetry, audit logs, operational/server logs
+- 3. Security model: secure client introduction, Kubernetes security implications
+- 4. Fault tolerance: HA clustering, DR replication, DR secondary promotion (Enterprise)
+- 5. HSM integration: auto-unseal with HSM, seal wrap use cases (Enterprise)
+- 6. Performance scale: batch tokens, performance standbys, PR replication, path filters (Enterprise)
+- 7. Access control: identity entities/groups, ACL policy troubleshooting, Sentinel, control groups, namespaces (Enterprise where applicable)
+- 8. Vault Agent: auto-auth + sink security, templating
 
 ## Mock Lab Scenarios
 ## Lab 1: Transit auto-unseal and node bootstrap
@@ -116,6 +128,7 @@ Mock lab Resources:
 
 - Lab 2: AppRole + wrapping + PostgreSQL walkthrough: [vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md](./lab-02-approle-wrapping-and-postgresql.md)
 - Lab 4: Performance replication with path filtering: [vault-professional-cert/lab-04-pr-replication-path-filtering.md](./lab-04-pr-replication-path-filtering.md)
+- Lab 5: Policies + KV v2 + namespaces walkthrough: [vault-professional-cert/lab-05-policy-kvv2-namespaces.md](./lab-05-policy-kvv2-namespaces.md)
 
 Future additions:
 
@@ -123,5 +136,3 @@ Future additions:
    - Transit seal config, init/unseal, node join validation
 2. vault-professional-cert/lab-03-vault-agent-approle-templating.md
    - Agent auto-auth and template rendering walkthrough
-3. vault-professional-cert/lab-05-policy-kvv2-namespaces.md
-   - Policy debugging and namespace/KV v2 drill set

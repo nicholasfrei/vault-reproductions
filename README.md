@@ -57,6 +57,15 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [Vault Professional Exam: What to Expect](vault-professional-cert/vault-professional-exam-guide.md)
 	- Experience-based guide covering likely question/lab themes, high-value prep strategy, and a roadmap for mock lab runbooks.
 
+- [Lab 2: AppRole + response wrapping + database secrets engine](vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md)
+	- Hands-on runbook for AppRole login with wrapped `secret_id`, JSON output capture, and PostgreSQL dynamic credentials validation.
+
+- [Lab 4: Performance replication with path filtering](vault-professional-cert/lab-04-pr-replication-path-filtering.md)
+	- Practical PR setup and verification flow focused on primary/secondary behavior and path filter validation.
+
+- [Lab 5: Policies, namespaces, and KV v2 operations](vault-professional-cert/lab-05-policy-kvv2-namespaces.md)
+	- Traditional runbook to practice namespace-aware login context, policy inheritance boundaries, and KV v2 path precision tests.
+
 ### Authentication Mounts
 - [Userpass Entity Metadata Dynamic Policy Repro](auth-userpass/userpass-entity-metadata-dynamic-policy-repro.md)
 	- Local reproduction for dynamic policy templating using entity metadata.

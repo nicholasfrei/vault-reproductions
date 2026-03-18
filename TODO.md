@@ -18,8 +18,6 @@
   - KV v2: soft-delete/destroy/undelete behavior and recovery.
 - **PKI**
   - Intermediate rotation, CRL/OCSP (tidy, etc.), outage mitigation.
-- **Namespaces (Enterprise)**
-  - Parent/child namespace policy inheritance and token scope gotchas.
 - **Audit / Security**
   - Audit device performance impact and log integrity validation.
 - **Kubernetes**
