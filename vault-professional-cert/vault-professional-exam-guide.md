@@ -123,6 +123,7 @@ Generic Resources:
 - PostgreSQL secrets engine baseline: [secrets-postgresql-db/postgresql-database-secrets-engine-repro.md](../secrets-postgresql-db/postgresql-database-secrets-engine-repro.md)
 - Replication concepts and recovery context: [replication/vault-replication-merkle-corruption-reindex-kb.md](../replication/vault-replication-merkle-corruption-reindex-kb.md)
 - Namespace and policy-heavy examples: [auth-userpass/userpass-entity-metadata-dynamic-policy-repro.md](../auth-userpass/userpass-entity-metadata-dynamic-policy-repro.md)
+- Sentinel EGP/RGP governance examples: [auth-sentinel/sentinel-egp-rgp-governing-policies-kb.md](../auth-sentinel/sentinel-egp-rgp-governing-policies-kb.md)
 
 Mock lab Resources:
 

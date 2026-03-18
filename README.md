@@ -81,6 +81,10 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Covers token role failures where requested token policies are not a subset of `allowed_policies` or `allowed_policies_glob`.
 	- Clarifies that token roles support glob patterns (not regex) and includes practical examples.
 
+- [Sentinel EGP and RGP Governing Policies KB](auth-sentinel/sentinel-egp-rgp-governing-policies-kb.md)
+	- Break-fix KB for understanding and validating Sentinel Endpoint Governing Policies (EGP) and Role Governing Policies (RGP).
+	- Includes practical policy examples, denial signatures, and validation/cleanup commands.
+
 ### Secrets Engines
 - [Artifactory Plugin Registration Script](secrets-artifactory/artifactory-plugin-registration.sh)
 	- Amazon Linux setup script for Vault Enterprise + JFrog Artifactory secrets plugin registration.

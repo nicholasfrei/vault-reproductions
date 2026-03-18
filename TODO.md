@@ -1,7 +1,5 @@
 # TODO Runbooks / KBs to Add
 
-- **Sentinel Policies**
-  - EGP & RGP governing policies: common examples and understanding
 - **Replication (Enterprise)**
   - Region loss simulation and service restoration timeline.
 - **Seal / Unseal**
