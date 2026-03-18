@@ -106,10 +106,37 @@ Fix actions:
 - keep active node stable while backlog drains
 - resolve packet loss / routing / firewall issues on replication paths
 
+If lag still does not drain, tune log shipper on the WAL-shipping cluster (typically the primary):
+
+```bash
+# Example server configuration on the WAL-shipping cluster
+replication {
+  logshipper_buffer_length = 130000
+  logshipper_buffer_size   = "5gb"
+}
+```
+
+Log shipper tuning guidance:
+
+- `logshipper_buffer_length` controls how many WAL entries can be retained in-memory.
+- Start by increasing `logshipper_buffer_length` to exceed the largest secondary debug value from:
+  - `[DEBUG] replication: starting merkle sync: num_conflict_keys=<N>`
+- `logshipper_buffer_size` caps memory usage for log shipper buffers. Increase only if needed after validating host memory headroom.
+- Apply these values on each member of the cluster shipping WAL and restart Vault servers in that cluster for changes to take effect.
+- Keep a controlled change window because restarts on the primary affect service.
+
+Useful telemetry while tuning:
+
+- `vault.logshipper.streamWALs.missing_guard` (increasing value indicates WAL entries are missing from buffer)
+- `vault.logshipper.streamWALs.scanned_entries` (helps estimate how far behind secondaries are)
+- `vault.logshipper.buffer.length`
+- `vault.logshipper.buffer.max_length`
+
 Retest by sampling status repeatedly and confirming lag trends downward.
 
 Related references:
 - Telemetry setup for replication trend visibility: [telemetry/vault-telemetry-grafana-repro.md](../telemetry/vault-telemetry-grafana-repro.md)
+- DR troubleshooting pattern for `merkle-diff`/`merkle-sync` and log shipper tuning: [DR Replication Issues](https://support.hashicorp.com/hc/en-us/articles/27327663163027-DR-Replication-Issues)
 
 ---
 
@@ -288,8 +315,10 @@ vault read sys/replication/dr/status
 ### References
 
 - [Vault Enterprise Replication](https://developer.hashicorp.com/vault/docs/enterprise/replication)
+- [replication stanza configuration](https://developer.hashicorp.com/vault/docs/configuration/replication)
 - [Performance replication API docs](https://developer.hashicorp.com/vault/api-docs/system/replication/replication-performance)
 - [Disaster recovery replication API docs](https://developer.hashicorp.com/vault/api-docs/system/replication/replication-dr)
+- [Troubleshoot and tune enterprise replication](https://developer.hashicorp.com/vault/tutorials/enterprise/troubleshoot-tune-enterprise-replication)
 - [Merkle Corruption Reindex KB](./vault-replication-merkle-corruption-reindex-kb.md)
 - [PR Path Filtering Lab](../vault-professional-cert/lab-04-pr-replication-path-filtering.md)
 - [Vault Raft Quorum Break and Restore Runbook](../kubernetes/vault-raft-quorum-break-and-restore-runbook.md)
