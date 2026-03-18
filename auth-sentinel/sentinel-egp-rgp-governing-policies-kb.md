@@ -25,7 +25,7 @@ Common use cases:
   - identity APIs used in this guide
 - `vault`, `jq`, and `base64` available
 
-## EGP vs RGP Quick Model
+## EGP vs RGP Comparison
 
 - EGP:
   - attached to paths via `paths=...`
@@ -60,7 +60,66 @@ vault token lookup
 vault read -format=json identity/entity/id/<entity_id>
 ```
 
-## Path to Resolution
+### Customer Case: JWT auth `max_lease_ttl` parse failure on `sys/auth/jwt/tune`
+
+Below is a customer case where an EGP was configured on the `sys/auth/jwt/tune` endpoint to restrict `max_lease_ttl` values, but the policy logic did not handle hour-only inputs correctly, leading to a parsing error and request denial. I worked with this customer to identify the root cause, implement a temporary workaround, and provide recommendations for improving the EGP logic to handle this case defensively.
+
+Customer request:
+
+```bash
+vault write -namespace=ns_cloud_security sys/auth/jwt/tune \
+  max_lease_ttl="720h" \
+  listing_visibility="unauth"
+```
+
+Error response:
+
+```text
+egp standard policy "root/restrict_ttls_of_auth_methods" evaluation resulted in denial
+root/restrict_ttls_of_auth_methods:45:15: strconv.ParseInt: parsing "": invalid syntax
+permission denied
+```
+
+Why this happened:
+
+- the EGP logic splits `max_lease_ttl` by `h`, `m`, and `s`
+- when value is `720h`, splitting on `h` yields `["720", ""]`
+- the code path later tries to parse an empty string as an integer for seconds (`int("")`), which raises `strconv.ParseInt: parsing "": invalid syntax`
+
+Incorrect line in the customer's EGP (reference):
+
+```sentinel
+seconds = int(strings.split(split_mlttl_by_minutes[0], "s")[0])
+```
+
+This line is unsafe in the `else` branch when `split_mlttl_by_minutes[0]` is empty after splitting an hour-only input such as `720h`.
+
+Impact:
+
+- request is denied even though `720h` (30 days) is below the 1-year threshold
+- this was a policy parsing bug, not a TTL threshold violation
+
+What I shared with the customer:
+
+- provided a format that included minutes (or seconds), so parsing does not hit an empty token
+- for one month, use `720h0m` (or `720h0m0s`)
+
+Example:
+
+```bash
+vault write -namespace=ns_cloud_security sys/auth/jwt/tune \
+  max_lease_ttl="720h0m" \
+  listing_visibility="unauth"
+```
+
+If the auth method is being enabled (not tuned) and the same EGP applies, use the same duration format in auth enable configuration so the EGP parser receives a non-empty minutes/seconds segment.
+
+Future cleanup / recommendation:
+
+- keep the temporary workaround (`720h0m`) for immediate progress
+- update the Sentinel policy logic to handle hour-only/minute-only inputs defensively so valid inputs like `720h` do not fail parsing
+
+## Sample EGP and RGP policies with validation steps are included in the next section.
 
 ### 1) Create an EGP
 
