@@ -14,8 +14,6 @@
 - **Auth Methods**
   - OIDC auth: groups claim mapping, bound claims, redirect URI issues.
   - AppRole hardening and IR: secret-id rotation, token cleanup, lease explosion (common Enterprise issue).
-- **Secrets Engines**
-  - KV v2: soft-delete/destroy/undelete behavior and recovery.
 - **PKI**
   - Intermediate rotation, CRL/OCSP (tidy, etc.), outage mitigation.
 - **Audit / Security**
