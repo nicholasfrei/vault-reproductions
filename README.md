@@ -114,6 +114,11 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Step-by-step lifecycle validation for KV v2 versioned secrets.
 	- Covers soft-delete, undelete, permanent destroy behavior, optional metadata delete, and cleanup.
 
+- [KV Path Migration Runbook (Same Mount)](secrets-kv/kv-path-migration-runbook.md)
+	- Instructions on how to copy a folder subtree and all secrets to a new path within the same KV mount.
+	- Includes a recursive script, dry-run mode, validation checks, and cleanup guidance.
+	- Clarifies when to use replication/snapshots versus manual copy and notes metadata/version-history limitations.
+
 - [TOTP Secrets Engine Repro](secrets-totp/totp-secrets-engine-repro.md)
 	- Reproduction runbook for the Vault TOTP secrets engine, including setup and validation flow.
 
