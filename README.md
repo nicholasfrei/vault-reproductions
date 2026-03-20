@@ -54,6 +54,8 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 ### Authentication Mounts
 
+#### Userpass
+
 - [Userpass Entity Metadata Dynamic Policy Repro](auth-userpass/userpass-entity-metadata-dynamic-policy-repro.md)
 	- Local reproduction for dynamic policy templating using entity metadata.
 	- Demonstrates immediate access changes on active tokens when entity metadata changes.
@@ -63,10 +65,14 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Useful for observing identity handling when many local auth users are created and used.
 	- Includes behavior validation related to entities and aliases.
 
+#### Kubernetes
+
 - [Kubernetes Auth User Creation and Login Script](auth-kubernetes/create-kubernetes-users-and-login.sh)
 	- Creates Kubernetes service accounts, configures Vault Kubernetes auth, and tests login flow.
 	- Useful for evaluating how Vault creates and maps identities during Kubernetes auth.
 	- Includes behavior validation related to entities and aliases.
+
+#### JWT
 
 - [JWT Authentication Setup and Login Script](auth-jwt/jwt-authentication-setup-and-login.sh)
 	- Configures Vault JWT auth with a local RSA key pair and issuer binding.
@@ -78,9 +84,13 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Demonstrates the fix with `bound_claims_type="glob"` and wildcard `namespace_path` patterns.
 	- Includes case-sensitivity checks, token-claim decoding, and cleanup commands.
 
+#### LDAP
+
 - [OpenLDAP LDAP Auth Reproduction](auth-ldap/openldap-ldap-auth-repro.md)
 	- End-to-end OpenLDAP + Vault LDAP auth runbook with Docker-hosted LDAP and Kubernetes-hosted Vault.
 	- Includes generation of 200 sample users, group mapping tests, and nested-group inheritance behavior checks.
+
+#### Token
 
 - [Token Role `allowed_policies` vs `allowed_policies_glob` KB](auth-token/token-role-allowed-policies-glob-kb.md)
 	- Covers token role failures where requested token policies are not a subset of `allowed_policies` or `allowed_policies_glob`.
@@ -88,27 +98,41 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 ### Secrets Engines
 
+#### Artifactory
+
 - [Artifactory Plugin Registration Script](secrets-artifactory/artifactory-plugin-registration.sh)
 	- Amazon Linux setup script for Vault Enterprise + JFrog Artifactory secrets plugin registration.
 	- Includes plugin checksum validation and flattened plugin directory layout to avoid execution path errors.
+
+#### LDAP
 
 - [LDAP Secrets Engine Setup Repro](secrets-ldap/setup-ldap-secrets-engine-repro.md)
 	- OpenLDAP + Vault LDAP secrets engine setup focused on bind account and static-role password rotation timing.
 	- Uses [secrets-ldap/openldap-deployment.yaml](secrets-ldap/openldap-deployment.yaml) as the backing Kubernetes manifest.
 
+#### Oracle Database
+
 - [Oracle Database Plugin Setup](secrets-oracle-db/oracle-database-plugin-setup.md)
 	- Rapid Oracle environment setup for testing Vault database plugin behavior with dynamic and static credentials.
+
+#### PKI (CMPv2)
 
 - [CMPv2 PKI Integration Guide](secrets-pki-cmpv2/cmpv2-pki-integration-guide.md)
 	- Markdown-only runbook for Vault PKI CMPv2 integration and proxy behavior validation.
 	- Includes concrete expected output blocks from a successful direct + proxied CMP IR repro.
 
+#### RabbitMQ
+
 - [RabbitMQ Secrets Engine Repro](secrets-rabbitmq-db/rabbitmq-secrets-engine-repro.md)
 	- Simple RabbitMQ + Vault secrets engine runbook for dynamic credential issuance and lease revocation validation.
 	- Assumes an already-operational Vault cluster in Kubernetes and uses a local RabbitMQ container for testing.
 
+#### AWS
+
 - [AWS Secrets Engine Upgrade Findings KB](secrets-aws/aws-secrets-engine-upgrade-findings-kb.md)
-    - Discusses real-life errors faced by enterprise customers found in v1.19.x for `sts_endpoint`, `iam_endpoint`, and rotation schedule/window(s).
+	- Discusses real-life errors faced by enterprise customers found in v1.19.x for `sts_endpoint`, `iam_endpoint`, and rotation schedule/window(s).
+
+#### KV
 
 - [KV v1 Secret Recovery Runbook](secrets-kv/kv-v1-secret-recovery-runbook.md)
 	- Step-by-step reproduction for Vault Enterprise secret recovery using a loaded Raft snapshot.
@@ -123,16 +147,20 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Includes a recursive script, dry-run mode, validation checks, and cleanup guidance.
 	- Clarifies when to use replication/snapshots versus manual copy and notes metadata/version-history limitations.
 
+#### TOTP
+
 - [TOTP Secrets Engine Repro](secrets-totp/totp-secrets-engine-repro.md)
 	- Reproduction runbook for the Vault TOTP secrets engine, including setup and validation flow.
 
-- PostgreSQL database plugin scenarios
-	- [PostgreSQL Database Secrets Engine Repro](secrets-postgresql-db/postgresql-database-secrets-engine-repro.md)
-		- PostgreSQL + Vault database secrets engine setup covering dynamic credentials, static role rotation, and custom password policies.
-		- Useful for validating credential lifecycle, lease revocation, and rotation timing behavior.
-	- [PostgreSQL Static Role Denial of Service Repro](secrets-postgresql-db/postgresql-static-role-denial-of-service-repro.md)
-		- Reproduces static role rotation pressure when the backing PostgreSQL target is unavailable or decommissioned.
-		- Useful for incident response drills and understanding cleanup/recovery patterns for stale static roles.
+#### PostgreSQL Database
+
+- [PostgreSQL Database Secrets Engine Repro](secrets-postgresql-db/postgresql-database-secrets-engine-repro.md)
+	- PostgreSQL + Vault database secrets engine setup covering dynamic credentials, static role rotation, and custom password policies.
+	- Useful for validating credential lifecycle, lease revocation, and rotation timing behavior.
+
+- [PostgreSQL Static Role Denial of Service Repro](secrets-postgresql-db/postgresql-static-role-denial-of-service-repro.md)
+	- Reproduces static role rotation pressure when the backing PostgreSQL target is unavailable or decommissioned.
+	- Useful for incident response drills and understanding cleanup/recovery patterns for stale static roles.
 
 ### Replication
 
@@ -180,15 +208,21 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 ### Kubernetes / Platform Behavior
 
+#### Vault Core on Kubernetes
+
 - [Liveness Probe KB](kubernetes/liveness-probe-kb.md)
 	- Demonstrates automatic Vault pod recovery when TLS certificates expire, using Kubernetes liveness probes.
 
 - [Vault Raft Quorum Break and Restore Runbook](kubernetes/vault-raft-quorum-break-and-restore-runbook.md)
 	- Reproduces quorum-loss by scaling a Vault StatefulSet down to one pod, then restores service with single-node raft peer recovery and scale-out validation.
 
+#### Proxy TLS Behavior
+
 - [Vault Proxy TLS Behavior Repro](kubernetes/proxy-tls-behavior/vault-proxy-tls-behavior-repro.md)
 	- Reproduces HTTP client traffic into a local proxy with TLS-only Vault upstream.
 	- Validates that Vault can stay TLS-only while a front proxy handles plaintext listener and HTTPS re-encryption.
+
+#### Vault Secrets Operator (VSO)
 
 - [VSO Kubernetes Auth Static and Dynamic Repro](kubernetes/vso-k8s-auth-static-dynamic/vso-k8s-auth-static-dynamic-repro.md)
 	- Reproduces Vault Secrets Operator sync flows for static KV v2 secrets and dynamic database credentials using Vault Kubernetes authentication.
