@@ -78,6 +78,10 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Demonstrates the fix with `bound_claims_type="glob"` and wildcard `namespace_path` patterns.
 	- Includes case-sensitivity checks, token-claim decoding, and cleanup commands.
 
+- [OpenLDAP LDAP Auth Reproduction](auth-ldap/openldap-ldap-auth-repro.md)
+	- End-to-end OpenLDAP + Vault LDAP auth runbook with Docker-hosted LDAP and Kubernetes-hosted Vault.
+	- Includes generation of 200 sample users, group mapping tests, and nested-group inheritance behavior checks.
+
 - [Token Role `allowed_policies` vs `allowed_policies_glob` KB](auth-token/token-role-allowed-policies-glob-kb.md)
 	- Covers token role failures where requested token policies are not a subset of `allowed_policies` or `allowed_policies_glob`.
 	- Clarifies that token roles support glob patterns (not regex) and includes practical examples.
