@@ -1,0 +1,12 @@
+# Lab 01 — transit / KMS node (dev Vault on transit-vault:8200)
+if [ -f /etc/bash.bashrc ]; then
+  # shellcheck source=/dev/null
+  . /etc/bash.bashrc
+fi
+
+export PS1='[transit-vault] \u@\h:\w\$ '
+export VAULT_ADDR=http://transit-vault:8200
+export VAULT_TOKEN=root
+
+printf '\n=== transit-vault (127.0.0.1:8200) — pre-started dev Vault / transit KMS ===\n'
+printf 'Hint: vault status  (should be unsealed)\n\n'

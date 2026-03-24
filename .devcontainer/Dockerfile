@@ -9,7 +9,9 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     jq \
     lsb-release \
+    nano \
     unzip \
+    vim \
     wget \
     && rm -rf /var/lib/apt/lists/*
 

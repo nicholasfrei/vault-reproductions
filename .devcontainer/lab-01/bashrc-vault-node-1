@@ -1,0 +1,11 @@
+# Lab 01 — raft node 1 (config listener on 127.0.0.2:8200, API via host vault-node-1)
+if [ -f /etc/bash.bashrc ]; then
+  # shellcheck source=/dev/null
+  . /etc/bash.bashrc
+fi
+
+export PS1='[vault-node-1] \u@\h:\w\$ '
+export VAULT_ADDR=http://vault-node-1:8200
+unset VAULT_TOKEN 2>/dev/null || true
+
+printf '\n=== vault-node-1 (127.0.0.2:8200 / vault-node-1:8200) — start: vault server -config=/tmp/vault-node-1.hcl ===\n\n'

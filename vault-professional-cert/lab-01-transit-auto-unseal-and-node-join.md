@@ -15,9 +15,12 @@ This lab is intentionally exam-style: you are expected to populate the `seal "tr
 
 #### How to Use This Hands-On Lab
 
-1. **Create a Codespace** from this repo (click the button below).  
-2. Once the Codespace is running, open the integrated terminal.
-3. Follow the instructions in each **lab** to complete the exercises.
+1. **Create a Codespace** from this repo using the Lab 01 devcontainer link below (required so host aliases and terminal profiles load).
+2. Open **three** terminals: use the **˅** next to **+** in the Terminal panel → **Select Profile** — pick each profile once (repeat three times):
+   - **Lab 01: transit-vault** — prompt shows `[transit-vault]`; use for transit KMS CLI (pre-started dev Vault).
+   - **Lab 01: vault-node-1** — prompt shows `[vault-node-1]`; run `vault server` for node 1 here.
+   - **Lab 01: vault-node-2** — prompt shows `[vault-node-2]`; run `vault server` for node 2 here.
+3. Follow the steps in this runbook in the matching terminal.
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=1161798724&skip_quickstart=true&devcontainer_path=.devcontainer%2Flab-01%2Fdevcontainer.json)
 
@@ -39,6 +42,10 @@ Lab topology in this profile:
 - Transit node: pre-started dev Vault at `transit-vault:8200`.
 - Node 1: you start/configure at `vault-node-1:8200`.
 - Node 2: you start/configure at `vault-node-2:8200`.
+
+Raft storage directories `/tmp/vault-node-1/data` and `/tmp/vault-node-2/data` are created on container start so `vault server` does not fail with missing `vault.db` paths.
+
+If `transit-vault` does not resolve, run `bash .devcontainer/lab-01/setup-loopback-hosts.sh` and retry `vault status`.
 
 ---
 
@@ -107,13 +114,13 @@ Tips:
 - Use `key_name = "autounseal-key"`.
 - Use the token from step 1.
 
-Start node 1:
+In the **`[vault-node-1]`** terminal, start node 1 (leave it running):
 
 ```bash
 vault server -config=/tmp/vault-node-1.hcl
 ```
 
-Open a second terminal for status/init commands.
+Use **`[transit-vault]`** for transit KMS commands and another tab (or **`[vault-node-1]`** with `VAULT_ADDR` changed) only if you need an extra shell for `vault status` before init.
 
 ---
 
@@ -185,7 +192,7 @@ cp .devcontainer/lab-01/vault-node-2.hcl.example /tmp/vault-node-2.hcl
 
 Edit `/tmp/vault-node-2.hcl` and add a valid `seal "transit"` stanza (same transit node/key model as node 1).
 
-Start node 2:
+In the **`[vault-node-2]`** terminal, start node 2:
 
 ```bash
 vault server -config=/tmp/vault-node-2.hcl

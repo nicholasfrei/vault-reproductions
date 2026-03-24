@@ -15,7 +15,33 @@
         "hashicorp.hcl"
       ],
       "settings": {
-        "terminal.integrated.defaultProfile.linux": "bash"
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.profiles.linux": {
+          "Lab 01: transit-vault": {
+            "path": "/bin/bash",
+            "args": [
+              "--rcfile",
+              "${containerWorkspaceFolder}/.devcontainer/lab-01/bashrc-transit-vault",
+              "-i"
+            ]
+          },
+          "Lab 01: vault-node-1": {
+            "path": "/bin/bash",
+            "args": [
+              "--rcfile",
+              "${containerWorkspaceFolder}/.devcontainer/lab-01/bashrc-vault-node-1",
+              "-i"
+            ]
+          },
+          "Lab 01: vault-node-2": {
+            "path": "/bin/bash",
+            "args": [
+              "--rcfile",
+              "${containerWorkspaceFolder}/.devcontainer/lab-01/bashrc-vault-node-2",
+              "-i"
+            ]
+          }
+        }
       }
     }
   },
@@ -26,7 +52,7 @@
   "containerEnv": {
     "SKIP_SETCAP": "true"
   },
-  "postStartCommand": "bash .devcontainer/lab-01/setup-loopback-hosts.sh && bash .devcontainer/run/start-vault.sh",
+  "postStartCommand": "bash .devcontainer/lab-01/post-start.sh",
   "forwardPorts": [
     8200
   ]
