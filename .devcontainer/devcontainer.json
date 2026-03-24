@@ -10,6 +10,9 @@
         "hashicorp.hcl"
       ],
       "settings": {
+        "workbench.editorAssociations": {
+          "*.md": "vscode.markdown.preview.editor"
+        },
         "terminal.integrated.defaultProfile.linux": "bash"
       }
     }
