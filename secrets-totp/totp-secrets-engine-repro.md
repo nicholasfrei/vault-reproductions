@@ -11,7 +11,7 @@ This runbook demonstrates Vault as a TOTP provider and verifier:
 2. Once the Codespace is running, open the integrated terminal.
 3. Follow the instructions in each **lab** to complete the exercises.
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=1161798724&skip_quickstart=true&devcontainer_path=.devcontainer%2Ftotp%2Fdevcontainer.json)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=1161798724&skip_quickstart=true&devcontainer_path=.devcontainer%2Fdevcontainer.json)
 
 Validate environment readiness:
 
