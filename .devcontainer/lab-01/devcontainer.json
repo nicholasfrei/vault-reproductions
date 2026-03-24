@@ -5,6 +5,11 @@
     "context": "../.."
   },
   "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "vault-professional-cert/lab-01-transit-auto-unseal-and-node-join.md"
+      ]
+    },
     "vscode": {
       "extensions": [
         "hashicorp.hcl"

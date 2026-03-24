@@ -5,6 +5,11 @@
     "context": "../.."
   },
   "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "secrets-totp/totp-secrets-engine-repro.md"
+      ]
+    },
     "vscode": {
       "extensions": [
         "hashicorp.hcl"
