@@ -253,6 +253,9 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [Vault Professional Exam Guide](vault-professional-cert/vault-professional-exam-guide.md)
 	- Experience-based guide covering likely question/lab themes, high-value prep strategy, and a roadmap for mock lab runbooks.
 
+	- [Lab 1: Transit Auto-Unseal and Node Join](vault-professional-cert/lab-01-transit-auto-unseal-and-node-join.md)
+		- Hands-on runbook for configuring a transit-backed auto-unseal flow and joining a node to a cluster.
+
 	- [Lab 2: AppRole + response wrapping + database secrets engine](vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md)
 		- Hands-on runbook for AppRole login with wrapped `secret_id`, JSON output capture, and PostgreSQL dynamic credentials validation.
 
