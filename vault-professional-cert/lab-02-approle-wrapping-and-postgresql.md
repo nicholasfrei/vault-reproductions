@@ -192,7 +192,7 @@ Goal: Configure Vault to talk to PostgreSQL and prepare for dynamic credential i
      plugin_name=postgresql-database-plugin \
      allowed_roles="*" \
      password_policy="pg-alphanumeric" \
-  connection_url="postgresql://{{username}}:{{password}}@127.0.0.1:5432/vaultdb?sslmode=disable" \
+     connection_url="postgresql://{{username}}:{{password}}@127.0.0.1:5432/vaultdb?sslmode=disable" \
      username="vaultuser" \
      password="vaultpass"
    ```
