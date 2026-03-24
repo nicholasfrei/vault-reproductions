@@ -55,6 +55,7 @@
   "containerEnv": {
     "SKIP_SETCAP": "true"
   },
+  "postAttachCommand": "code --command markdown.showPreview",
   "postStartCommand": "bash .devcontainer/lab-01/post-start.sh",
   "forwardPorts": [
     8200

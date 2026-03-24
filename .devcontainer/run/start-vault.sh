@@ -5,6 +5,12 @@ export VAULT_ADDR="${VAULT_ADDR:-http://127.0.0.1:8200}"
 export VAULT_TOKEN="${VAULT_TOKEN:-root}"
 VAULT_DEV_LISTEN_ADDRESS="${VAULT_DEV_LISTEN_ADDRESS:-0.0.0.0:8200}"
 
+# Some Codespaces/container runtimes reject file capabilities on /usr/bin/vault.
+# Clearing capabilities makes vault executable in both old and rebuilt images.
+if command -v setcap >/dev/null 2>&1; then
+  setcap -r "$(command -v vault)" >/dev/null 2>&1 || true
+fi
+
 if pgrep -x vault >/dev/null 2>&1; then
   exit 0
 fi

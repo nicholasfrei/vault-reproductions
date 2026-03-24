@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     git \
     gnupg \
     jq \
+    libcap2-bin \
     lsb-release \
     nano \
     unzip \
@@ -23,4 +24,5 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
     echo "deb [signed-by=/etc/apt/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(. /etc/os-release && echo ${VERSION_CODENAME}) main" > /etc/apt/sources.list.d/hashicorp.list && \
     apt-get update && \
     apt-get install -y vault && \
+    setcap -r /usr/bin/vault || true && \
     rm -rf /var/lib/apt/lists/*
