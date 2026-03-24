@@ -11,7 +11,7 @@ This lab is intentionally exam-style: you are expected to populate the `seal "tr
 
 ---
 
-### 0. Preconditions
+### 0. Lab Setup
 
 #### How to Use This Hands-On Lab
 

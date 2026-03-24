@@ -18,7 +18,7 @@ Kubernetes Secret `data` keys must match this regex:
 
 The character `@` is not allowed, so VSO sync fails if a KV key includes `@`.
 
-## Preconditions
+## Lab Setup
 
 - Running Kubernetes cluster
 - `kubectl`, `vault`, and `jq` installed

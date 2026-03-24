@@ -14,7 +14,7 @@ It focuses on:
 
 ---
 
-### Preconditions
+### Lab Setup
 
 - Vault Enterprise is running and unsealed.
 - You have a root token.

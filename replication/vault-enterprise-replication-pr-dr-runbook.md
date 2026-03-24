@@ -14,7 +14,7 @@ This includes patterns from real internal support incidents.
 
 ---
 
-### Preconditions
+### Lab Setup
 
 - PR and/or DR replication is already configured between clusters.
 - You have operator access (`root` or equivalent replication permissions) on all involved clusters.

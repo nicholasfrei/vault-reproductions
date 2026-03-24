@@ -8,7 +8,7 @@ This is designed to be close to the Vault Professional exam experience: you will
 
 ---
 
-### Preconditions
+### Lab Setup
 
 - Two single-node Vault Enterprise clusters running in Kubernetes:
   - Primary: namespace `vault-pr-primary`, pod `vault-pr-primary-0`

@@ -16,7 +16,7 @@ Common use cases:
 - role/path governance standards are difficult to enforce with ACL policies alone
 - policy denials are hard to triage when EGP and RGP scope/attachment are misunderstood
 
-## Preconditions
+## Lab Setup
 
 - Vault Enterprise (or HCP Vault Dedicated) with Sentinel support
 - operator token with permissions for:
