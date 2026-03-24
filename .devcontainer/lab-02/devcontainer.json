@@ -35,7 +35,6 @@
   "containerEnv": {
     "SKIP_SETCAP": "true"
   },
-  "postAttachCommand": "code --command workbench.action.toggleZenMode",
   "postStartCommand": "bash .devcontainer/lab-02/post-start.sh",
   "forwardPorts": [
     8200,

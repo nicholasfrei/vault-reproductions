@@ -27,7 +27,6 @@
   "containerEnv": {
     "SKIP_SETCAP": "true"
   },
-  "postAttachCommand": "code --command workbench.action.toggleZenMode",
   "postStartCommand": "bash .devcontainer/run/start-vault.sh",
   "forwardPorts": [
     8200
