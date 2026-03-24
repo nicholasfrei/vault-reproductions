@@ -1,8 +1,8 @@
 {
-  "name": "vault-reproductions-default",
+  "name": "vault-reproductions-totp",
   "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".."
+    "dockerfile": "../Dockerfile",
+    "context": "../.."
   },
   "customizations": {
     "vscode": {

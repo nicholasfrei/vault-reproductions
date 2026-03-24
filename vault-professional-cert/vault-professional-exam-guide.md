@@ -127,13 +127,12 @@ Generic Resources:
 
 Mock lab Resources:
 
+- Lab 1: Transit auto-unseal and node join walkthrough: [vault-professional-cert/lab-01-transit-auto-unseal-and-node-join.md](./lab-01-transit-auto-unseal-and-node-join.md)
 - Lab 2: AppRole + wrapping + PostgreSQL walkthrough: [vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md](./lab-02-approle-wrapping-and-postgresql.md)
 - Lab 4: Performance replication with path filtering: [vault-professional-cert/lab-04-pr-replication-path-filtering.md](./lab-04-pr-replication-path-filtering.md)
 - Lab 5: Policies + KV v2 + namespaces walkthrough: [vault-professional-cert/lab-05-policy-kvv2-namespaces.md](./lab-05-policy-kvv2-namespaces.md)
 
 Future additions:
 
-1. vault-professional-cert/lab-01-transit-auto-unseal-and-node-join.md
-   - Transit seal config, init/unseal, node join validation
-2. vault-professional-cert/lab-03-vault-agent-approle-templating.md
+1. vault-professional-cert/lab-03-vault-agent-approle-templating.md
    - Agent auto-auth and template rendering walkthrough

@@ -1,0 +1,20 @@
+storage "raft" {
+  path    = "/tmp/vault-node-2/data"
+  node_id = "vault-node-2"
+
+  # retry_join {
+  #   leader_api_addr = "http://vault-node-1:8200"
+  # }
+}
+
+listener "tcp" {
+  address     = "127.0.0.3:8200"
+  tls_disable = 1
+}
+
+api_addr      = "http://vault-node-2:8200"
+cluster_addr  = "http://vault-node-2:8201"
+disable_mlock = true
+
+# TODO (lab): add your seal "transit" stanza below, then restart this node.
+# Use the same transit address, key, and token policy model as node 1.

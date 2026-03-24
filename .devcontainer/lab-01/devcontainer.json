@@ -1,8 +1,8 @@
 {
-  "name": "vault-reproductions-default",
+  "name": "vault-reproductions-lab-01",
   "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".."
+    "dockerfile": "../Dockerfile",
+    "context": "../.."
   },
   "customizations": {
     "vscode": {
@@ -15,13 +15,13 @@
     }
   },
   "remoteEnv": {
-    "VAULT_ADDR": "http://127.0.0.1:8200",
+    "VAULT_ADDR": "http://transit-vault:8200",
     "VAULT_TOKEN": "root"
   },
   "containerEnv": {
     "SKIP_SETCAP": "true"
   },
-  "postStartCommand": "bash .devcontainer/run/start-vault.sh",
+  "postStartCommand": "bash .devcontainer/lab-01/setup-loopback-hosts.sh && bash .devcontainer/run/start-vault.sh",
   "forwardPorts": [
     8200
   ]
