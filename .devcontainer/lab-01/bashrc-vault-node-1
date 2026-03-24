@@ -4,8 +4,9 @@ if [ -f /etc/bash.bashrc ]; then
   . /etc/bash.bashrc
 fi
 
-export PS1='[vault-node-1] \u@\h:\w\$ '
+export PS1='[vault-node-1] \u@vault-node-1:\w\$ '
 export VAULT_ADDR=http://vault-node-1:8200
 unset VAULT_TOKEN 2>/dev/null || true
 
 printf '\n=== vault-node-1 (127.0.0.2:8200 / vault-node-1:8200) — start: vault server -config=/tmp/vault-node-1.hcl ===\n\n'
+printf 'Note: if this shell shows transit status before node1 starts, rebuild Codespace so transit binds 127.0.0.1 only.\n\n'

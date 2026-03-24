@@ -4,7 +4,7 @@ if [ -f /etc/bash.bashrc ]; then
   . /etc/bash.bashrc
 fi
 
-export PS1='[vault-node-2] \u@\h:\w\$ '
+export PS1='[vault-node-2] \u@vault-node-2:\w\$ '
 export VAULT_ADDR=http://vault-node-2:8200
 unset VAULT_TOKEN 2>/dev/null || true
 

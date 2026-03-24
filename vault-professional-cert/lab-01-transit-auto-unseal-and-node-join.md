@@ -93,6 +93,7 @@ TRANSIT_UNSEAL_TOKEN="$(
     -format=json | jq -r .auth.client_token
 )"
 
+export TRANSIT_UNSEAL_TOKEN
 echo "$TRANSIT_UNSEAL_TOKEN"
 ```
 

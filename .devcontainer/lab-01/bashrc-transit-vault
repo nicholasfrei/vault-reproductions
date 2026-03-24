@@ -4,7 +4,7 @@ if [ -f /etc/bash.bashrc ]; then
   . /etc/bash.bashrc
 fi
 
-export PS1='[transit-vault] \u@\h:\w\$ '
+export PS1='[transit-vault] \u@transit-vault:\w\$ '
 export VAULT_ADDR=http://transit-vault:8200
 export VAULT_TOKEN=root
 
