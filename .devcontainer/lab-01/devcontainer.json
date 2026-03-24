@@ -19,6 +19,9 @@
           "*.md": "vscode.markdown.preview.editor"
         },
         "terminal.integrated.defaultProfile.linux": "bash",
+        "zenMode.restore": true,
+        "zenMode.fullScreen": false,
+        "zenMode.centerLayout": false,
         "terminal.integrated.profiles.linux": {
           "Lab 01: transit-vault": {
             "path": "/bin/bash",
@@ -55,7 +58,6 @@
   "containerEnv": {
     "SKIP_SETCAP": "true"
   },
-  "postAttachCommand": "code --command markdown.showPreview",
   "postStartCommand": "bash .devcontainer/lab-01/post-start.sh",
   "forwardPorts": [
     8200

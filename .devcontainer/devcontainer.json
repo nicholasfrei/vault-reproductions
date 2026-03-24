@@ -13,7 +13,10 @@
         "workbench.editorAssociations": {
           "*.md": "vscode.markdown.preview.editor"
         },
-        "terminal.integrated.defaultProfile.linux": "bash"
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "zenMode.restore": true,
+        "zenMode.fullScreen": false,
+        "zenMode.centerLayout": false
       }
     }
   },

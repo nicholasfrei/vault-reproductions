@@ -21,7 +21,10 @@
         "workbench.editorAssociations": {
           "*.md": "vscode.markdown.preview.editor"
         },
-        "terminal.integrated.defaultProfile.linux": "bash"
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "zenMode.restore": true,
+        "zenMode.fullScreen": false,
+        "zenMode.centerLayout": false
       }
     }
   },
@@ -32,7 +35,6 @@
   "containerEnv": {
     "SKIP_SETCAP": "true"
   },
-  "postAttachCommand": "code --command markdown.showPreview",
   "postStartCommand": "bash .devcontainer/lab-02/post-start.sh",
   "forwardPorts": [
     8200,
