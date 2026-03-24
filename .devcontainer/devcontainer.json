@@ -1,0 +1,28 @@
+{
+  "name": "vault-reproductions",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "hashicorp.hcl"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  "remoteEnv": {
+    "VAULT_ADDR": "http://127.0.0.1:8200",
+    "VAULT_TOKEN": "root"
+  },
+  "containerEnv": {
+    "SKIP_SETCAP": "true"
+  },
+  "postStartCommand": "bash .devcontainer/run/start-vault.sh",
+  "forwardPorts": [
+    8200
+  ]
+}

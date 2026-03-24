@@ -5,11 +5,26 @@ This runbook demonstrates Vault as a TOTP provider and verifier:
 - Vault can validate TOTP codes generated from those keys.
 - A third-party service can enroll against the shared secret (for example, by scanning the provisioning URI or importing the secret) and then submit codes to Vault for verification.
 
-## Preconditions
+## How to Use This Hands-On Lab
 
-- Vault CLI is installed and authenticated.
-- You have permissions to enable and write to the `totp` secrets engine.
-- The TOTP secrets engine is not already enabled at path `totp` (or use a different mount path).
+1. **Create a Codespace** from this repo (click the button below).  
+2. Once the Codespace is running, open the integrated terminal.
+3. Follow the instructions in each **lab** to complete the exercises.
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/nicholasfrei/vault-reproductions)
+
+Validate environment readiness:
+
+```bash
+echo "$VAULT_ADDR"
+vault status
+vault token lookup
+```
+
+Expected:
+- `VAULT_ADDR` is `http://127.0.0.1:8200`.
+- `vault status` shows a running dev server.
+- `vault token lookup` works with the preconfigured root token.
 
 ## Step 1: Enable TOTP Secrets Engine
 
