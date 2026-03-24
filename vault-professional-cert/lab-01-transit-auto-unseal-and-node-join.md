@@ -43,9 +43,7 @@ Lab topology in this profile:
 - Node 1: you start/configure at `vault-node-1:8200`.
 - Node 2: you start/configure at `vault-node-2:8200`.
 
-Raft storage directories `/tmp/vault-node-1/data` and `/tmp/vault-node-2/data` are created on container start so `vault server` does not fail with missing `vault.db` paths.
-
-If `transit-vault` does not resolve, run `bash .devcontainer/lab-01/setup-loopback-hosts.sh` and retry `vault status`.
+Raft storage directories `/tmp/vault-node-1/data` and `/tmp/vault-node-2/data` are created on container start.
 
 ---
 
@@ -200,11 +198,29 @@ vault server -config=/tmp/vault-node-2.hcl
 ```
 
 Expected:
-- Node 2 starts and joins raft leader at `http://vault-node-1:8200`.
+- Node 2 starts with transit seal configuration.
+- Node 2 is **not joined yet** until you run `vault operator raft join`.
 
 ---
 
-### 6. Validate Cluster Join and Health
+### 6. Manually Join Node 2 to Node 1
+
+Run the join command against node 2 using the node 1 root token from init:
+
+```bash
+export VAULT_ADDR=http://vault-node-2:8200
+vault operator raft join http://vault-node-1:8200
+export VAULT_TOKEN="$(jq -r .root_token /tmp/lab1-node1-init.json)"
+vault status
+```
+
+Expected:
+- `vault operator raft join` returns success.
+- Node 2 reports healthy status after join.
+
+---
+
+### 7. Validate Cluster Join and Health
 
 From a separate shell:
 
@@ -228,21 +244,18 @@ Expected:
 - Node 1 leader / node 2 follower (or equivalent cluster state).
 
 ---
-
-### 7. Troubleshooting Hints
+### 8. Troubleshooting Hints
 
 - `permission denied` in seal operations:
-  - Re-check policy paths and token used in `seal "transit"`.
-- Node stays sealed after restart:
-  - Confirm transit node is up and reachable at `http://transit-vault:8200`.
-  - Confirm `key_name`, `mount_path`, and token are correct.
-- Node 2 does not join:
-  - Verify `retry_join` leader address.
-  - Confirm node 1 is initialized and healthy before starting node 2.
+  - Confirm each HCL file has the actual transit token (not the placeholder).
+  - Verify the transit policy includes encrypt/decrypt/read for `autounseal-key`.
+- Node 2 join fails:
+  - Ensure node 1 is initialized, unsealed, and active first.
+  - Re-run `vault operator raft join http://vault-node-1:8200` from node 2 context.
 
 ---
 
-### 8. Cleanup
+### 9. Cleanup
 
 Stop node 1 and node 2 server processes (`Ctrl+C`).
 
