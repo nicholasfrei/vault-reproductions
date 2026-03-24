@@ -7,6 +7,38 @@ This lab contains **two distinct scenarios**:
 
 ---
 
+### How to Use This Hands-On Lab
+
+1. **Create a Codespace** from this repo using the Lab 02 devcontainer link below.
+2. Once the Codespace is running, open the integrated terminal.
+3. Confirm Vault is up before starting the lab steps.
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=1161798724&skip_quickstart=true&devcontainer_path=.devcontainer%2Flab-02%2Fdevcontainer.json)
+
+Quick checks:
+
+```bash
+echo "$VAULT_ADDR"
+vault status
+vault token lookup
+docker ps --filter "name=postgres-vault"
+```
+
+Expected:
+- `VAULT_ADDR` is `http://127.0.0.1:8200`.
+- Vault is unsealed in dev mode.
+- `VAULT_TOKEN` is privileged enough for lab setup.
+- `postgres-vault` is running on port `5432`.
+
+If PostgreSQL is not running, bootstrap it:
+
+```bash
+bash .devcontainer/lab-02/start-postgres.sh
+docker ps --filter "name=postgres-vault"
+```
+
+---
+
 ### 0. Assumptions and Lab Setup
 
 - **Vault** is already running and unsealed.
@@ -14,9 +46,7 @@ This lab contains **two distinct scenarios**:
   - Enable auth methods
   - Write policies
   - Configure the database secrets engine
-- You have access to a **PostgreSQL instance** compatible with the baseline in `secrets-postgresql-db/postgresql-database-secrets-engine-repro.md`, for example:
-  - PostgreSQL in Docker (`postgres-vault`) listening on `0.0.0.0:5432`
-  - Vault can reach it via `host.minikube.internal:5432` (or equivalent)
+- PostgreSQL is available in the same Codespace as Docker container `postgres-vault` on `127.0.0.1:5432`.
 - `vault` CLI is installed and `VAULT_ADDR` is set.
 - `jq` is available for JSON parsing.
 
@@ -162,7 +192,7 @@ Goal: Configure Vault to talk to PostgreSQL and prepare for dynamic credential i
      plugin_name=postgresql-database-plugin \
      allowed_roles="*" \
      password_policy="pg-alphanumeric" \
-     connection_url="postgresql://{{username}}:{{password}}@host.minikube.internal:5432/vaultdb?sslmode=disable" \
+  connection_url="postgresql://{{username}}:{{password}}@127.0.0.1:5432/vaultdb?sslmode=disable" \
      username="vaultuser" \
      password="vaultpass"
    ```

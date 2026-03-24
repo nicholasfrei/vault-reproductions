@@ -1,0 +1,37 @@
+{
+  "name": "vault-reproductions-lab-02",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": "../.."
+  },
+  "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md"
+      ]
+    },
+    "vscode": {
+      "extensions": [
+        "hashicorp.hcl"
+      ],
+      "settings": {
+        "workbench.editorAssociations": {
+          "*.md": "vscode.markdown.preview.editor"
+        },
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  "remoteEnv": {
+    "VAULT_ADDR": "http://127.0.0.1:8200",
+    "VAULT_TOKEN": "root"
+  },
+  "containerEnv": {
+    "SKIP_SETCAP": "true"
+  },
+  "postStartCommand": "bash .devcontainer/lab-02/post-start.sh",
+  "forwardPorts": [
+    8200,
+    5432
+  ]
+}
