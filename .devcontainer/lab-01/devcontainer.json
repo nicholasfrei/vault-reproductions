@@ -7,7 +7,7 @@
   "customizations": {
     "codespaces": {
       "openFiles": [
-        "vault-professional-cert/lab-01-transit-auto-unseal-and-node-join.md:preview"
+        "vault-professional-cert/lab-01-transit-auto-unseal-and-node-join.md"
       ]
     },
     "vscode": {
@@ -58,6 +58,7 @@
   "containerEnv": {
     "SKIP_SETCAP": "true"
   },
+  "postAttachCommand": "code --command workbench.action.toggleZenMode",
   "postStartCommand": "bash .devcontainer/lab-01/post-start.sh",
   "forwardPorts": [
     8200

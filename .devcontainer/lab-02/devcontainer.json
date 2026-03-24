@@ -10,7 +10,7 @@
   "customizations": {
     "codespaces": {
       "openFiles": [
-        "vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md:preview"
+        "vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md"
       ]
     },
     "vscode": {
@@ -35,6 +35,7 @@
   "containerEnv": {
     "SKIP_SETCAP": "true"
   },
+  "postAttachCommand": "code --command workbench.action.toggleZenMode",
   "postStartCommand": "bash .devcontainer/lab-02/post-start.sh",
   "forwardPorts": [
     8200,
