@@ -16,6 +16,7 @@ This lab is a runbook walking you through the steps to configure Vault Agent wit
 1. **Create a Codespace** from this repo (click the button below).  
 2. Once the Codespace is running, open the integrated terminal.
 3. Follow the instructions in each **lab** to complete the exercises.
+4. Follow the step requirements first, and expand the command spoilers only when you need a hint or exact syntax.
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=1161798724&skip_quickstart=true&devcontainer_path=.devcontainer%2Fdevcontainer.json)
 
@@ -31,6 +32,8 @@ Expected:
 - `VAULT_ADDR` is `http://127.0.0.1:8200`.
 - Vault is reachable and unsealed.
 - Your token has enough privileges for auth, policy, and secret setup.
+
+IMPORTANT: You can expand each step to reveal the command blocks if you get stuck.
 
 ---
 
@@ -52,6 +55,16 @@ Single-node reminder:
 
 Create a least-privilege policy for Vault Agent reads and token self-inspection.
 
+Required policy inputs:
+- policy file path: `/tmp/lab-03/vault-agent-policy.hcl`
+- policy name: `vault-agent-policy`
+- required paths:
+  - `secret/data/agent-demo` with `read`
+  - `auth/token/lookup-self` with `read`
+
+<details>
+<summary>Create and write vault-agent-policy</summary>
+
 ```bash
 cat > /tmp/lab-03/vault-agent-policy.hcl <<'EOF'
 path "secret/data/agent-demo" {
@@ -66,9 +79,17 @@ EOF
 vault policy write vault-agent-policy /tmp/lab-03/vault-agent-policy.hcl
 ```
 
+</details>
+
 Enable AppRole auth and create the role.
 - use the policy created above
 - set `token_ttl` to 30m and `token_max_ttl` to 2h
+- role name: `lab3-agent-role`
+- `secret_id_ttl`: `1h`
+- `secret_id_num_uses`: `0`
+
+<details>
+<summary>Enable AppRole and create lab3-agent-role</summary>
 
 ```bash
 vault auth enable approle
@@ -81,7 +102,17 @@ vault write auth/approle/role/lab3-agent-role \
   secret_id_num_uses=0
 ```
 
+</details>
+
 Capture `role_id` and `secret_id` to local files.
+
+Required output files:
+- `/tmp/lab-03/auth/role_id`
+- `/tmp/lab-03/auth/secret_id`
+- set mode `0600` on both files
+
+<details>
+<summary>Capture role_id and secret_id to local files</summary>
 
 ```bash
 vault read -format=json auth/approle/role/lab3-agent-role/role-id \
@@ -92,6 +123,8 @@ vault write -f -format=json auth/approle/role/lab3-agent-role/secret-id \
 
 chmod 600 /tmp/lab-03/auth/role_id /tmp/lab-03/auth/secret_id
 ```
+
+</details>
 
 Expected:
 - AppRole role exists at `auth/approle/role/lab3-agent-role`.
@@ -115,6 +148,19 @@ Expected:
 ### 3. Build the Initial Vault Agent Config (Auto-Auth + Sink)
 
 Create `vault-agent.hcl` from scratch.
+
+Required config values:
+- config path: `/tmp/lab-03/vault-agent.hcl`
+- `vault.address`: `http://127.0.0.1:8200`
+- AppRole mount path: `auth/approle`
+- role/secret files:
+  - `/tmp/lab-03/auth/role_id`
+  - `/tmp/lab-03/auth/secret_id`
+- sink token path: `/tmp/lab-03/sink/agent-token`
+- sink mode: `0600`
+
+<details>
+<summary>Create initial vault-agent.hcl (auto_auth + sink)</summary>
 
 ```bash
 cat > /tmp/lab-03/vault-agent.hcl <<'EOF'
@@ -144,6 +190,8 @@ auto_auth {
 EOF
 ```
 
+</details>
+
 Important grading note:
 - `remove_secret_id_file_after_reading = false` must be present.
 
@@ -159,13 +207,22 @@ grep -q 'method "approle"' /tmp/lab-03/vault-agent.hcl && grep -Eq 'remove_secre
 
 Start the agent in the background and capture logs.
 
+Required runtime outputs:
+- process started with config `/tmp/lab-03/vault-agent.hcl`
+- logs written to `/tmp/lab-03/agent.log`
+
+<details>
+<summary>Start Vault Agent in background</summary>
+
 ```bash
-# Kill the agent is it's already running from a previous attempt
+# Kill the agent if it's already running from a previous attempt
 pgrep -f 'vault agent -config=/tmp/lab-03/vault-agent.hcl' | xargs -r kill
 
 vault agent -config=/tmp/lab-03/vault-agent.hcl \
   > /tmp/lab-03/agent.log 2>&1 &
 ```
+
+</details>
 
 Run grading command 2 now (after starting Vault Agent) to confirm `secret_id` file still exists and auto-auth worked:
 
@@ -179,6 +236,13 @@ echo "FAIL: auto_auth not confirmed, sink token invalid/missing, or secret_id mi
 ```
 
 Run all required checks:
+
+Required validation artifacts:
+- sink token file at `/tmp/lab-03/sink/agent-token`
+- JSON output file at `/tmp/lab-03/output/kv-from-agent.json`
+
+<details>
+<summary>Run required post-start validation checks</summary>
 
 ```bash
 # Check 1: secret_id still exists on filesystem
@@ -194,6 +258,8 @@ VAULT_TOKEN="$(cat /tmp/lab-03/sink/agent-token)" \
 
 cat /tmp/lab-03/output/kv-from-agent.json | jq '.data.data'
 ```
+
+</details>
 
 Expected:
 - `secret_id` file is still present.
@@ -215,6 +281,13 @@ vault kv put secret/agent-demo \
 
 Create the template file:
 
+Required template file:
+- `/tmp/lab-03/templates/agent-demo.ctmpl`
+- must render `username`, `password`, and `api_key` from `secret/data/agent-demo`
+
+<details>
+<summary>Create agent-demo.ctmpl template file</summary>
+
 ```bash
 cat > /tmp/lab-03/templates/agent-demo.ctmpl <<'EOF'
 {{- with secret "secret/data/agent-demo" -}}
@@ -226,11 +299,27 @@ version={{ .Data.metadata.version }}
 EOF
 ```
 
+</details>
+
 Update `vault-agent.hcl` using `vi` (add the template section to your existing config):
+
+Required config update:
+- add a `template` stanza in `/tmp/lab-03/vault-agent.hcl`
+- source: `/tmp/lab-03/templates/agent-demo.ctmpl`
+- destination: `/tmp/lab-03/output/rendered-secret.txt`
+- perms: `0640`
+
+<details>
+<summary>Edit vault-agent.hcl to add template stanza</summary>
 
 ```bash
 vi /tmp/lab-03/vault-agent.hcl
 ```
+
+</details>
+
+<details>
+<summary>Template stanza reference</summary>
 
 ```hcl
 template {
@@ -240,7 +329,12 @@ template {
 }
 ```
 
+</details>
+
 Restart the existing Vault Agent process:
+
+<details>
+<summary>Restart Vault Agent with updated config</summary>
 
 ```bash
 # Kill the existing agent process
@@ -250,11 +344,21 @@ vault agent -config=/tmp/lab-03/vault-agent.hcl \
   > /tmp/lab-03/agent.log 2>&1 &
 ```
 
+</details>
+
 Validate rendered output file exists and contains all three keys:
+
+Required output file:
+- `/tmp/lab-03/output/rendered-secret.txt` with `username=`, `password=`, and `api_key=` lines
+
+<details>
+<summary>Inspect rendered template output</summary>
 
 ```bash
 cat /tmp/lab-03/output/rendered-secret.txt
 ```
+
+</details>
 
 Run grading command 3 now (after templating config + restart):
 
