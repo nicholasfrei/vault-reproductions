@@ -15,12 +15,10 @@ This lab is intentionally exam-style: you are expected to populate the `seal "tr
 
 #### How to Use This Hands-On Lab
 
-1. **Create a Codespace** from this repo using the Lab 01 devcontainer link below (required so host aliases and terminal profiles load).
-2. Open **three** terminals: use the **˅** next to **+** in the Terminal panel → **Select Profile** — pick each profile:
-   - **Lab 01: transit-vault** — prompt shows `[transit-vault]`; use for transit KMS CLI (pre-started dev Vault).
-   - **Lab 01: vault-node-1** — prompt shows `[vault-node-1]`; run `vault server` for node 1 here.
-   - **Lab 01: vault-node-2** — prompt shows `[vault-node-2]`; run `vault server` for node 2 here.
-3. Follow the steps in this runbook in the matching terminal.
+1. **Create a Codespace** from this repo (click the button below).  
+2. Once the Codespace is running, open the integrated terminal.
+  - There are three terminals available: **`[transit-vault]`**, **`[vault-node-1]`**, and **`[vault-node-2]`**.
+3. Follow the instructions in each **lab** to complete the exercises.
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=1161798724&skip_quickstart=true&devcontainer_path=.devcontainer%2Flab-01%2Fdevcontainer.json)
 
@@ -39,14 +37,15 @@ Expected:
 - Root token works.
 
 Lab topology in this profile:
-- Transit node: pre-started dev Vault at `transit-vault:8200`.
-- Node 1: you start/configure at `vault-node-1:8200`.
-- Node 2: you start/configure at `vault-node-2:8200`.
+- Transit node: unsealed Vault dev server at `transit-vault:8200`.
+- Node 1: you will configure and start at `vault-node-1:8200`.
+- Node 2: you will configure and start at `vault-node-2:8200`.
 
 Raft storage directories `/tmp/vault-node-1/data` and `/tmp/vault-node-2/data` are created on container start.
 
+> **Disclaimer:** This lab is setup on one linux VM, so please be mindful of the VAULT_ADDR you are targeting with each command. Each 'node' is just a different hostname and config, but all vault processes are running on the same VM.
 
-> **Disclaimer:** This lab is setup on one linux VM, so please be mindful of the VAULT_ADDR you are targeting with each command. Each 'node' is just a different hostname and config, but all vault processes are running in the same container environment. 
+IMPORTANT: You can expand the steps to view the commands and their expected output if you get stuck.
 
 ---
 
