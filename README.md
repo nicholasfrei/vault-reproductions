@@ -259,6 +259,9 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- [Lab 2: AppRole + response wrapping + database secrets engine](vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md)
 		- Hands-on runbook for AppRole login with wrapped `secret_id`, JSON output capture, and PostgreSQL dynamic credentials validation.
 
+	- [Lab 3: Vault Agent + AppRole auto-auth + templating](vault-professional-cert/lab-03-vault-agent-approle-templating.md)
+		- Hands-on runbook for configuring Vault Agent with AppRole auto-auth, validating `secret_id` retention, and rendering a template with dynamic KV v2 secrets.
+		
 	- [Lab 4: Performance replication with path filtering](vault-professional-cert/lab-04-pr-replication-path-filtering.md)
 		- Practical PR setup and verification flow focused on primary/secondary behavior and path filter validation.
 
