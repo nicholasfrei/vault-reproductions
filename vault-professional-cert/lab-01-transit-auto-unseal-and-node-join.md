@@ -59,14 +59,18 @@ export VAULT_ADDR=http://transit-vault:8200
 export VAULT_TOKEN=root
 ```
 
-Enable transit and create key:
+<details>
+<summary>Enable transit and create key</summary>
 
 ```bash
 vault secrets enable transit
 vault write -f transit/keys/autounseal-key
 ```
 
-Create minimal policy:
+</details>
+
+<details>
+<summary>Create minimal policy</summary>
 
 ```bash
 vault policy write transit-auto-unseal - <<EOF
@@ -84,7 +88,15 @@ path "transit/keys/autounseal-key" {
 EOF
 ```
 
-Create token for seal operations:
+</details>
+
+Create a token for seal operations with the following parameters:
+- policy: transit-auto-unseal
+- period: 24h
+- format: json
+
+<details>
+<summary>Create token for seal operations</summary>
 
 ```bash
 TRANSIT_UNSEAL_TOKEN="$(
@@ -97,6 +109,8 @@ TRANSIT_UNSEAL_TOKEN="$(
 export TRANSIT_UNSEAL_TOKEN
 echo "$TRANSIT_UNSEAL_TOKEN"
 ```
+
+</details>
 
 ---
 
@@ -116,26 +130,28 @@ Tips:
 - Use `key_name = "autounseal-key"`.
 - Use the token from step 1.
 
+<details>
+<summary>Start node 1</summary>
+
 In the **`[vault-node-1]`** terminal, start node 1 (leave it running):
 
 ```bash
 vault server -config=/tmp/vault-node-1.hcl
 ```
 
-Use **`[transit-vault]`** for transit KMS commands and another tab (or **`[vault-node-1]`** with `VAULT_ADDR` changed) only if you need an extra shell for `vault status` before init.
+</details>
 
 ---
 
 ### 3. Initialize Node 1 with Recovery Keys
-
-In a new shell:
 
 ```bash
 export VAULT_ADDR=http://vault-node-1:8200
 vault status
 ```
 
-Initialize with recovery key options:
+<details>
+<summary>Initialize node 1 and save json output to /tmp/lab1-node1-init.json</summary>
 
 ```bash
 vault operator init \
@@ -144,12 +160,17 @@ vault operator init \
   -format=json > /tmp/lab1-node1-init.json
 ```
 
-Read and export root token:
+</details>
+
+<details>
+<summary>Read and export root token</summary>
 
 ```bash
 jq -r .root_token /tmp/lab1-node1-init.json
 export VAULT_TOKEN="$(jq -r .root_token /tmp/lab1-node1-init.json)"
 ```
+
+</details>
 
 Validation:
 
@@ -165,11 +186,17 @@ Expected:
 
 ### 4. Restart Node 1 to Prove Auto-Unseal
 
-In node 1 server terminal, stop process (`Ctrl+C`) and restart:
+<details>
+<summary>Restart node 1 to prove auto-unseal is configured correctly</summary>
+
+
+In the **`[vault-node-1]`** terminal, stop the process (`Ctrl+C`) and restart:
 
 ```bash
 vault server -config=/tmp/vault-node-1.hcl
 ```
+
+</details>
 
 In another shell:
 
@@ -194,11 +221,16 @@ cp .devcontainer/lab-01/vault-node-2.hcl.example /tmp/vault-node-2.hcl
 
 Edit `/tmp/vault-node-2.hcl` and add a valid `seal "transit"` stanza (same transit node/key model as node 1).
 
+<details>
+<summary>Start node 2</summary>
+
 In the **`[vault-node-2]`** terminal, start node 2:
 
 ```bash
 vault server -config=/tmp/vault-node-2.hcl
 ```
+
+</details>
 
 Expected:
 - Node 2 starts with transit seal configuration.
@@ -208,7 +240,8 @@ Expected:
 
 ### 6. Manually Join Node 2 to Node 1
 
-Run the join command against node 2 using the node 1 root token from init:
+<details>
+<summary>Manually join node 2 to node 1</summary>
 
 ```bash
 export VAULT_ADDR=http://vault-node-2:8200
@@ -216,6 +249,8 @@ vault operator raft join http://vault-node-1:8200
 export VAULT_TOKEN="$(jq -r .root_token /tmp/lab1-node1-init.json)"
 vault status
 ```
+
+</details>
 
 Expected:
 - `vault operator raft join` returns success.
