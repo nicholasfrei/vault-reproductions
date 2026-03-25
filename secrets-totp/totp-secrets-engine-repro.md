@@ -139,3 +139,5 @@ Destructive action: disabling the mount deletes all keys under it.
 ```bash
 vault secrets disable totp
 ```
+
+If using the github codespace, you can also stop the codespace via the bottom left Codespaces panel to clean up the entire environment.

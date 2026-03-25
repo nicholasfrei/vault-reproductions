@@ -16,7 +16,7 @@ This lab is intentionally exam-style: you are expected to populate the `seal "tr
 #### How to Use This Hands-On Lab
 
 1. **Create a Codespace** from this repo using the Lab 01 devcontainer link below (required so host aliases and terminal profiles load).
-2. Open **three** terminals: use the **˅** next to **+** in the Terminal panel → **Select Profile** — pick each profile once (repeat three times):
+2. Open **three** terminals: use the **˅** next to **+** in the Terminal panel → **Select Profile** — pick each profile:
    - **Lab 01: transit-vault** — prompt shows `[transit-vault]`; use for transit KMS CLI (pre-started dev Vault).
    - **Lab 01: vault-node-1** — prompt shows `[vault-node-1]`; run `vault server` for node 1 here.
    - **Lab 01: vault-node-2** — prompt shows `[vault-node-2]`; run `vault server` for node 2 here.
@@ -44,6 +44,9 @@ Lab topology in this profile:
 - Node 2: you start/configure at `vault-node-2:8200`.
 
 Raft storage directories `/tmp/vault-node-1/data` and `/tmp/vault-node-2/data` are created on container start.
+
+
+> **Disclaimer:** This lab is setup on one linux VM, so please be mindful of the VAULT_ADDR you are targeting with each command. Each 'node' is just a different hostname and config, but all vault processes are running in the same container environment. 
 
 ---
 
@@ -257,13 +260,7 @@ Expected:
 
 ### 9. Cleanup
 
-Stop node 1 and node 2 server processes (`Ctrl+C`).
-
-Optional cleanup files:
-
-```bash
-rm -rf /tmp/vault-node-1 /tmp/vault-node-2 /tmp/lab1-node1-init.json
-```
+Stop the github codespace via the bottom left Codespaces panel.
 
 ---
 
