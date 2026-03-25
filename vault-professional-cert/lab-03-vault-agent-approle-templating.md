@@ -158,6 +158,7 @@ Required config values:
   - `/tmp/lab-03/auth/secret_id`
 - sink token path: `/tmp/lab-03/sink/agent-token`
 - sink mode: `0600`
+- the auto-auth configuration must keep the SecretID file on disk after successful authentication
 
 <details>
 <summary>Create initial vault-agent.hcl (auto_auth + sink)</summary>
@@ -191,9 +192,6 @@ EOF
 ```
 
 </details>
-
-Important grading note:
-- `remove_secret_id_file_after_reading = false` must be present.
 
 Run grading command 1 now to see if you've configured everything correctly:
 
