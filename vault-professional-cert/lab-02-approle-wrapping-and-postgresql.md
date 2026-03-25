@@ -12,6 +12,7 @@ This lab contains **two distinct scenarios**:
 1. **Create a Codespace** from this repo using the Lab 02 devcontainer link below.
 2. Once the Codespace is running, open the integrated terminal.
 3. Confirm Vault is up before starting the lab steps.
+4. Follow the instructions first, and only expand the command spoilers when you need a hint or want to verify exact syntax.
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=1161798724&skip_quickstart=true&devcontainer_path=.devcontainer%2Flab-02%2Fdevcontainer.json)
 
@@ -52,6 +53,8 @@ docker ps --filter "name=postgres-vault"
 
 > Adjust hostnames, ports, and credentials as needed for your environment, but keep the **shape** of commands and JSON output consistent with this lab for grading.
 
+IMPORTANT: You can expand each step to reveal the command blocks if you get stuck.
+
 ---
 
 ### 1. Part 1: AppRole and Response Wrapping
@@ -60,25 +63,55 @@ Goal: Enable AppRole and create a role that can be used with **response wrapping
 
 1. **Enable the AppRole auth method**:
 
+   Required outcome:
+   - `approle/` exists in `vault auth list`.
+
+   <details>
+   <summary>Enable AppRole and verify mount</summary>
+
    ```bash
    vault auth enable approle
    vault auth list
    ```
 
+   </details>
+
 2. **Create a simple AppRole policy** (e.g., `approle-demo`) It exists just to demonstrate that the role can have policies attached:
 
-   ```bash
-    cat > approle-demo.hcl <<EOF
-    path "secret/data/approle-demo" {
-      capabilities = ["read", "list"]
-    }
-    EOF
+   Required inputs:
+   - policy file name: `approle-demo.hcl`
+   - policy name in Vault: `approle-demo`
+   - path: `secret/data/approle-demo`
+   - capabilities: `read`, `list`
 
-    vault policy write approle-demo approle-demo.hcl
-    vault policy read approle-demo
+   <details>
+   <summary>Create and apply policy approle-demo</summary>
+
+   ```bash
+   cat > approle-demo.hcl <<EOF
+   path "secret/data/approle-demo" {
+     capabilities = ["read", "list"]
+   }
+   EOF
+
+   vault policy write approle-demo approle-demo.hcl
+   vault policy read approle-demo
    ```
 
+   </details>
+
 3. **Create the AppRole** bound to this policy:
+
+   Required values:
+   - role name: `app-db-role`
+   - attached policy: `approle-demo`
+   - `token_ttl`: `1h`
+   - `token_max_ttl`: `4h`
+   - `secret_id_num_uses`: `1`
+   - `secret_id_ttl`: `1h`
+
+   <details>
+   <summary>Create AppRole app-db-role with required TTLs</summary>
 
    ```bash
    vault write auth/approle/role/app-db-role \
@@ -89,7 +122,18 @@ Goal: Enable AppRole and create a role that can be used with **response wrapping
      secret_id_ttl="1h"
    ```
 
+   </details>
+
 4. **Fetch and persist the `role_id` to JSON**:
+
+   Required output file:
+   - save JSON to `approle-role-id.json`
+
+   Validation target:
+   - extract `.data.role_id` from that JSON file.
+
+   <details>
+   <summary>Read role_id and save to approle-role-id.json</summary>
 
    ```bash
    vault read -format=json auth/approle/role/app-db-role/role-id \
@@ -97,6 +141,8 @@ Goal: Enable AppRole and create a role that can be used with **response wrapping
 
    cat approle-role-id.json | jq -r '.data.role_id'
    ```
+
+   </details>
 
    Keep `approle-role-id.json` for grading.
 
@@ -108,23 +154,48 @@ Goal: Use **response wrapping** with `-wrap-ttl` and persist the **wrapped** res
 
 1. **Generate a wrapped `secret_id`**:
 
+   Required values:
+   - wrap TTL: `4h`
+   - output format: `json`
+   - output file: `approle-secret-id-wrapped.json`
+
+   <details>
+   <summary>Generate wrapped secret_id and save JSON</summary>
+
    ```bash
-   vault write -f -wrap-ttl=5m -format=json \
+   vault write -f -wrap-ttl=4h -format=json \
      auth/approle/role/app-db-role/secret-id \
      > approle-secret-id-wrapped.json
    ```
 
+   </details>
+
 2. **Inspect the wrapped response**:
+
+   Inspect `approle-secret-id-wrapped.json` and verify it contains `wrap_info` (not plaintext `secret_id`).
+
+   <details>
+   <summary>Inspect wrapped JSON</summary>
 
    ```bash
    cat approle-secret-id-wrapped.json | jq
    ```
+
+   </details>
 
    Confirm that:
    - The **actual `secret_id` is not visible**.
    - A `wrap_info` block exists with fields like `token`, `ttl`, and `creation_time`.
 
 3. **(Optional but recommended) Validate wrapped token one-time use**:
+
+   Optional validation flow:
+   - read `wrap_info.token` into `WRAP_TOKEN`
+   - unwrap once and save to `approle-secret-id-unwrapped.json`
+   - attempt a second unwrap with same wrapping token and confirm failure
+
+   <details>
+   <summary>Validate one-time unwrap behavior</summary>
 
    ```bash
    WRAP_TOKEN=$(jq -r '.wrap_info.token' approle-secret-id-wrapped.json)
@@ -138,6 +209,8 @@ Goal: Use **response wrapping** with `-wrap-ttl` and persist the **wrapped** res
    # Second unwrap: should fail
    VAULT_TOKEN="$WRAP_TOKEN" vault unwrap
    ```
+
+   </details>
 
    Expected:
    - First unwrap produces `.data.secret_id`.
@@ -157,12 +230,29 @@ Goal: Configure Vault to talk to PostgreSQL and prepare for dynamic credential i
 
 1. **Enable the database secrets engine**:
 
+   Required outcome:
+   - `database/` appears in `vault secrets list`.
+
+   <details>
+   <summary>Enable database secrets engine</summary>
+
    ```bash
    vault secrets enable database
    vault secrets list
    ```
 
+   </details>
+
 2. **(Optional) Create a password policy** for generated DB users:
+
+   Optional policy requirements:
+   - local policy file: `pg-password-policy.hcl`
+   - Vault password policy name: `pg-alphanumeric`
+   - length: `20`
+   - include lowercase, uppercase, and numeric character rules
+
+   <details>
+   <summary>Create password policy pg-alphanumeric</summary>
 
    ```bash
    cat > pg-password-policy.hcl <<EOF
@@ -185,7 +275,21 @@ Goal: Configure Vault to talk to PostgreSQL and prepare for dynamic credential i
    vault list sys/policies/password
    ```
 
+   </details>
+
 3. **Configure the database connection** (adjust host as needed):
+
+   Required values:
+   - config name: `postgres` (path: `database/config/postgres`)
+   - plugin: `postgresql-database-plugin`
+   - allowed roles: `*`
+   - db host/port/dbname: `127.0.0.1:5432/vaultdb`
+   - admin user/password: `vaultuser` / `vaultpass`
+
+   Note: keep `password_policy="pg-alphanumeric"` only if you created that optional policy.
+
+   <details>
+   <summary>Configure database/config/postgres</summary>
 
    ```bash
    vault write database/config/postgres \
@@ -197,11 +301,20 @@ Goal: Configure Vault to talk to PostgreSQL and prepare for dynamic credential i
      password="vaultpass"
    ```
 
+   </details>
+
 4. **Verify the database config**:
+
+   Read and verify `database/config/postgres` returns successfully.
+
+   <details>
+   <summary>Read database config as JSON</summary>
 
    ```bash
    vault read -format=json database/config/postgres
    ```
+
+   </details>
 
    Confirm that the read succeeds and shows the expected connection parameters.
 
@@ -213,15 +326,29 @@ Some exam scenarios explicitly require rotating the database root credentials us
 
 1. **Rotate the root credentials for `database/config/postgres`**:
 
+   Execute root rotation for config name `postgres`.
+
+   <details>
+   <summary>Rotate root credentials</summary>
+
    ```bash
    vault write -f database/rotate-root/postgres
    ```
 
+   </details>
+
 2. **Re-read the database config**:
+
+   Re-read config and confirm it still succeeds.
+
+   <details>
+   <summary>Re-read database config after rotation</summary>
 
    ```bash
    vault read -format=json database/config/postgres
    ```
+
+   </details>
 
    Confirm the config still reads successfully, indicating the rotated credentials are valid.
 
@@ -233,6 +360,15 @@ Goal: Configure Vault to issue **dynamic, short-lived PostgreSQL users**.
 
 1. **Create a dynamic role** (e.g., `pg-readonly`):
 
+   Required values:
+   - role name: `pg-readonly`
+   - db config name in role: `db_name=postgres`
+   - `default_ttl`: `1h`
+   - `max_ttl`: `24h`
+
+   <details>
+   <summary>Create dynamic role pg-readonly</summary>
+
    ```bash
    vault write database/roles/pg-readonly \
      db_name=postgres \
@@ -242,7 +378,16 @@ Goal: Configure Vault to issue **dynamic, short-lived PostgreSQL users**.
      max_ttl="24h"
    ```
 
+   </details>
+
 2. **(Optional) Admin-side sanity check for dynamic credentials**:
+
+   Optional validation target:
+   - read from `database/creds/pg-readonly`
+   - save JSON to `db-creds-admin-test.json`
+
+   <details>
+   <summary>Read dynamic DB creds and save JSON</summary>
 
    ```bash
    vault read -format=json database/creds/pg-readonly \
@@ -251,11 +396,20 @@ Goal: Configure Vault to issue **dynamic, short-lived PostgreSQL users**.
    cat db-creds-admin-test.json | jq
    ```
 
+   </details>
+
    You should see:
    - `lease_id` under `database/creds/pg-readonly/...`
    - `username` and `password` fields.
 
 3. **(Optional) Verify credentials against PostgreSQL**:
+
+   Optional verification inputs:
+   - extract `.data.username` and `.data.password` from `db-creds-admin-test.json`
+   - connect to `postgres-vault` and run `SELECT current_user;`
+
+   <details>
+   <summary>Test issued credentials against PostgreSQL</summary>
 
    ```bash
    DB_USER=$(jq -r '.data.username' db-creds-admin-test.json)
@@ -265,6 +419,8 @@ Goal: Configure Vault to issue **dynamic, short-lived PostgreSQL users**.
      "postgresql://$DB_USER:$DB_PASS@localhost:5432/vaultdb?sslmode=disable" \
      -c "SELECT current_user;"
    ```
+
+   </details>
 
 ---
 
