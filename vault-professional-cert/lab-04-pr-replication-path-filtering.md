@@ -32,35 +32,53 @@ For the rest of the lab, you will:
 
 ### 2. Open two terminals and log in inside each pod
 
-Use two terminal windows/tabs so you can keep a shell open in both clusters.
+Use two terminal windows/tabs so you can keep a shell open in both clusters. Exec into the shell of both pods:
 
-- **Terminal 1 (secondary):**
+<details>
+<summary>Open shell in primary and secondary pods</summary>
 
 ```bash
+# Open shell in primary pod
+kubectl exec -ti -n vault-pr-primary vault-pr-primary-0 -- sh
+# Open shell in secondary pod (different terminal)
 kubectl exec -ti -n vault-pr-secondary vault-pr-secondary-0 -- sh
 ```
 
-- **Terminal 2 (primary):**
-
-```bash
-kubectl exec -ti -n vault-pr-primary vault-pr-primary-0 -- sh
-```
+</details>
 
 Inside **each** pod shell, log in with the root token from `/tmp/init.json` and validate status:
 
+Required login input:
+- root token from `/tmp/init.json` in that same pod.
+
+Validation target:
+- `vault status` succeeds in both pods.
+
+<details>
+<summary>Login in each pod shell & check Vault status</summary>
+
 ```bash
 vault login <vault_token_from_init_json>
-```
-
-Validate status:
-
-```bash
 vault status
 ```
+
+</details>
+
 ---
 
-### 3. Enable performance replication on the primary
-On the **primary** cluster, enable performance replication in primary mode and generate a secondary activation token.
+### 3. Enable performance replication on the primary 
+On the **primary** cluster, enable performance replication & generate a secondary activation token.
+
+Required values:
+- secondary ID: `pr-secondary`
+- save token response to `/tmp/pr-secondary-token.json`
+
+Required outcomes:
+- primary performance replication mode enabled
+- secondary activation token generated and persisted for later join
+
+<details>
+<summary>Enable PR primary and create activation token</summary>
 
 ```bash
 # Enable PR primary
@@ -71,37 +89,72 @@ vault write -format=json sys/replication/performance/primary/secondary-token id=
   | tee /tmp/pr-secondary-token.json
 ```
 
+</details>
+
 The secondary token value in `/tmp/pr-secondary-token.json` is needed on the secondary.
 Extract and copy it from the **primary** terminal.
 
-# If you need to delete this token (for example, if it didn't work), run:
+If you need to delete this token (for example, if it didn't work), check the hint below:
+
+<details>
+<summary>Optional: Revoke secondary activation token</summary>
+
 ```bash
 vault write sys/replication/performance/primary/revoke-secondary id="pr-secondary"
 ```
+
+</details>
 ---
 
 ### 4. Enable performance replication on the secondary and join
 
-On the **secondary** cluster, enable performance replication in secondary mode and join it to the primary using the activation token.
+On the **secondary** cluster, enable performance replication as a secondary & join it to the primary using the activation token.
+
+Required input:
+- token value from `/tmp/pr-secondary-token.json` on the primary.
+
+Required outcome:
+- secondary enters replication mode and joins primary.
+
+<details>
+<summary>Enable PR secondary and join with activation token</summary>
 
 ```bash
 # Enable PR secondary
 vault write -f sys/replication/performance/secondary/enable token="<paste-token-from-primary>"
 ```
 
-Verify status from both sides:
+</details>
+
+Verify status from both sides and output the results to JSON files:
+
+Required artifact files:
+- primary status: `/tmp/pr-primary-status.json`
+- secondary status: `/tmp/pr-secondary-status.json`
+
+In the **primary** terminal:
+
+<details>
+<summary>Read PR status from primary</summary>
+
+```bash
+vault read -format=json sys/replication/performance/status \
+  | tee /tmp/pr-primary-status.json
+```
+
+</details>
+
+In the **secondary** terminal:
+
+<details>
+<summary>Read PR status from secondary</summary>
 
 ```bash
 vault read -format=json sys/replication/performance/status \
   | tee /tmp/pr-secondary-status.json
 ```
 
-In the **primary** terminal:
-
-```bash
-vault read -format=json sys/replication/performance/status \
-  | tee /tmp/pr-primary-status.json
-```
+</details>
 
 Confirm:
 
@@ -120,15 +173,22 @@ In this lab you will:
 
 First, we will create some test data on the **primary**:
 
+Required mounts:
+- KV v2 at `denied/`
+- KV v2 at `secret/`
+
 ```bash
 vault secrets enable -path=denied kv-v2 || true
 vault secrets enable -path=secret kv-v2 || true
 ```
-Apply a paths filter in `deny` mode for a couple of endpoints.
-For KV v2, use API paths under `secret/data/...` in the filter.
 
-See the official API docs for reference:  
-`Performance replication: create paths filter` ([docs](https://developer.hashicorp.com/vault/api-docs/system/replication/replication-performance#create-paths-filter)).
+Apply a paths filter with the following settings:
+- filter name/ID: `pr-secondary`
+- mode: `deny`
+- paths: `denied/`
+
+<details>
+<summary>Create deny-mode paths filter on primary</summary>
 
 ```bash
 vault write sys/replication/performance/primary/paths-filter/pr-secondary \
@@ -136,14 +196,28 @@ vault write sys/replication/performance/primary/paths-filter/pr-secondary \
   paths="denied/"
 ```
 
-Verify the filter configuration:
+</details>
+
+Verify the filter configuration and output the results to a JSON file:
+
+Required artifact:
+- save filter read output to `/tmp/pr-primary-paths-filter.json`
+
+<details>
+<summary>Read paths filter configuration</summary>
 
 ```bash
 vault read -format=json sys/replication/performance/primary/paths-filter/pr-secondary \
   | tee /tmp/pr-primary-paths-filter.json
 ```
 
+</details>
+
 Now write fresh test data **after** the filter is active:
+
+Required writes:
+- allowed path: `secret/app`
+- denied test paths: `denied/ops` and `denied/internal`
 
 ```bash
 # Allowed path (should replicate)
@@ -169,7 +243,7 @@ On the **secondary**, confirm the following behavior:
 
 If you do not have a secondary auth method enabled, you will need to generate a root token for the PR secondary.
 
-Optional recovery flow on the **secondary**:
+Generate a new secondary root token:
 
 ```bash
 # Start a new attempt and record Nonce
@@ -188,7 +262,14 @@ vault login <new-root-token>
 vault token lookup
 ```
 
-On the secondary:
+On the secondary, validate the replicated and filtered paths:
+
+Required validation behavior:
+- `secret/app` read succeeds.
+- `denied/ops` and `denied/internal` fail (for example `404` or permission error).
+
+<details>
+<summary>Validate replicated and filtered paths on secondary</summary>
 
 ```bash
 # These reads should succeed and show the replicated secrets
@@ -198,6 +279,8 @@ vault kv get secret/app
 vault kv get denied/ops
 vault kv get denied/internal 
 ```
+
+</details>
 
 ---
 
@@ -229,4 +312,5 @@ vault delete sys/replication/performance/primary/paths-filter/pr-secondary || tr
 
 ### References
 
-- Performance replication concepts and API: [Vault docs](https://developer.hashicorp.com/vault/docs/enterprise/replication/performance)
+- [Performance replication concepts and API](https://developer.hashicorp.com/vault/docs/enterprise/replication/performance)
+- [Performance replication: create paths filter](https://developer.hashicorp.com/vault/api-docs/system/replication/replication-performance#create-paths-filter)
