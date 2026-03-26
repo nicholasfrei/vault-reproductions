@@ -19,6 +19,7 @@ This lab is intentionally exam-style: you are expected to populate the `seal "tr
 2. Once the Codespace is running, open the integrated terminal.
   - There are three terminals available: **`[transit-vault]`**, **`[vault-node-1]`**, and **`[vault-node-2]`**.
 3. Follow the instructions in each **lab** to complete the exercises.
+4. Follow the step requirements first, and expand the command spoilers only when you need a hint or exact syntax.
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=1161798724&skip_quickstart=true&devcontainer_path=.devcontainer%2Flab-01%2Fdevcontainer.json)
 
@@ -45,7 +46,7 @@ Raft storage directories `/tmp/vault-node-1/data` and `/tmp/vault-node-2/data` a
 
 > **Disclaimer:** This lab is setup on one linux VM, so please be mindful of the VAULT_ADDR you are targeting with each command. Each 'node' is just a different hostname and config, but all vault processes are running on the same VM.
 
-IMPORTANT: You can expand the steps to view the commands and their expected output if you get stuck.
+IMPORTANT: You can expand each step to reveal the command blocks if you get stuck.
 
 ---
 
@@ -57,6 +58,14 @@ Point CLI at the transit node:
 export VAULT_ADDR=http://transit-vault:8200
 export VAULT_TOKEN=root
 ```
+
+Required outcomes for this section:
+- Transit secrets engine enabled at `transit/`.
+- Transit key named `autounseal-key` created.
+- Policy named `transit-auto-unseal` created with:
+  - `update` on `transit/encrypt/autounseal-key`
+  - `update` on `transit/decrypt/autounseal-key`
+  - `read` on `transit/keys/autounseal-key`
 
 <details>
 <summary>Enable transit and create key</summary>
@@ -89,11 +98,10 @@ EOF
 
 </details>
 
-Create a token for seal operations with the following parameters:
-- policy: transit-auto-unseal
-- period: 24h
-- format: json
-
+- A renewable periodic token exported as `TRANSIT_UNSEAL_TOKEN` with:
+  - policy: `transit-auto-unseal`
+  - period: `24h`
+  - output format: `json` (for token extraction)
 <details>
 <summary>Create token for seal operations</summary>
 
@@ -149,6 +157,16 @@ export VAULT_ADDR=http://vault-node-1:8200
 vault status
 ```
 
+Required init values:
+- threshold = 3
+- shared = 5
+- output format `json`
+- output file `/tmp/lab1-node1-init.json`
+
+Required post-init actions:
+- read `root_token` from `/tmp/lab1-node1-init.json`
+- export it as `VAULT_TOKEN`
+
 <details>
 <summary>Initialize node 1 and save json output to /tmp/lab1-node1-init.json</summary>
 
@@ -180,10 +198,14 @@ vault status
 Expected:
 - `Sealed` is `false` (auto-unseal active).
 - `Recovery Seal Type` shows transit-backed behavior.
+- `Initialized` is `true`.
 
 ---
 
 ### 4. Restart Node 1 to Prove Auto-Unseal
+
+Action requirement:
+- Restart the same node 1 process using `/tmp/vault-node-1.hcl` after initialization.
 
 <details>
 <summary>Restart node 1 to prove auto-unseal is configured correctly</summary>
@@ -207,6 +229,7 @@ vault status
 
 Expected:
 - Node 1 returns as unsealed without manual `vault operator unseal`.
+- `vault status` returns successfully against `http://vault-node-1:8200`.
 
 ---
 
@@ -238,6 +261,9 @@ Expected:
 ---
 
 ### 6. Manually Join Node 2 to Node 1
+
+Required join inputs:
+- join target `http://vault-node-1:8200`
 
 <details>
 <summary>Manually join node 2 to node 1</summary>
@@ -279,6 +305,10 @@ vault status
 Expected:
 - Two raft peers are visible.
 - Node 1 leader / node 2 follower (or equivalent cluster state).
+
+Required validation outputs:
+- `vault operator raft list-peers` from node 1 shows both peers.
+- `vault status` succeeds against both node endpoints.
 
 ---
 ### 8. Troubleshooting Hints
