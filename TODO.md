@@ -5,6 +5,7 @@
 - **Seal / Unseal**
   - Multi-seal and Seal HA: config patterns, startup order, failure modes.
   - Auto-unseal migration (Shamir → KMS/HSM) with rollback considerations.
+  - Recovery/Options when Key Vault or Data Center is destroyed (i.e. War in Middle East causing outages in various Data Centers)
 - **Raft / Storage**
   - Integrated storage autopilot: dead server cleanup, peer replacement.
   - Snapshot/restore validation (single cluster and cross-cluster).
