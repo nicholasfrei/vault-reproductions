@@ -204,6 +204,10 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Single-node EC2 (Amazon Linux 2023) setup for Vault Enterprise with `awskms` seal and `raft` storage.
 	- Includes license setup, systemd service configuration, restart validation, and cleanup guidance.
 
+- [Azure Key Vault Auto-Unseal Runbook (Linux VM + Vault Enterprise)](seal-azure/azurekeyvault-auto-unseal-runbook.md)
+	- Single-node Azure Ubuntu 22.04 VM setup for Vault Enterprise with `azurekeyvault` seal and `raft` storage.
+	- Covers App Registration creation, client secret generation, Key Vault Crypto User role assignment, and seal stanza configuration.
+
 ### Linux / Platform Behavior
 
 - [Vault Logrotate KB](linux/vault-logrotate-kb.md)
