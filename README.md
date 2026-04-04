@@ -16,6 +16,7 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 	- [Kubernetes / Platform Behavior](#kubernetes--platform-behavior)
 	- [Telemetry](#telemetry)
 	- [Vault Professional Exam Prep](#vault-professional-exam-prep)
+	- [Tools](#tools)
 - [TODO / Roadmap](#todo--roadmap)
 
 ## How to use this repository
@@ -276,6 +277,15 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- [Lab 5: Policies, namespaces, and KV v2 operations](vault-professional-cert/lab-05-policy-kvv2-namespaces.md)
 		- Traditional runbook to practice namespace-aware login context, policy inheritance boundaries, and KV v2 path precision tests.
 
+
+### Tools
+
+- [Vault Log Inspector](tools/vault-log-inspector/main.go)
+	- Go CLI tool that scans a Vault operational or audit log file and reports errors/findings with resolution steps.
+	- Currently only covers the following errors: sealed state, permission denied, and token expiry/invalidity.
+	- Automatically detects log format (plain-text operational vs. JSON audit) and extracts error context from audit log entries.
+	- Build: `go build -o vault-log-inspector ./tools/vault-log-inspector`
+	- Usage: `vault-log-inspector -log <path> [-type operational|audit|auto]`
 
 ## TODO / Roadmap
 
