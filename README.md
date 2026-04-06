@@ -152,6 +152,12 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [TOTP Secrets Engine Repro](secrets-totp/totp-secrets-engine-repro.md)
 	- Reproduction runbook for the Vault TOTP secrets engine, including setup and validation flow.
 
+#### Snowflake Database
+
+- [AppRole + Snowflake Database Secrets Engine Repro](secrets-snowflake-db/approle-snowflake-db-reproduction.md)
+	- End-to-end setup for Vault database secrets engine with Snowflake using RSA key-pair authentication and static role rotation.
+	- Covers Snowflake service account creation, AppRole auth configuration, credential rotation verification, and optional SnowSQL connection validation.
+
 #### PostgreSQL Database
 
 - [PostgreSQL Database Secrets Engine Repro](secrets-postgresql-db/postgresql-database-secrets-engine-repro.md)
