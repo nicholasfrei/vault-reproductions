@@ -2,7 +2,7 @@
 
 This reproduction demonstrates how to configure the Vault database secrets engine with Snowflake, using a static role for RSA key-pair credential rotation and AppRole authentication for application access. Snowflake deprecated password-based authentication for service accounts in November 2025, making key-pair auth the standard approach.
 
-This runbook is based on a real support case where a customer was experiencing issues integrating their workflow to include approle auth with snowflake secrets engine. The customer had several questions about the integration and how to use snowflake RSA key-pair authentication with Vault. This runbook will cover the setup of the snowflake secrets engine, the static role, and the approle auth. It will also cover the testing and verification of the integration.
+This runbook is based on a real support case, of my colleague Harley, where a customer was experiencing issues integrating their workflow to include approle auth with snowflake secrets engine. The customer had several questions about the integration and how to use snowflake RSA key-pair authentication with Vault. This runbook will cover the setup of the snowflake secrets engine, the static role, and the approle auth. It will also cover the testing and verification of the integration.
 
 ## Prerequisites
 
