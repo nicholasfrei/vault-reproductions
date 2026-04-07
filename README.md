@@ -206,6 +206,9 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Local reproduction for Vault transit-based auto-unseal using two dev servers (transit + auto-unseal).
 	- Includes a mock HCL config file (`vault-transit-auto-unseal.hcl`) and step-by-step startup, init, restart, and validation flow.
 
+- [KB: Circular Transit Auto-Unseal Dependency (Double Transit)](seal-transit/double-transit-autounseal-dependency-kb.md)
+	- Documents a support case where two Vault clusters were configured to transit-unseal each other.
+
 - [AWS KMS Auto-Unseal Runbook (EC2 + Vault Enterprise)](seal-awskms/awskms-auto-unseal-runbook.md)
 	- Single-node EC2 (Amazon Linux 2023) setup for Vault Enterprise with `awskms` seal and `raft` storage.
 	- Includes license setup, systemd service configuration, restart validation, and cleanup guidance.
