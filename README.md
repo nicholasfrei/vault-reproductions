@@ -1,9 +1,21 @@
 # Vault Reproductions
 
-This repository is a vault (wink) of various scenarios I've worked with during my time as a Senior Support Engineer. The goal is to share various scripts, guides, and reproductions for different Vault plugins. Some of these are based on real support cases or incidents, while others are smaller scripts to assist with learning Vault. 
+This repository is a vault (wink) of various scenarios I've worked with during my time as a Senior Support Engineer. The goal with this project is to share various scripts, guides, and reproductions for different Vault plugins. Some of these are based on real support cases or incidents, while others are smaller scripts to assist with learning Vault. 
+
+I hope you find this repository helpful in your journey with Vault. 
+
+## Start Here
+
+If you are new to this repo, use this quick path:
+
+1. Pick a category from [Available Docs](#available-docs) based on the issue type (`auth-*`, `secrets-*`, `kubernetes`, `seal-*`, `replication`, etc.).
+2. Open the linked runbook/KB and complete the preconditions listed in that file before running commands.
+3. Follow the validation and cleanup steps so your lab stays reproducible between runs.
 
 ## Table of contents
 
+- [Start Here](#start-here)
+- [How to use this repository](#how-to-use-this-repository)
 - [Prerequisites](#prerequisites)
 - [Available Docs](#available-docs)
 	- [Authentication Mounts](#authentication-mounts)
@@ -15,26 +27,26 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 	- [Linux / Platform Behavior](#linux--platform-behavior)
 	- [Kubernetes / Platform Behavior](#kubernetes--platform-behavior)
 	- [Telemetry](#telemetry)
+	- [System Backend - Vault (sys/)](#system-backend---vault-sys)
 	- [Vault Professional Exam Prep](#vault-professional-exam-prep)
 - [TODO / Roadmap](#todo--roadmap)
 
 ## How to use this repository
 
-1. Find the plugin you're interested in.
-2. Reference various KBs or Runbooks based on your need.
-3. Follow the instructions in the file.
-4. Voilà.
+1. Locate the relevant scenario category in [Available Docs](#available-docs).
+2. Choose a runbook (`*.md`) for walkthroughs or a script (`*.sh`) for setup automation.
+3. Run commands exactly as written, then confirm expected output in each Validation section.
+4. Run cleanup steps before starting another scenario to avoid state carryover.
 
 ## Prerequisites
 
-Most runbooks use these core tools:
+Most scenarios use this baseline local lab setup:
 
-- Homebrew (or any package manager)
 - `kubectl`, `helm`, `minikube`
 - Docker (`Docker Desktop` or Docker Engine)
 - `jq`
 
-Some scenarios also require:
+Common optional tools (scenario-dependent):
 
 - `gpg`
 - `unzip` and `wget`/`curl`
@@ -288,5 +300,4 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 ## TODO / Roadmap
 
-Planned runbooks and KBs are tracked in [TODO.md](TODO.md).
-Refactoring the runbooks to be used in GitHub Codespaces.
+Planned runbooks and KBs are tracked in [TODO.md](TODO.md). Refactoring some of the runbooks to be used in GitHub Codespaces.
