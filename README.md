@@ -12,6 +12,13 @@ If you are new to this repo, use this quick path:
 2. Open the linked runbook/KB and complete the preconditions listed in that file before running commands.
 3. Follow the validation and cleanup steps so your lab stays reproducible between runs.
 
+Helpful external links:
+
+- [Documentation](https://developer.hashicorp.com/vault/docs)
+- [Tutorials](https://developer.hashicorp.com/vault/tutorials)
+- [Certification exam](https://developer.hashicorp.com/certifications/security-automation)
+- [Documentation source](https://github.com/hashicorp/web-unified-docs)
+
 ## Table of contents
 
 - [Start Here](#start-here)
@@ -66,7 +73,7 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 ### Authentication Mounts
 
-#### Userpass
+#### <img src="https://cdn.simpleicons.org/vault" alt="Vault" width="18" /> Userpass
 
 - [Userpass Entity Metadata Dynamic Policy Repro](auth-userpass/userpass-entity-metadata-dynamic-policy-repro.md)
 	- Local reproduction for dynamic policy templating using entity metadata.
@@ -77,14 +84,14 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Useful for observing identity handling when many local auth users are created and used.
 	- Includes behavior validation related to entities and aliases.
 
-#### Kubernetes
+#### <img src="https://cdn.simpleicons.org/kubernetes" alt="Kubernetes" width="18" /> Kubernetes
 
 - [Kubernetes Auth User Creation and Login Script](auth-kubernetes/create-kubernetes-users-and-login.sh)
 	- Creates Kubernetes service accounts, configures Vault Kubernetes auth, and tests login flow.
 	- Useful for evaluating how Vault creates and maps identities during Kubernetes auth.
 	- Includes behavior validation related to entities and aliases.
 
-#### JWT
+#### <img src="https://cdn.simpleicons.org/jsonwebtokens" alt="JWT" width="18" /> JWT
 
 - [JWT Authentication Setup and Login Script](auth-jwt/jwt-authentication-setup-and-login.sh)
 	- Configures Vault JWT auth with a local RSA key pair and issuer binding.
@@ -96,13 +103,13 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Demonstrates the fix with `bound_claims_type="glob"` and wildcard `namespace_path` patterns.
 	- Includes case-sensitivity checks, token-claim decoding, and cleanup commands.
 
-#### LDAP
+#### <img src="https://cdn.simpleicons.org/openldap" alt="OpenLDAP" width="18" /> LDAP
 
 - [OpenLDAP LDAP Auth Reproduction](auth-ldap/openldap-ldap-auth-repro.md)
 	- End-to-end OpenLDAP + Vault LDAP auth runbook with Docker-hosted LDAP and Kubernetes-hosted Vault.
 	- Includes generation of 200 sample users, group mapping tests, and nested-group inheritance behavior checks.
 
-#### Token
+#### <img src="https://cdn.simpleicons.org/vault" alt="Vault" width="18" /> Token
 
 - [Token Role `allowed_policies` vs `allowed_policies_glob` KB](auth-token/token-role-allowed-policies-glob-kb.md)
 	- Covers token role failures where requested token policies are not a subset of `allowed_policies` or `allowed_policies_glob`.
@@ -110,41 +117,41 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 ### Secrets Engines
 
-#### Artifactory
+#### <img src="https://cdn.simpleicons.org/jfrog" alt="JFrog" width="18" /> Artifactory
 
 - [Artifactory Plugin Registration Script](secrets-artifactory/artifactory-plugin-registration.sh)
 	- Amazon Linux setup script for Vault Enterprise + JFrog Artifactory secrets plugin registration.
 	- Includes plugin checksum validation and flattened plugin directory layout to avoid execution path errors.
 
-#### LDAP
+#### <img src="https://cdn.simpleicons.org/openldap" alt="OpenLDAP" width="18" /> LDAP
 
 - [LDAP Secrets Engine Setup Repro](secrets-ldap/setup-ldap-secrets-engine-repro.md)
 	- OpenLDAP + Vault LDAP secrets engine setup focused on bind account and static-role password rotation timing.
 	- Uses [secrets-ldap/openldap-deployment.yaml](secrets-ldap/openldap-deployment.yaml) as the backing Kubernetes manifest.
 
-#### Oracle Database
+#### <img src="https://cdn.simpleicons.org/oracle" alt="Oracle" width="18" /> Oracle Database
 
 - [Oracle Database Plugin Setup](secrets-oracle-db/oracle-database-plugin-setup.md)
 	- Rapid Oracle environment setup for testing Vault database plugin behavior with dynamic and static credentials.
 
-#### PKI (CMPv2)
+#### <img src="https://cdn.simpleicons.org/letsencrypt" alt="PKI" width="18" /> PKI (CMPv2)
 
 - [CMPv2 PKI Integration Guide](secrets-pki-cmpv2/cmpv2-pki-integration-guide.md)
 	- Markdown-only runbook for Vault PKI CMPv2 integration and proxy behavior validation.
 	- Includes concrete expected output blocks from a successful direct + proxied CMP IR repro.
 
-#### RabbitMQ
+#### <img src="https://cdn.simpleicons.org/rabbitmq" alt="RabbitMQ" width="18" /> RabbitMQ
 
 - [RabbitMQ Secrets Engine Repro](secrets-rabbitmq-db/rabbitmq-secrets-engine-repro.md)
 	- Simple RabbitMQ + Vault secrets engine runbook for dynamic credential issuance and lease revocation validation.
 	- Assumes an already-operational Vault cluster in Kubernetes and uses a local RabbitMQ container for testing.
 
-#### AWS
+#### <img src="https://cdn.simpleicons.org/amazonaws" alt="AWS" width="18" /> AWS
 
 - [AWS Secrets Engine Upgrade Findings KB](secrets-aws/aws-secrets-engine-upgrade-findings-kb.md)
 	- Discusses real-life errors faced by enterprise customers found in v1.19.x for `sts_endpoint`, `iam_endpoint`, and rotation schedule/window(s).
 
-#### KV
+#### <img src="https://cdn.simpleicons.org/vault" alt="Vault" width="18" /> KV
 
 - [KV v1 Secret Recovery Runbook](secrets-kv/kv-v1-secret-recovery-runbook.md)
 	- Step-by-step reproduction for Vault Enterprise secret recovery using a loaded Raft snapshot.
@@ -159,18 +166,18 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Includes a recursive script, dry-run mode, validation checks, and cleanup guidance.
 	- Clarifies when to use replication/snapshots versus manual copy and notes metadata/version-history limitations.
 
-#### TOTP
+#### <img src="https://cdn.simpleicons.org/vault" alt="Vault" width="18" /> TOTP
 
 - [TOTP Secrets Engine Repro](secrets-totp/totp-secrets-engine-repro.md)
 	- Reproduction runbook for the Vault TOTP secrets engine, including setup and validation flow.
 
-#### Snowflake Database
+#### <img src="https://cdn.simpleicons.org/snowflake" alt="Snowflake" width="18" /> Snowflake Database
 
 - [AppRole + Snowflake Database Secrets Engine Repro](secrets-snowflake-db/approle-snowflake-db-reproduction.md)
 	- End-to-end setup for Vault database secrets engine with Snowflake using RSA key-pair authentication and static role rotation.
 	- Covers Snowflake service account creation, AppRole auth configuration, credential rotation verification, and optional SnowSQL connection validation.
 
-#### PostgreSQL Database
+#### <img src="https://cdn.simpleicons.org/postgresql" alt="PostgreSQL" width="18" /> PostgreSQL Database
 
 - [PostgreSQL Database Secrets Engine Repro](secrets-postgresql-db/postgresql-database-secrets-engine-repro.md)
 	- PostgreSQL + Vault database secrets engine setup covering dynamic credentials, static role rotation, and custom password policies.
@@ -237,7 +244,7 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 ### Kubernetes / Platform Behavior
 
-#### Vault Core on Kubernetes
+#### <img src="https://cdn.simpleicons.org/kubernetes" alt="Kubernetes" width="18" /> Vault Core on Kubernetes
 
 - [Liveness Probe KB](kubernetes/liveness-probe-kb.md)
 	- Demonstrates automatic Vault pod recovery when TLS certificates expire, using Kubernetes liveness probes.
@@ -245,13 +252,13 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [Vault Raft Quorum Break and Restore Runbook](kubernetes/vault-raft-quorum-break-and-restore-runbook.md)
 	- Reproduces quorum-loss by scaling a Vault StatefulSet down to one pod, then restores service with single-node raft peer recovery and scale-out validation.
 
-#### Proxy TLS Behavior
+#### <img src="https://cdn.simpleicons.org/nginx" alt="Proxy TLS" width="18" /> Proxy TLS Behavior
 
 - [Vault Proxy TLS Behavior Repro](kubernetes/proxy-tls-behavior/vault-proxy-tls-behavior-repro.md)
 	- Reproduces HTTP client traffic into a local proxy with TLS-only Vault upstream.
 	- Validates that Vault can stay TLS-only while a front proxy handles plaintext listener and HTTPS re-encryption.
 
-#### Vault Secrets Operator (VSO)
+#### <img src="https://cdn.simpleicons.org/vault" alt="Vault" width="18" /> Vault Secrets Operator (VSO)
 
 - [VSO Kubernetes Auth Static and Dynamic Repro](kubernetes/vso-k8s-auth-static-dynamic/vso-k8s-auth-static-dynamic-repro.md)
 	- Reproduces Vault Secrets Operator sync flows for static KV v2 secrets and dynamic database credentials using Vault Kubernetes authentication.
