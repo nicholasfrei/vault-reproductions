@@ -103,7 +103,7 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Demonstrates the fix with `bound_claims_type="glob"` and wildcard `namespace_path` patterns.
 	- Includes case-sensitivity checks, token-claim decoding, and cleanup commands.
 
-#### <img src="https://cdn.simpleicons.org/openldap" alt="OpenLDAP" width="18" /> LDAP
+#### <img src="https://icons.veryicon.com/png/o/business/cloud-desktop/personal-ldap.png" alt="OpenLDAP" width="18" /> LDAP
 
 - [OpenLDAP LDAP Auth Reproduction](auth-ldap/openldap-ldap-auth-repro.md)
 	- End-to-end OpenLDAP + Vault LDAP auth runbook with Docker-hosted LDAP and Kubernetes-hosted Vault.
@@ -123,13 +123,13 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Amazon Linux setup script for Vault Enterprise + JFrog Artifactory secrets plugin registration.
 	- Includes plugin checksum validation and flattened plugin directory layout to avoid execution path errors.
 
-#### <img src="https://cdn.simpleicons.org/openldap" alt="OpenLDAP" width="18" /> LDAP
+#### <img src="https://icons.veryicon.com/png/o/business/cloud-desktop/personal-ldap.png" alt="OpenLDAP" width="18" /> LDAP
 
 - [LDAP Secrets Engine Setup Repro](secrets-ldap/setup-ldap-secrets-engine-repro.md)
 	- OpenLDAP + Vault LDAP secrets engine setup focused on bind account and static-role password rotation timing.
 	- Uses [secrets-ldap/openldap-deployment.yaml](secrets-ldap/openldap-deployment.yaml) as the backing Kubernetes manifest.
 
-#### <img src="https://cdn.simpleicons.org/oracle" alt="Oracle" width="18" /> Oracle Database
+#### <img src="https://icons.veryicon.com/png/o/education-technology/edit-job-operator/oracle-2.png" alt="Oracle" width="18" /> Oracle Database
 
 - [Oracle Database Plugin Setup](secrets-oracle-db/oracle-database-plugin-setup.md)
 	- Rapid Oracle environment setup for testing Vault database plugin behavior with dynamic and static credentials.
@@ -146,7 +146,7 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Simple RabbitMQ + Vault secrets engine runbook for dynamic credential issuance and lease revocation validation.
 	- Assumes an already-operational Vault cluster in Kubernetes and uses a local RabbitMQ container for testing.
 
-#### <img src="https://cdn.simpleicons.org/amazonaws" alt="AWS" width="18" /> AWS
+#### <img src="https://icons.veryicon.com/png/o/application/awesome-common-free-open-source-icon/aws-12.png" alt="AWS" width="18" /> AWS
 
 - [AWS Secrets Engine Upgrade Findings KB](secrets-aws/aws-secrets-engine-upgrade-findings-kb.md)
 	- Discusses real-life errors faced by enterprise customers found in v1.19.x for `sts_endpoint`, `iam_endpoint`, and rotation schedule/window(s).
@@ -258,7 +258,7 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Reproduces HTTP client traffic into a local proxy with TLS-only Vault upstream.
 	- Validates that Vault can stay TLS-only while a front proxy handles plaintext listener and HTTPS re-encryption.
 
-#### <img src="https://cdn.simpleicons.org/vault" alt="Vault" width="18" /> Vault Secrets Operator (VSO)
+#### <img src="https://cdn.simpleicons.org/kubernetes" alt="Vault" width="18" /> Vault Secrets Operator (VSO)
 
 - [VSO Kubernetes Auth Static and Dynamic Repro](kubernetes/vso-k8s-auth-static-dynamic/vso-k8s-auth-static-dynamic-repro.md)
 	- Reproduces Vault Secrets Operator sync flows for static KV v2 secrets and dynamic database credentials using Vault Kubernetes authentication.
