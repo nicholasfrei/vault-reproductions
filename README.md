@@ -4,6 +4,9 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 
 I hope you find this repository helpful in your journey with Vault. 
 
+
+<img src="./images/vault-primary-logo.png" alt="Vault Primary Logo" width="200"/>
+
 ## Start Here
 
 If you are new to this repo, use this quick path:
@@ -35,6 +38,7 @@ Helpful external links:
 	- [Kubernetes / Platform Behavior](#kubernetes--platform-behavior)
 	- [Telemetry](#telemetry)
 	- [System Backend - Vault (sys/)](#system-backend---vault-sys)
+	- [Vault Associate Exam Prep](#vault-associate-exam-prep)
 	- [Vault Professional Exam Prep](#vault-professional-exam-prep)
 - [TODO / Roadmap](#todo--roadmap)
 
