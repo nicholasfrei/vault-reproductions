@@ -284,10 +284,15 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Break-fix KB for understanding and validating Sentinel Endpoint Governing Policies (EGP) and Role Governing Policies (RGP).
 	- Includes practical policy examples, denial signatures, and validation/cleanup commands.
 
+### Vault Associate Exam Prep
+
+- [Vault Associate Exam Guide](vault-associate-cert/vault-associate-exam-guide.md)
+	- Guide covering the Vault Associate Exam: format, rubric, and external resources.
+
 ### Vault Professional Exam Prep
 
 - [Vault Professional Exam Guide](vault-professional-cert/vault-professional-exam-guide.md)
-	- Experience-based guide covering likely question/lab themes, high-value prep strategy, and a roadmap for mock lab runbooks.
+	- Guide covering the Vault Professional Exam: format, rubric, and lab scenarios.
 
 	- [Lab 1: Transit Auto-Unseal and Node Join](vault-professional-cert/lab-01-transit-auto-unseal-and-node-join.md)
 		- Hands-on runbook for configuring a transit-backed auto-unseal flow and joining a node to a cluster.
