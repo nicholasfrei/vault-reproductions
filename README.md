@@ -5,7 +5,7 @@ This repository is a vault (wink) of various scenarios I've worked with during m
 I hope you find this repository helpful in your journey with Vault. 
 
 
-<img src="./images/vault-primary-logo.png" alt="Vault Primary Logo" width="200"/>
+<img src="./images/vault-primary-logo.png" alt="Vault Primary Logo" width="400"/>
 
 ## Start Here
 

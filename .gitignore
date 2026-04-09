@@ -5,3 +5,4 @@ pgp-keys/
 *.der
 .cursor/
 vault.hclic
+.DS_Store
