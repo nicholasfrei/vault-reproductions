@@ -8,7 +8,7 @@ Official exam details:
 
 - Assessment type: multiple choice
 - Duration: 1 hour
-- Price: $70.50 USD (plus local taxes/fees)
+- Price: $70.50 USD (plus taxes)
 - Credential expiration: 2 years
 
 Question style:

@@ -8,6 +8,7 @@ This guide is to be used for preparation for the Vault Professional Exam.
 - 4 hands-on lab scenarios
 - 1 hybrid scenario with a lab and multiple-choice questions
 - 4 hours = total exam time
+- $295 USD (plus taxes)
 
 ## Official Exam Objective Rubric
 
