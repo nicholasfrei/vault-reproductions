@@ -284,6 +284,14 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 ### System Backend - Vault (sys/)
 
+- [Vault sys/raw Endpoint KB](sys-raw/sys-raw-kb.md)
+	- KB for working with Vault's raw storage endpoint safely and understanding when it is appropriate to use it.
+	- Includes background on `raw_storage_endpoint`, example raw reads, and cautions about bypassing normal validation.
+
+- [Vault sys/raw Inspector Script](sys-raw/sys-raw-inspector.sh)
+	- Bash utility for walking logical/auth storage under `/sys/raw` and exporting an ASCII tree.
+	- Includes recursive search mode for locating UUIDs or other strings inside raw storage responses without using Python.
+
 - [Sentinel EGP and RGP Governing Policies KB](sys-policies/sentinel-egp-rgp-governing-policies-kb.md)
 	- Break-fix KB for understanding and validating Sentinel Endpoint Governing Policies (EGP) and Role Governing Policies (RGP).
 	- Includes practical policy examples, denial signatures, and validation/cleanup commands.

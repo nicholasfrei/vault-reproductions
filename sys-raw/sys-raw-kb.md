@@ -121,7 +121,32 @@ path "identity/oidc/provider/+/authorize" {\
 }
 ```
 
+## sys/raw Utility Script
 
+There is a utility script at `sys-raw/sys-raw-inspector.sh` for two common support tasks:
+
+1. Printing an ASCII tree of mounted logical and auth storage by resolving mount UUIDs from `core/mounts` and `core/auth`.
+2. Recursively searching raw storage responses for a UUID or other string under a chosen starting path.
+
+Example usage:
+
+```bash
+export VAULT_ADDR="https://127.0.0.1:8200"
+export VAULT_TOKEN="..."
+
+# Walk logical/auth storage and write output to sys-raw/vault_storage_tree.txt
+./sys-raw/sys-raw-inspector.sh tree
+
+# Search under sys/raw/core for a UUID or other substring
+./sys-raw/sys-raw-inspector.sh search --needle "<uuid>" --start-path "sys/raw/core"
+```
+
+Dependencies:
+
+- `vault`
+- `jq`
+
+If you are testing against a lab instance with self-signed TLS, use the normal Vault CLI environment variables such as `VAULT_SKIP_VERIFY=true`, `VAULT_CACERT`, or `VAULT_CAPATH` before running the script.
 
 ## References
 

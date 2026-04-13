@@ -1,0 +1,37 @@
+# Sample sys/raw tree
+
+Vault Storage Inspector: http://127.0.0.1:8200
+============================================================
+
+[ SECRET ENGINES (sys/raw/logical/) ]
+|-- identity/ (type=identity, uuid=<UUID>)
+|   |-- oidc_provider/
+|   |   |-- assignment/
+|   |   |   `-- allow_all
+|   |   `-- provider/
+|   |       `-- default
+|   `-- oidc_tokens/
+|       |-- named_keys/
+|       |   `-- default
+|       `-- public_keys/
+|           |-- <UUID>
+|           `-- <UUID>
+|-- kv-v2-lifecycle/ (type=kv, uuid=<UUID>)
+|   `-- <UUID>/
+|       |-- archive/
+|       |   `-- metadata
+|       |-- metadata/
+|       |   |-- <UUID>
+|       |   `-- <UUID/>
+|       |       `-- <UUID>
+|       |-- policy/
+|       |   `-- metadata
+|       |-- salt
+|       |-- upgrading
+|       `-- versions/
+|           |-- 795/
+|           |   `-- <UUID>
+|           `-- 880/
+|               `-- <UUID>
+
+[ AUTH METHODS (sys/raw/auth/) ]
