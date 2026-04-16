@@ -1,0 +1,33 @@
+global:
+  enabled: false
+  externalVaultAddr: "https://vault-1-active.vault-1.svc.cluster.local:8200"
+
+server:
+  enabled: false
+
+injector:
+  enabled: false
+
+csi:
+  enabled: true
+
+  volumes:
+    - name: vault-ca
+      secret:
+        secretName: vault-ca-bundle
+
+  volumeMounts:
+    - name: vault-ca
+      mountPath: /vault/vault-tls
+      readOnly: true
+
+  # This configures the CSI provider container itself.
+  extraArgs:
+    - --vault-tls-ca-cert=/vault/vault-tls/vault.ca
+
+  # This is for the Vault Agent sidecar for the CSI provider.
+  # Point it at the same CA bundle.
+  agent:
+    enabled: true
+    extraArgs:
+      - -ca-cert=/vault/vault-tls/vault.ca

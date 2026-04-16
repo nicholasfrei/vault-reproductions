@@ -260,6 +260,12 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [Vault Raft Quorum Break and Restore Runbook](kubernetes/vault-raft-quorum-break-and-restore-runbook.md)
 	- Reproduces quorum-loss by scaling a Vault StatefulSet down to one pod, then restores service with single-node raft peer recovery and scale-out validation.
 
+#### <img src="https://cdn.simpleicons.org/kubernetes" alt="CSI" width="18" /> Vault CSI Provider
+
+- [Vault CSI Provider TLS CA Bundle Runbook](vault-csi-provider/vault-csi-provider-tls-ca-bundle-runbook.md)
+	- Reproduces and fixes CSI login failures caused by an untrusted Vault TLS issuer.
+	- Shows how to mount the CA bundle into both the CSI provider and the Vault Agent sidecar, then align `SecretProviderClass` with `vaultCACertPath`.
+
 #### <img src="https://cdn.simpleicons.org/nginx" alt="Proxy TLS" width="18" /> Proxy TLS Behavior
 
 - [Vault Proxy TLS Behavior Repro](kubernetes/proxy-tls-behavior/vault-proxy-tls-behavior-repro.md)
