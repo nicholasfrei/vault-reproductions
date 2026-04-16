@@ -3,8 +3,8 @@
 This reproduction demonstrates a UI bug/regression in Vault spanning versions `1.20.7` through `1.20.10` and `1.21.5` where the `check-out` context action is missing from the Web UI for an LDAP Library Set. The issue prevents properly scoped users from initiating a checkout via the browser GUI. It acts normally in `1.20.4` and in `2.0.0`.
 
 ## Impacted Versions
-- 1.20.7 - 1.20.10
-- 1.21.5
+- 1.20.7 - 1.20.10+
+- 1.21.5+
 
 ## Working Versions
 - 1.20.4
@@ -116,12 +116,27 @@ Using the newly provisioned token, log into the Vault UI and navigate to the mou
 
 Observe the allowed capabilities and actionable buttons inside the user checkout screen as presented below.
 
-### Vault 1.20.4 & 2.0.0 (Working Properly)
+### Vault 1.20.4 & 2.0.0 (Working Version)
 In the earlier baseline version, the user clearly sees the actionable `check-out` function within the Library Set detail UI.
 
 ![Vault 1.20.4 Library Checkout View](./images/20260416-1.20.4.png)
 
-### Vault 1.21.5 (Bug Introduced / Reproducible)
-In intermediate patch sets bridging `1.20.7-1.20.10` and `1.21.5`, the UI incorrectly filters the permissions, failing to render the `check-out` options, thus obscuring the functionality entirely from the browser view.
+#### Vault 1.20.4 Developer Tools View
+
+<p align="center">
+    <img src="./images/20260416-1.20.4-dev-console.png" alt="Vault 1.20.4 developer tools view 1" width="48%" />
+    <img src="./images/20260416-1.20.4-dev-console(1).png" alt="Vault 1.20.4 developer tools view 2" width="48%" />
+</p>
+
+### Vault 1.21.5 (Impacted Version) 
+In `1.20.7-1.20.10+` and `1.21.5+`, the UI incorrectly filters the permissions, failing to render the `check-out` option, thus obscuring the functionality entirely from the browser view.
 
 ![Vault 1.21.5 Missing Capability View](./images/20260416-1.21.5.png)
+
+#### Vault 1.20.7 Developer Tools View
+
+<p align="center">
+    <img src="./images/20260416-1.20.7-dev-console.png" alt="Vault 1.20.7 developer tools view 1" width="32%" />
+    <img src="./images/20260416-1.20.7-dev-console(1).png" alt="Vault 1.20.7 developer tools view 2" width="32%" />
+    <img src="./images/20260416-1.20.7-dev-console(2).png" alt="Vault 1.20.7 developer tools view 3" width="32%" />
+</p>
