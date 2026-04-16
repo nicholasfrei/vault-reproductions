@@ -133,6 +133,10 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- OpenLDAP + Vault LDAP secrets engine setup focused on bind account and static-role password rotation timing.
 	- Uses [secrets-ldap/openldap-deployment.yaml](secrets-ldap/openldap-deployment.yaml) as the backing Kubernetes manifest.
 
+- [LDAP UI Capabilities Self Bug Repro](secrets-ldap/ldap-ui-capabilities-self-bug.md)
+	- Reproduces a Vault UI regression where the LDAP library set `check-out` action is visible in `1.20.4`, missing in `1.20.7` through `1.20.10` and `1.21.5`, and restored in `2.0.0`.
+	- Includes OpenLDAP container setup, scoped policy creation, UI navigation steps, and version-specific screenshots.
+
 #### <img src="https://icons.veryicon.com/png/o/education-technology/edit-job-operator/oracle-2.png" alt="Oracle" width="18" /> Oracle Database
 
 - [Oracle Database Plugin Setup](secrets-oracle-db/oracle-database-plugin-setup.md)
