@@ -33,6 +33,7 @@ Helpful external links:
 	- [Replication](#replication)
 	- [Vault MCP Server](#vault-mcp-server)
 	- [Vault Setup](#vault-setup)
+	- [Vault Policies](#vault-policies)
 	- [Seal / Unseal](#seal--unseal)
 	- [Linux / Platform Behavior](#linux--platform-behavior)
 	- [Kubernetes / Platform Behavior](#kubernetes--platform-behavior)
@@ -227,6 +228,15 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [Vault Sandbox Cleanup Script](setup/cleanup.sh)
 	- Cleans up sandbox state between runs: uninstalls the Vault Helm release, deletes the `vault` namespace, deletes the Minikube `vault` profile, and removes `setup/init.json`.
 
+### Vault Policies
+
+- [Sentinel EGP and RGP Governing Policies KB](sys-policies/sentinel-egp-rgp-governing-policies-kb.md)
+	- Break-fix KB for understanding and validating Sentinel Endpoint Governing Policies (EGP) and Role Governing Policies (RGP).
+	- Includes practical policy examples, denial signatures, and validation/cleanup commands.
+- [Priority Matching in ACL Policies KB](sys-policies/priority-matching-policies.md)
+	- Actionable KB explaining how Vault determines the winning path when multiple policies match a request.
+	- Covers capability union vs. exact-match priority rules, namespace expansion, and common wild-card pitfalls.
+
 ### Seal / Unseal
 
 - [Transit Auto-Unseal Runbook](seal-transit/transit-auto-unseal-runbook.md)
@@ -301,10 +311,6 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [Vault sys/raw Inspector Script](sys-raw/sys-raw-inspector.sh)
 	- Bash utility for walking logical/auth storage under `/sys/raw` and exporting an ASCII tree.
 	- Includes recursive search mode for locating UUIDs or other strings inside raw storage responses without using Python.
-
-- [Sentinel EGP and RGP Governing Policies KB](sys-policies/sentinel-egp-rgp-governing-policies-kb.md)
-	- Break-fix KB for understanding and validating Sentinel Endpoint Governing Policies (EGP) and Role Governing Policies (RGP).
-	- Includes practical policy examples, denial signatures, and validation/cleanup commands.
 
 ### Vault Associate Exam Prep
 
