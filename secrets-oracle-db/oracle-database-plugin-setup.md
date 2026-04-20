@@ -133,6 +133,17 @@ vault plugin register \
   oracle-database-plugin
 ```
 
+For non-Enterprise plugins, you can register the plugin with the SHA256 checksum. This is the typical flow when the plugin binary is managed locally in the plugin directory.
+
+```bash
+SHA=$(sha256sum /path/to/plugin | awk '{print $1}')
+
+vault plugin register \
+  -sha256="$SHA" \
+  database \
+  oracle-database-plugin
+```
+
 ### 3. Create Password Policies
 
 ```bash
