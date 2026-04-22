@@ -2,6 +2,12 @@
 
 This runbook is intended to reproduce an integration with Red Hat Directory Server (RHDS) and the Vault LDAP secrets engine. The reproduction uses the open source 389 Directory Server (389ds) image which is functionally similar for testing purposes (and free).
 
+Version Mapping:
+
+    RHDS 12 → 389-ds 2.0.x
+    RHDS 11 → 389-ds 1.4.x
+    RHDS 10 → 389-ds 1.3.x
+
 ## Goal
 
 - See compatibility with LDAP secrets engine & 389ds
