@@ -120,6 +120,9 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Covers token role failures where requested token policies are not a subset of `allowed_policies` or `allowed_policies_glob`.
 	- Clarifies that token roles support glob patterns (not regex) and includes practical examples.
 
+- [Generate a New Root Token Using Unseal Keys Runbook](auth-token/generate-root-token-from-unseal-keys-runbook.md)
+	- Step-by-step runbook for generating a new Vault root token when the original has been lost, using existing Shamir unseal key shares.
+
 ### Secrets Engines
 
 #### <img src="https://cdn.simpleicons.org/jfrog" alt="JFrog" width="18" /> Artifactory
