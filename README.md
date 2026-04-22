@@ -138,6 +138,10 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Reproduces a Vault UI regression where the LDAP library set `check-out` action is visible in `1.20.4`, missing in `1.20.7` through `1.20.10` and `1.21.5`, and restored in `2.0.0`.
 	- Includes OpenLDAP container setup, scoped policy creation, UI navigation steps, and version-specific screenshots.
 
+- [RHDS + Vault LDAP Secrets Engine Reproduction](secrets-ldap/red-hat-directory-server/rhds-ldap-integration-repro.md)
+	- End-to-end reproduction using 389 Directory Server (open source RHDS equivalent) with the Vault LDAP secrets engine on Vault 1.16.7.
+	- Covers static-role creation for 10 pre-existing LDAP users, automatic and manual `rotate-role` validation, and `rotate-root` bind-account rotation.
+
 #### <img src="https://icons.veryicon.com/png/o/education-technology/edit-job-operator/oracle-2.png" alt="Oracle" width="18" /> Oracle Database
 
 - [Oracle Database Plugin Setup](secrets-oracle-db/oracle-database-plugin-setup.md)
