@@ -1,0 +1,123 @@
+dn: ou=people,dc=example,dc=org
+objectClass: top
+objectClass: organizationalUnit
+ou: people
+aci: (targetattr="*")(version 3.0; acl "Allow vault-svc to read managed users"; allow (read,search,compare)(userdn="ldap:///uid=vault-svc,ou=svc,dc=example,dc=org");)
+aci: (targetattr="userPassword")(version 3.0; acl "Allow vault-svc to rotate managed user passwords"; allow (read,search,compare,write)(userdn="ldap:///uid=vault-svc,ou=svc,dc=example,dc=org");)
+
+dn: ou=svc,dc=example,dc=org
+objectClass: top
+objectClass: organizationalUnit
+ou: svc
+aci: (targetfilter="(uid=vault-svc)")(targetattr="*")(version 3.0; acl "Allow vault-svc to read its own service account entry"; allow (read,search,compare)(userdn="ldap:///uid=vault-svc,ou=svc,dc=example,dc=org");)
+aci: (targetfilter="(uid=vault-svc)")(targetattr="userPassword")(version 3.0; acl "Allow vault-svc to rotate its own password"; allow (read,search,compare,write)(userdn="ldap:///uid=vault-svc,ou=svc,dc=example,dc=org");)
+
+dn: uid=vault-svc,ou=svc,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: vault-svc
+sn: vault-svc
+uid: vault-svc
+userPassword: VaultSvcInitialPass1
+
+dn: uid=app01,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: app01
+sn: app01
+uid: app01
+userPassword: App01InitialPass1
+
+dn: uid=app02,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: app02
+sn: app02
+uid: app02
+userPassword: App02InitialPass1
+
+dn: uid=app03,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: app03
+sn: app03
+uid: app03
+userPassword: App03InitialPass1
+
+dn: uid=app04,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: app04
+sn: app04
+uid: app04
+userPassword: App04InitialPass1
+
+dn: uid=app05,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: app05
+sn: app05
+uid: app05
+userPassword: App05InitialPass1
+
+dn: uid=app06,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: app06
+sn: app06
+uid: app06
+userPassword: App06InitialPass1
+
+dn: uid=app07,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: app07
+sn: app07
+uid: app07
+userPassword: App07InitialPass1
+
+dn: uid=app08,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: app08
+sn: app08
+uid: app08
+userPassword: App08InitialPass1
+
+dn: uid=app09,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: app09
+sn: app09
+uid: app09
+userPassword: App09InitialPass1
+
+dn: uid=app10,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: app10
+sn: app10
+uid: app10
+userPassword: App10InitialPass1
