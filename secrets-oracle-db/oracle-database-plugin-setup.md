@@ -14,19 +14,24 @@ This reproduction provides a complete setup for testing Vault's Oracle Database 
 
 ### 1. Download and Install Vault
 
-You can also add this step to the startup script for the EC2 instance to automate the setup process.
+You can also add this step to the startup script for the EC2 instance to automate the setup process [docs](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html).
 
 ```bash
+#!/bin/bash
+
 export VAULT_LICENSE="<your-license-key>"
 export VAULT_VERSION="1.20.2+ent"
 export VAULT_ADDR="http://127.0.0.1:8200"
+export VAULT_TOKEN="root"
 
 wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip
 unzip vault_${VAULT_VERSION}_linux_amd64.zip
 sudo mv vault /usr/local/bin/
 vault --version
 
-vault server -dev -dev-root-token-id="root" 2>&1
+sudo vault server -dev -dev-root-token-id="root" -dev-plugin-dir=/etc/vault.d/plugins > /var/log/vault.log 2>&1 &
+
+until vault status > /dev/null 2>&1; do sleep 1; done
 ```
 
 ### 2. Install Docker and Create Oracle Container
