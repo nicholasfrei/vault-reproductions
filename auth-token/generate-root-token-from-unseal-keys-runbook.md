@@ -118,6 +118,31 @@ Confirm the output shows:
 
 ---
 
+## Checking Status of an In-Progress Attempt
+
+To inspect the current state of a generate-root operation (e.g., to see how many key shares have been submitted, or whether the process is complete), query the API directly:
+
+```bash
+vault read sys/generate-root/attempt
+```
+
+Example output:
+
+```
+Key            Value
+---            -----
+complete       false
+nonce          <nonce-value>
+otp_length     26
+progress       1
+required       3
+started        true
+```
+
+This is useful when multiple operators are submitting shares and you want to confirm current progress without submitting another share.
+
+---
+
 ## Cancelling an In-Progress Attempt
 
 If you need to cancel an incomplete generate-root operation:
