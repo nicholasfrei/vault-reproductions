@@ -39,6 +39,7 @@ Helpful external links:
 	- [Kubernetes / Platform Behavior](#kubernetes--platform-behavior)
 	- [Telemetry](#telemetry)
 	- [System Backend - Vault (sys/)](#system-backend---vault-sys)
+	- [Known Bugs & Regressions](#known-bugs--regressions)
 	- [Vault Associate Exam Prep](#vault-associate-exam-prep)
 	- [Vault Professional Exam Prep](#vault-professional-exam-prep)
 - [TODO / Roadmap](#todo--roadmap)
@@ -261,6 +262,11 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Single-node Azure Ubuntu 22.04 VM setup for Vault Enterprise with `azurekeyvault` seal and `raft` storage.
 	- Covers App Registration creation, client secret generation, Key Vault Crypto User role assignment, and seal stanza configuration.
 
+- [Azure Key Vault Auto-Unseal: US Gov Cloud Bug (`go-kms-wrapping` ≤ v2.0.14)](seal-azure/azurekeyvault-auto-unseal-gov-cloud.md)
+	- Bug in `go-kms-wrapping` where the Azure AD authentication endpoint is hard-coded to public cloud, causing Vault startup failures for US Government Cloud tenants. Filed as [VAULT-44389](https://hashicorp.atlassian.net/browse/VAULT-44389).
+	- Covers two independent issues: an invalid `environment` config value and a hard-coded auth endpoint; both affect US Government Cloud tenants.
+	- Affected: all Vault versions using `go-kms-wrapping/wrappers/azurekeyvault/v2` ≤ v2.0.14; workarounds available.
+
 ### Linux / Platform Behavior
 
 - [Vault Logrotate KB](linux/vault-logrotate-kb.md)
@@ -318,6 +324,21 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [Vault sys/raw Inspector Script](sys-raw/sys-raw-inspector.sh)
 	- Bash utility for walking logical/auth storage under `/sys/raw` and exporting an ASCII tree.
 	- Includes recursive search mode for locating UUIDs or other strings inside raw storage responses without using Python.
+
+### Known Bugs & Regressions
+
+- [Azure Key Vault Auto-Unseal: US Gov Cloud Bug (`go-kms-wrapping` ≤ v2.0.14)](seal-azure/azurekeyvault-auto-unseal-gov-cloud.md)
+	- Bug in `go-kms-wrapping` where the Azure AD authentication endpoint is hard-coded to public cloud, causing Vault startup failures for US Government Cloud tenants. Filed as [VAULT-44389](https://hashicorp.atlassian.net/browse/VAULT-44389).
+	- Covers two independent issues: an invalid `environment` config value and a hard-coded auth endpoint; both affect US Government Cloud tenants.
+	- Affected: all Vault versions using `go-kms-wrapping/wrappers/azurekeyvault/v2` ≤ v2.0.14; workarounds available.
+
+- [AWS Secrets Engine Upgrade Findings (`1.19.1` → `1.19.9/1.19.10`)](secrets-aws/aws-secrets-engine-upgrade-findings-kb.md)
+	- Multiple bugs introduced and inadvertently reintroduced across Vault `1.19.x`: STS client initialization failures, root config write timeouts, IAM signature/region failures, and `rotation_schedule`/window regressions in `1.19.9`.
+	- Impacted large enterprise customers across multiple support tickets.
+
+- [LDAP Secrets Engine UI `check-out` Regression](secrets-ldap/ldap-ui-capabilities-self-bug.md)
+	- Vault UI regression in `1.20.7`–`1.20.10` and `1.21.5` where the LDAP Library Set `check-out` action disappears from the browser GUI for scoped users.
+	- Restored in `2.0.0`; includes version-specific screenshots and a runnable repro.
 
 ### Vault Associate Exam Prep
 
