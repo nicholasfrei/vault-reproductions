@@ -5,6 +5,8 @@ This reproduction provides a complete setup for testing Vault's Oracle Database 
 ## Prerequisites
 
 - AWS EC2 instance (Amazon Linux 2 or later recommended)
+  - Instance Type: t2.medium or larger (for better performance with Oracle and Vault)
+  - Storage: At least 30GB EBS volume 
 - Vault Enterprise license
 - Internet connectivity for downloading dependencies
 
@@ -12,11 +14,19 @@ This reproduction provides a complete setup for testing Vault's Oracle Database 
 
 ### 1. Download and Install Vault
 
+You can also add this step to the startup script for the EC2 instance to automate the setup process.
+
 ```bash
-wget https://releases.hashicorp.com/vault/1.20.2+ent/vault_1.20.2+ent_linux_amd64.zip
-unzip vault_1.20.2+ent_linux_amd64.zip
+export VAULT_LICENSE="<your-license-key>"
+export VAULT_VERSION="1.20.2+ent"
+export VAULT_ADDR="http://127.0.0.1:8200"
+
+wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip
+unzip vault_${VAULT_VERSION}_linux_amd64.zip
 sudo mv vault /usr/local/bin/
 vault --version
+
+vault server -dev -dev-root-token-id="root" 2>&1
 ```
 
 ### 2. Install Docker and Create Oracle Container
@@ -31,10 +41,13 @@ sudo usermod -aG docker $(whoami)
 **Note**: Log out and back in for group changes to take effect.
 
 ```bash
-docker run -d --name oracle-db -p 1521:1521 -e ORACLE_PWD=admin container-registry.oracle.com/database/express:21.3.0-xe
+sudo docker run -d --name oracle-db -p 1521:1521 -e ORACLE_PWD=admin container-registry.oracle.com/database/express:21.3.0-xe
 
 # Monitor container startup (wait until "DATABASE IS READY TO USE" appears)
 docker logs -f oracle-db
+
+# Check status of the container
+docker ps --filter "name=oracle-db"
 ```
 
 ### 3. Configure Oracle Database User
@@ -65,11 +78,15 @@ exit;
 ### 1. Install Oracle Instant Client Dependencies
 
 ```bash
-# Download Oracle SDK
-wget https://download.oracle.com/otn_software/linux/instantclient/1928000/instantclient-sdk-linux.x64-19.28.0.0.0dbru.zip
-unzip instantclient-sdk-linux.x64-19.28.0.0.0dbru.zip
+# Download Oracle Instant Client Basic (provides libclntsh.so.19.1 runtime library)
+wget https://download.oracle.com/otn_software/linux/instantclient/1928000/instantclient-basic-linux.x64-19.28.0.0.0dbru.zip
+unzip instantclient-basic-linux.x64-19.28.0.0.0dbru.zip
 sudo mkdir -p /opt/oracle
 sudo mv instantclient_19_28 /opt/oracle/
+
+# Download Oracle SDK (provides header files; extract into the same directory)
+wget https://download.oracle.com/otn_software/linux/instantclient/1928000/instantclient-sdk-linux.x64-19.28.0.0.0dbru.zip
+sudo unzip instantclient-sdk-linux.x64-19.28.0.0.0dbru.zip -d /opt/oracle/
 
 # Configure library path
 echo /opt/oracle/instantclient_19_28 | sudo tee /etc/ld.so.conf.d/oracle-instantclient.conf
@@ -100,28 +117,16 @@ sudo mv /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/vault
 # Set permissions
 sudo chmod +x /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/oracle-database-plugin
 sudo chown ec2-user:ec2-user -R /etc/vault.d/plugins/
+```
 
-# Verify dependencies
+To verify the plugin binary and its dependencies are correctly installed:
+```
 ldd /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/oracle-database-plugin
 ```
 
 ## Vault Configuration
 
-### 1. Start Vault Server
-
-```bash
-export VAULT_LICENSE="<your-license-key>"
-vault server -dev -dev-plugin-dir=/etc/vault.d/plugins
-```
-
-In a new terminal:
-
-```bash
-export VAULT_ADDR='http://127.0.0.1:8200'
-export VAULT_TOKEN='<your-root-token>'
-```
-
-### 2. Register Plugin and Enable Database Secrets Engine
+### 1. Register Plugin and Enable Database Secrets Engine
 
 ```bash
 vault secrets enable database
@@ -144,7 +149,38 @@ vault plugin register \
   oracle-database-plugin
 ```
 
-### 3. Create Password Policies
+To deregister the plugin:
+
+```bash
+vault plugin deregister \
+  -version="0.12.3+ent" \
+  database \
+  oracle-database-plugin
+```
+
+To verify plugin registration details:
+
+```bash
+vault plugin info -version="0.12.3+ent" database oracle-database-plugin
+```
+
+Example output:
+
+```
+Key                   Value
+---                   -----
+args                  []
+builtin               false
+command               oracle-database-plugin_0.12.3+ent_linux_amd64/oracle-database-plugin
+deprecation_status    n/a
+name                  oracle-database-plugin
+oci_image             n/a
+runtime               n/a
+sha256                eef0864b88e6bf99044fb44b15905604d6f04a6289029bb4d2ed91de8da5f776
+version               v0.12.3+ent
+```
+
+### 2. Create Password Policies
 
 ```bash
 mkdir -p vault
@@ -187,7 +223,7 @@ vault write sys/policies/password/oracle-10char-nospecial policy=@oracle-10char-
 vault list sys/policies/password
 ```
 
-### 4. Configure Database Connections
+### 3. Configure Database Connections
 
 ```bash
 vault write database/config/oracle-8 \
