@@ -336,7 +336,7 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Multiple bugs introduced and inadvertently reintroduced across Vault `1.19.x`: STS client initialization failures, root config write timeouts, IAM signature/region failures, and `rotation_schedule`/window regressions in `1.19.9`.
 	- Impacted large enterprise customers across multiple support tickets.
 
-- [LDAP Secrets Engine UI `check-out` Regression](secrets-ldap/ldap-ui-capabilities-self-bug.md)
+- [LDAP Secrets Engine UI `check-out` Regression in `1.20.7`–`1.20.10` and `1.21.5`](secrets-ldap/ldap-ui-capabilities-self-bug.md)
 	- Vault UI regression in `1.20.7`–`1.20.10` and `1.21.5` where the LDAP Library Set `check-out` action disappears from the browser GUI for scoped users.
 	- Restored in `2.0.0`; includes version-specific screenshots and a runnable repro.
 
