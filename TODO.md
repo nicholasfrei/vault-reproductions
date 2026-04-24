@@ -24,6 +24,7 @@
 - **Leases**
   - Vault lease lifecycle and cleanup: orphaned leases, irreconcilable leases, expired but not cleaned up, and how to identify and resolve these issues.
   - Lease Explosion
+- **MongoDB Atlas Plugin Reproduction**
 
 
 - **Golang Custom Plugin Development**
