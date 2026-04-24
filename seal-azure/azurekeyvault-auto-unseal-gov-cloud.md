@@ -1,10 +1,12 @@
 # Azure Auto Unseal: US Government Cloud Bug in `go-kms-wrapping` v2.0.14 and Earlier [Draft]
 
-I worked with a customer who was deploying Vault on AKS in the Azure US Government Cloud and configuring Azure Key Vault Auto Unseal. Vault was failing to start on every attempt. We ended up hitting both of the issues documented here in sequence: first, a startup failure caused by an invalid `environment` config value — the customer had used a string from a different HashiCorp library that doesn't apply to the seal config — and then, after correcting that, a second failure caused by a bug in `go-kms-wrapping` where the Azure authentication endpoint is hard-coded to the public cloud and never updated for Gov Cloud tenants. This document covers both issues, their root causes, and workarounds.
+I worked with a customer who was deploying Vault on AKS in the Azure US Government Cloud and configuring Azure Key Vault Auto Unseal. Vault was failing to start on every attempt. We ended up hitting both of the issues documented here in sequence: first, a startup failure caused by an invalid `environment` config value — the customer had used a string from a different HashiCorp library that doesn't apply to the seal config — and then, after correcting that, a second failure caused by a bug in `go-kms-wrapping` where the Azure authentication endpoint is hard-coded to the public cloud and never updated for Gov Cloud tenants. 
 
-Component: Azure Key Vault Auto Unseal (`seal "azurekeyvault"`) - (also impacts Azure Managed Keys `/sys/managed-keys/azurekeyvault`)
-Severity: High — Vault will not start  
-Affected versions: All Vault versions using `go-kms-wrapping/wrappers/azurekeyvault/v2` ≤ v2.0.14 (no fixed version available as of this writing; use the workarounds below)
+This document covers both issues, their root causes, and workarounds. This has been filed as [VAULT-44389](https://hashicorp.atlassian.net/browse/VAULT-44389).
+
+- Component: Azure Key Vault Auto Unseal (`seal "azurekeyvault"`) - (also impacts Azure Managed Keys `/sys/managed-keys/azurekeyvault`)
+- Severity: High — Vault will not start  
+- Affected versions: All Vault versions using `go-kms-wrapping/wrappers/azurekeyvault/v2` ≤ v2.0.14 (no fixed version available as of this writing; use the workarounds below)
 
 ---
 
