@@ -86,7 +86,7 @@ Internal repo practice material:
 - [secrets-postgresql-db/postgresql-database-secrets-engine-repro.md](../secrets-postgresql-db/postgresql-database-secrets-engine-repro.md) — dynamic secrets, leases, revoke/renew patterns (4a-4c, 5b, 5f)
 - [secrets-rabbitmq-db/rabbitmq-secrets-engine-repro.md](../secrets-rabbitmq-db/rabbitmq-secrets-engine-repro.md) — another dynamic secrets + lease flow (4, 5)
 - [secrets-totp/totp-secrets-engine-repro.md](../secrets-totp/totp-secrets-engine-repro.md) — broader engine familiarity (5a, 5d)
-- [setup/vault-encryption-key-rotation-and-rekey-runbook.md](../setup/vault-encryption-key-rotation-and-rekey-runbook.md) — seal/unseal fundamentals, key rotation/rekey concepts (7a-7c, 8c)
+- [sys-rotate/vault-encryption-key-rotation-and-rekey-runbook.md](../sys-rotate/vault-encryption-key-rotation-and-rekey-runbook.md) — seal/unseal fundamentals, key rotation/rekey concepts (7a-7c, 8c)
 - [seal-awskms/awskms-auto-unseal-runbook.md](../seal-awskms/awskms-auto-unseal-runbook.md) and [seal-azure/azurekeyvault-auto-unseal-runbook.md](../seal-azure/azurekeyvault-auto-unseal-runbook.md) — auto-unseal concepts in practice (7b, 8b-8e)
 - [replication/vault-enterprise-replication-pr-dr-runbook.md](../replication/vault-enterprise-replication-pr-dr-runbook.md) — DR vs performance replication concepts (8d)
 - [kubernetes/vso-k8s-auth-static-dynamic/vso-k8s-auth-static-dynamic-repro.md](../kubernetes/vso-k8s-auth-static-dynamic/vso-k8s-auth-static-dynamic-repro.md) — VSO objective coverage (9b)

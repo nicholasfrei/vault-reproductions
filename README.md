@@ -233,7 +233,7 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [Vault PGP Key Setup Script](setup/setup-pgp-keys-for-vault.sh)
 	- Generates PGP key pairs, copies public keys into the Vault pod, and runs `vault operator init` with PGP-encrypted unseal keys. Targets `vault-0` in namespace `vault` (configurable).
 
-- [Vault Encryption Key Rotation + Rekey Runbook](setup/vault-encryption-key-rotation-and-rekey-runbook.md)
+- [Vault Encryption Key Rotation + Rekey Runbook](sys-rotate/vault-encryption-key-rotation-and-rekey-runbook.md)
 	- Step-by-step runbook for rotating the Vault encryption key term (`sys/rotate`) and rekeying Shamir unseal shares (`vault operator rekey`).
 	- Includes least-privilege policy example, command syntax gotchas, and post-change validation checks.
 
