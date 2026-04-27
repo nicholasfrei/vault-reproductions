@@ -24,14 +24,22 @@ export VAULT_VERSION="1.20.2+ent"
 export VAULT_ADDR="http://127.0.0.1:8200"
 export VAULT_TOKEN="root"
 
+# Persist environment variables for ec2-user SSH sessions
+echo "export VAULT_ADDR=http://127.0.0.1:8200" >> /home/ec2-user/.bashrc
+echo "export VAULT_TOKEN=root" >> /home/ec2-user/.bashrc
+
 wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip
 unzip vault_${VAULT_VERSION}_linux_amd64.zip
 sudo mv vault /usr/local/bin/
 vault --version
 
-sudo vault server -dev -dev-root-token-id="root" -dev-plugin-dir=/etc/vault.d/plugins > /var/log/vault.log 2>&1 &
+# Create plugin directory before starting Vault
+sudo mkdir -p /etc/vault.d/plugins
 
-until vault status > /dev/null 2>&1; do sleep 1; done
+# Use -E to preserve VAULT_LICENSE in the sudo environment
+sudo -E vault server -dev -dev-root-token-id="root" -dev-plugin-dir=/etc/vault.d/plugins > /var/log/vault.log 2>&1 &
+
+until VAULT_ADDR=http://127.0.0.1:8200 vault status > /dev/null 2>&1; do sleep 1; done
 ```
 
 ### 2. Install Docker and Create Oracle Container
