@@ -323,6 +323,9 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 	- Step-by-step runbook for rotating the Vault encryption key term (`sys/rotate`) and rekeying Shamir unseal shares (`vault operator rekey`).
 	- Includes least-privilege policy example, command syntax gotchas, and post-change validation checks.
 
+- [sys/health Best Practices KB](sys-health/sys-health-best-practices-kb.md)
+	- Covers how `sys/health` status codes and query parameters work, including `standbycode`, `performancestandbycode`, `drsecondarycode`, and the boolean `standbyok`/`perfstandbyok` flags.
+
 ### Known Bugs & Regressions
 
 - [Azure Key Vault Auto-Unseal: US Gov Cloud Bug (`go-kms-wrapping` ≤ v2.0.14)](seal-azure/azurekeyvault-auto-unseal-gov-cloud.md)
