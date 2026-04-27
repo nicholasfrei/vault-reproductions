@@ -1,5 +1,13 @@
 # Vault Proxy TLS Behavior Reproduction
 
+## Introduction
+
+This runbook reproduces a proxy + TLS topology used in a real support scenario where clients send HTTP traffic to an internal proxy, and the proxy forwards requests to Vault over HTTPS while Vault remains TLS-only.
+
+To do this, deploy Vault TLS materials (issuer/certificate + Helm TLS values), then deploy an NGINX proxy service in front of Vault. Validate that direct Vault HTTP is rejected, direct Vault HTTPS succeeds, and proxied HTTP requests are successfully re-encrypted upstream to Vault HTTPS.
+
+The outcome confirms this architecture is technically valid for lab testing and serves as a prerequisite transport check before running the CMPv2 PKI integration flow.
+
 ## Objective
 
 Validate this transport pattern before running the CMPv2 integration runbook:

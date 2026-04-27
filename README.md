@@ -153,9 +153,13 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 #### <img src="https://cdn.simpleicons.org/letsencrypt" alt="PKI" width="18" /> PKI (CMPv2)
 
-- [CMPv2 PKI Integration Guide](secrets-pki-cmpv2/cmpv2-pki-integration-guide.md)
+- [CMPv2 PKI Integration Guide](secrets-pki/cmpv2/cmpv2-pki-integration-guide.md)
 	- Markdown-only runbook for Vault PKI CMPv2 integration and proxy behavior validation.
 	- Includes concrete expected output blocks from a successful direct + proxied CMP IR repro.
+
+- [Vault Proxy TLS Behavior Repro](secrets-pki/cmpv2/vault-proxy-tls-behavior-repro.md)
+	- Reproduces HTTP client traffic into a local proxy with TLS-only Vault upstream.
+	- Validates that Vault can stay TLS-only while a front proxy handles plaintext listener and HTTPS re-encryption.
 
 #### <img src="https://cdn.simpleicons.org/rabbitmq" alt="RabbitMQ" width="18" /> RabbitMQ
 
@@ -288,12 +292,6 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [Vault CSI Provider TLS CA Bundle Runbook](vault-csi-provider/vault-csi-provider-tls-ca-bundle-runbook.md)
 	- Reproduces and fixes CSI login failures caused by an untrusted Vault TLS issuer.
 	- Shows how to mount the CA bundle into both the CSI provider and the Vault Agent sidecar, then align `SecretProviderClass` with `vaultCACertPath`.
-
-#### <img src="https://cdn.simpleicons.org/nginx" alt="Proxy TLS" width="18" /> Proxy TLS Behavior
-
-- [Vault Proxy TLS Behavior Repro](secrets-pki/cmpv2/vault-proxy-tls-behavior-repro.md)
-	- Reproduces HTTP client traffic into a local proxy with TLS-only Vault upstream.
-	- Validates that Vault can stay TLS-only while a front proxy handles plaintext listener and HTTPS re-encryption.
 
 #### <img src="https://cdn.simpleicons.org/kubernetes" alt="Vault" width="18" /> Vault Secrets Operator (VSO)
 
