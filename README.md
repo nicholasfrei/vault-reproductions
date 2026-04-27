@@ -291,7 +291,7 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 #### <img src="https://cdn.simpleicons.org/nginx" alt="Proxy TLS" width="18" /> Proxy TLS Behavior
 
-- [Vault Proxy TLS Behavior Repro](kubernetes/proxy-tls-behavior/vault-proxy-tls-behavior-repro.md)
+- [Vault Proxy TLS Behavior Repro](secrets-pki/cmpv2/vault-proxy-tls-behavior-repro.md)
 	- Reproduces HTTP client traffic into a local proxy with TLS-only Vault upstream.
 	- Validates that Vault can stay TLS-only while a front proxy handles plaintext listener and HTTPS re-encryption.
 
