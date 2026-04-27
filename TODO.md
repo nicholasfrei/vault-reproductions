@@ -1,5 +1,9 @@
 # TODO Runbooks / KBs to Add
 
+- AWS ASG Information
+  - Custom health checks and auto scaling 
+- JQ Audit Logs Queries / Helpful Commands
+
 - **Replication (Enterprise)**
   - Region loss simulation and service restoration timeline.
 - **Seal / Unseal**
