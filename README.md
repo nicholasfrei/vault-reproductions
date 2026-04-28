@@ -326,6 +326,9 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 - [sys/health Best Practices KB](sys-health/sys-health-best-practices-kb.md)
 	- Covers how `sys/health` status codes and query parameters work, including `standbycode`, `performancestandbycode`, `drsecondarycode`, and the boolean `standbyok`/`perfstandbyok` flags.
 
+- [AWS Auto Scaling Runbook for Vault `sys/health`](sys-health/aws-asg-sys-health-runbook.md)
+	- Step-by-step AWS CLI runbook to create an ALB target group and Auto Scaling Group using Vault `sys/health` endpoint checks for automated unhealthy-instance replacement.
+
 ### Known Bugs & Regressions
 
 - [Azure Key Vault Auto-Unseal: US Gov Cloud Bug (`go-kms-wrapping` ≤ v2.0.14)](seal-azure/azurekeyvault-auto-unseal-gov-cloud.md)
