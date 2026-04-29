@@ -4,7 +4,7 @@ This reproduction provides a complete setup for testing Vault's Oracle Database 
 
 ## Prerequisites
 
-- AWS EC2 instance (Amazon Linux 2 or later recommended)
+- AWS EC2 instance (Amazon Linux 2023 or later recommended)
   - Instance Type: t2.medium or larger (for better performance with Oracle and Vault)
   - Storage: At least 30GB EBS volume 
 - Vault Enterprise license
@@ -14,7 +14,7 @@ This reproduction provides a complete setup for testing Vault's Oracle Database 
 
 ### 1. Download and Install Vault
 
-You can also add this step to the startup script for the EC2 instance to automate the setup process [docs](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html).
+You can also add this step to the startup script for the EC2 instance to automate the setup process ([AWS docs](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html)).
 
 ```bash
 #!/bin/bash
@@ -44,8 +44,10 @@ until VAULT_ADDR=http://127.0.0.1:8200 vault status > /dev/null 2>&1; do sleep 1
 
 ### 2. Install Docker and Create Oracle Container
 
+Start here if you already have a running Vault server with `plugin_directory` configured.
+
 ```bash
-sudo yum install -y docker
+sudo dnf install -y docker
 sudo systemctl start docker
 sudo systemctl enable docker
 sudo usermod -aG docker $(whoami)
@@ -104,62 +106,64 @@ sudo unzip instantclient-sdk-linux.x64-19.28.0.0.0dbru.zip -d /opt/oracle/
 # Configure library path
 echo /opt/oracle/instantclient_19_28 | sudo tee /etc/ld.so.conf.d/oracle-instantclient.conf
 sudo ldconfig
-sudo dnf install -y libnsl
+sudo dnf install -y libaio libnsl
 ```
 
-### 2. Download and Install Oracle Database Plugin
+The Oracle Instant Client is still required even when Vault downloads the plugin binary for you with `-download=true`.
+
+### 2. Prepare the Vault Plugin Directory
+
+In the Vault config, there is a `plugin_directory` option that specifies where Vault looks for plugin binaries. Please view this [before you start](https://developer.hashicorp.com/vault/docs/plugins/register#before-you-start) section of the external plugin documentation for more details on how to get started.
+
+This reproduction uses the plugin directory `/etc/vault.d/plugins`, which was already configured when the Vault dev server was started above.
 
 ```bash
-# Create plugin directory
 sudo mkdir -p /etc/vault.d/plugins
-
-# Download plugin
-wget https://releases.hashicorp.com/vault-plugin-database-oracle/0.12.3+ent/vault-plugin-database-oracle_0.12.3+ent_linux_amd64.zip
-
-# Extract to versioned folder
-mkdir oracle-database-plugin_0.12.3+ent_linux_amd64
-sudo unzip vault-plugin-database-oracle_0.12.3+ent_linux_amd64.zip -d oracle-database-plugin_0.12.3+ent_linux_amd64
-
-# Move to plugins directory
-sudo mv oracle-database-plugin_0.12.3+ent_linux_amd64 /etc/vault.d/plugins/
-
-# Rename binary
-sudo mv /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/vault-plugin-database-oracle \
-        /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/oracle-database-plugin
-
-# Set permissions
-sudo chmod +x /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/oracle-database-plugin
-sudo chown ec2-user:ec2-user -R /etc/vault.d/plugins/
-```
-
-To verify the plugin binary and its dependencies are correctly installed:
-```
-ldd /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/oracle-database-plugin
+sudo chmod 755 /etc/vault.d/plugins
 ```
 
 ## Vault Configuration
 
-### 1. Register Plugin and Enable Database Secrets Engine
+### 1. Enable the Database Secrets Engine and Register the Plugin
+
+For Vault 1.20.x and newer, the easier path is to let Vault download the plugin from `releases.hashicorp.com`. The user that runs the Vault service must have permission to write to the plugin directory because Vault downloads and extracts the binary there.
 
 ```bash
 vault secrets enable database
 
 vault plugin register \
-  -command="oracle-database-plugin" \
   -version="0.12.3+ent" \
+  -download=true \
   database \
-  oracle-database-plugin
+  vault-plugin-database-oracle
 ```
 
-For non-Enterprise plugins, you can register the plugin with the SHA256 checksum. This is the typical flow when the plugin binary is managed locally in the plugin directory.
+To verify plugin registration details:
 
 ```bash
-SHA=$(sha256sum /path/to/plugin | awk '{print $1}')
+vault plugin info -version="0.12.3+ent" database vault-plugin-database-oracle
+```
 
-vault plugin register \
-  -sha256="$SHA" \
-  database \
-  oracle-database-plugin
+Example output:
+
+```text
+Key                   Value
+---                   -----
+args                  []
+builtin               false
+command               .runtime/vault-plugin-database-oracle_0.12.3+ent_linux_amd64/vault-plugin-database-oracle
+deprecation_status    n/a
+name                  vault-plugin-database-oracle
+oci_image             n/a
+runtime               n/a
+sha256                eef0864b88e6bf99044fb44b15905604d6f04a6289029bb4d2ed91de8da5f776
+version               v0.12.3+ent
+```
+
+To verify the plugin binary and its Oracle client dependencies after the download step:
+
+```bash
+sudo ldd /etc/vault.d/plugins/.runtime/vault-plugin-database-oracle_0.12.3+ent_linux_amd64/vault-plugin-database-oracle
 ```
 
 To deregister the plugin:
@@ -168,29 +172,7 @@ To deregister the plugin:
 vault plugin deregister \
   -version="0.12.3+ent" \
   database \
-  oracle-database-plugin
-```
-
-To verify plugin registration details:
-
-```bash
-vault plugin info -version="0.12.3+ent" database oracle-database-plugin
-```
-
-Example output:
-
-```
-Key                   Value
----                   -----
-args                  []
-builtin               false
-command               oracle-database-plugin_0.12.3+ent_linux_amd64/oracle-database-plugin
-deprecation_status    n/a
-name                  oracle-database-plugin
-oci_image             n/a
-runtime               n/a
-sha256                eef0864b88e6bf99044fb44b15905604d6f04a6289029bb4d2ed91de8da5f776
-version               v0.12.3+ent
+  vault-plugin-database-oracle
 ```
 
 ### 2. Create Password Policies
@@ -240,16 +222,16 @@ vault list sys/policies/password
 
 ```bash
 vault write database/config/oracle-8 \
-    plugin_name=oracle-database-plugin \
-    allowed_roles="*" \
-    password_policy=oracle-8char-nospecial \
-    connection_url="vaultuser/vault@localhost:1521/XEPDB1"
+  plugin_name=vault-plugin-database-oracle \
+  allowed_roles="*" \
+  password_policy=oracle-8char-nospecial \
+  connection_url="vaultuser/vault@localhost:1521/XEPDB1"
 
 vault write database/config/oracle-10 \
-    plugin_name=oracle-database-plugin \
-    allowed_roles="*" \
-    password_policy=oracle-10char-nospecial \
-    connection_url="vaultuser/vault@localhost:1521/XEPDB1"
+  plugin_name=vault-plugin-database-oracle \
+  allowed_roles="*" \
+  password_policy=oracle-10char-nospecial \
+  connection_url="vaultuser/vault@localhost:1521/XEPDB1"
 ```
 
 ## Testing Dynamic Credentials
@@ -351,3 +333,77 @@ docker rm oracle-db
 - Password policies are configured without special characters to comply with Oracle password requirements
 - Two configurations are provided to test different password lengths (8 and 10 characters)
 - Static roles require pre-existing users in the Oracle database
+
+## Appendix: Manual Plugin Installation Details
+
+If you are using a Vault version older than 1.20.x, or if you want to manage the plugin binary yourself instead of using `-download=true`, use the manual flow below.
+
+The published plugin name on `releases.hashicorp.com` is `vault-plugin-database-oracle`. In the manual example below, the extracted binary is renamed to `oracle-database-plugin` for simplicity, and the same name is then used in the `vault plugin register -command=...` step.
+
+### 1. Download and Install the Plugin Manually
+
+```bash
+# Create plugin directory
+sudo mkdir -p /etc/vault.d/plugins
+
+# Download plugin
+wget https://releases.hashicorp.com/vault-plugin-database-oracle/0.12.3+ent/vault-plugin-database-oracle_0.12.3+ent_linux_amd64.zip
+
+# Extract to versioned folder
+mkdir oracle-database-plugin_0.12.3+ent_linux_amd64
+sudo unzip vault-plugin-database-oracle_0.12.3+ent_linux_amd64.zip -d oracle-database-plugin_0.12.3+ent_linux_amd64
+
+# Move to plugins directory
+sudo mv oracle-database-plugin_0.12.3+ent_linux_amd64 /etc/vault.d/plugins/
+
+# Rename binary
+sudo mv /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/vault-plugin-database-oracle \
+        /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/oracle-database-plugin
+
+# Set permissions
+sudo chmod +x /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/oracle-database-plugin
+sudo chown ec2-user:ec2-user -R /etc/vault.d/plugins/
+```
+
+To verify the plugin binary and its dependencies are correctly installed:
+
+```bash
+ldd /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/oracle-database-plugin
+```
+
+### 2. Register the Manually Installed Plugin
+
+```bash
+vault plugin register \
+  -command="oracle-database-plugin" \
+  -version="0.12.3+ent" \
+  database \
+  oracle-database-plugin
+```
+
+If you use the manual registration path above, update the database connection configuration to use `plugin_name=oracle-database-plugin` instead of `plugin_name=vault-plugin-database-oracle`.
+
+For non-Enterprise plugins, you can register the plugin with the SHA256 checksum. This is the typical flow when the plugin binary is managed locally in the plugin directory.
+
+```bash
+SHA=$(sha256sum /path/to/plugin | awk '{print $1}')
+
+vault plugin register \
+  -sha256="$SHA" \
+  database \
+  oracle-database-plugin
+```
+
+## References
+
+- [AWS EC2 user data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html)
+- [Vault external plugin registration](https://developer.hashicorp.com/vault/docs/plugins/register)
+- [Vault external plugin registration prerequisites](https://developer.hashicorp.com/vault/docs/plugins/register#before-you-start)
+- [Vault database secrets engine](https://developer.hashicorp.com/vault/docs/secrets/databases)
+- [Vault Oracle database secrets engine](https://developer.hashicorp.com/vault/docs/secrets/databases/oracle)
+- [Vault database secrets engine API](https://developer.hashicorp.com/vault/api-docs/secret/databases)
+- [Vault Oracle database API](https://developer.hashicorp.com/vault/api-docs/secret/databases/oracle)
+- [Vault plugin management for enterprise plugins](https://developer.hashicorp.com/vault/docs/plugins/plugin-management#enterprise-plugins)
+- [Oracle database plugin releases](https://releases.hashicorp.com/vault-plugin-database-oracle)
+- [Oracle database plugin source repository](https://github.com/hashicorp/vault-plugin-database-oracle)
+- [Vault plugins register/read/update API docs](https://developer.hashicorp.com/vault/api-docs/system/plugins-catalog)
