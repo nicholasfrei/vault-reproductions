@@ -625,6 +625,10 @@ Expected result:
 All in-service ASG instances appear in the target group with state "healthy".
 ```
 
+AWS console reference (steady state):
+
+![Target group with 3 healthy targets](images/sys-health-target-group-01-all-healthy.png)
+
 Retest Vault cluster membership before failure injection.
 
 ```bash
@@ -673,6 +677,20 @@ Expected result:
 ```text
 The stopped-Vault instance transitions to unhealthy in target health, then ASG terminates/replaces it to maintain desired capacity.
 ```
+
+AWS console reference during failure and replacement:
+
+1. Vault failure detected (`2 healthy`, `1 unhealthy`):
+
+![Target group with one unhealthy target after Vault failure](images/sys-health-target-group-02-one-unhealthy.png)
+
+2. Failed target starts deregistration (`draining`):
+
+![Target group with one draining target during deregistration](images/sys-health-target-group-03-old-target-draining.png)
+
+3. Replacement node registers (`initial`) while the old node is still draining (temporary `4 total targets`):
+
+![Target group with one initial target and one draining target during replacement](images/sys-health-target-group-04-replacement-initial.png)
 
 Validate the replacement node before expecting it to pass target health.
 
