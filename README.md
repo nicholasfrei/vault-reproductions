@@ -11,7 +11,7 @@ I hope you find this repository helpful in your journey with Vault.
 
 If you are new to this repo, use this quick path:
 
-1. Pick a category from [Available Docs](#available-docs) based on the issue type (`auth-*`, `secrets-*`, `kubernetes`, `seal-*`, `replication`, etc.).
+1. Pick a category from [Available Docs](#available-docs) based on the issue type (`auth/`, `secrets/`, `kubernetes/`, `seal/`, `sys/`, `replication/`, etc.).
 2. Open the linked runbook/KB and complete the preconditions listed in that file before running commands.
 3. Follow the validation and cleanup steps so your lab stays reproducible between runs.
 
