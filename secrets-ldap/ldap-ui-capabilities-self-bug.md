@@ -1,14 +1,24 @@
 # LDAP Secrets Engine - UI Capabilities Self Bug Reproduction
 
-This reproduction demonstrates a UI bug/regression in Vault spanning versions `1.20.7` through `1.20.10` and `1.21.5` where the `check-out` context action is missing from the Web UI for an LDAP Library Set. The issue prevents properly scoped users from initiating a checkout via the browser GUI. It acts normally in `1.20.4` and in `2.0.0`.
+This reproduction demonstrates a UI bug/regression in Vault affecting versions `1.20.6` through `1.20.10` and `1.21.5`, where the `check-out` context action is missing from the Web UI for an LDAP Library Set. The issue prevents properly scoped users from initiating a checkout via the browser GUI.
 
-## Impacted Versions
-- 1.20.7 - 1.20.10+
-- 1.21.5+
+This bug was introduced in `1.20.6` when the UI was updated to display hierarchical LDAP libraries, which did not include the full hierarchical name in the capabilities check. This was corrected in `1.20.11` and `1.21.6`. `2.0.0` onward is not affected.
 
-## Working Versions
-- 1.20.4
-- 2.0.0
+### Impacted Versions
+- 1.20.6 - 1.20.10
+- 1.21.5
+
+### Working Versions
+- 1.20.5 and earlier
+- 1.20.11+
+- 1.21.6+ 
+- 2.0.0+
+
+### Github & JIRA Links
+- [JIRA - VAULT-44142](https://hashicorp.atlassian.net/browse/VAULT-44142)
+- [PR - 14290 - 1.20.x-ent](https://github.com/hashicorp/vault-enterprise/pull/14290)
+- [PR - 14292 - 1.21.x-ent](https://github.com/hashicorp/vault-enterprise/pull/14292)    
+
 
 ## Environment Setup
 
@@ -129,7 +139,7 @@ In the earlier baseline version, the user clearly sees the actionable `check-out
 </p>
 
 ### Vault 1.21.5 (Impacted Version) 
-In `1.20.7-1.20.10+` and `1.21.5+`, the UI incorrectly filters the permissions, failing to render the `check-out` option, thus obscuring the functionality entirely from the browser view.
+In `1.20.6-1.20.10` and `1.21.5`, the UI incorrectly filters permissions and fails to render the `check-out` option, obscuring the functionality from the browser view.
 
 ![Vault 1.21.5 Missing Capability View](./images/20260416-1.21.5.png)
 
