@@ -16,7 +16,7 @@ This is designed to be close to the Vault Professional exam experience: you will
 - `kubectl` and `vault` CLI installed on your workstation.
 - Vault Enterprise license already applied to both clusters.
 - You have run:
-  - `vault-professional-cert/lab-04-pr-setup.sh`
+  - `certification/vault-professional-cert/lab-04-pr-setup.sh`
     - This script:
       - Initializes each cluster
       - Unseals the nodes

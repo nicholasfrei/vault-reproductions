@@ -81,130 +81,130 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 #### <img src="https://cdn.simpleicons.org/vault" alt="Vault" width="18" /> Userpass
 
-- [Userpass Entity Metadata Dynamic Policy Repro](auth-userpass/userpass-entity-metadata-dynamic-policy-repro.md)
+- [Userpass Entity Metadata Dynamic Policy Repro](auth/userpass/userpass-entity-metadata-dynamic-policy-repro.md)
 	- Local reproduction for dynamic policy templating using entity metadata.
 	- Demonstrates immediate access changes on active tokens when entity metadata changes.
 
-- [Userpass Authentication Setup Script](auth-userpass/userpass-authentication-setup.sh)
+- [Userpass Authentication Setup Script](auth/userpass/userpass-authentication-setup.sh)
 	- Enables userpass auth, creates test users, and validates login/token behavior.
 	- Useful for observing identity handling when many local auth users are created and used.
 	- Includes behavior validation related to entities and aliases.
 
 #### <img src="https://cdn.simpleicons.org/kubernetes" alt="Kubernetes" width="18" /> Kubernetes
 
-- [Kubernetes Auth User Creation and Login Script](auth-kubernetes/create-kubernetes-users-and-login.sh)
+- [Kubernetes Auth User Creation and Login Script](auth/kubernetes/create-kubernetes-users-and-login.sh)
 	- Creates Kubernetes service accounts, configures Vault Kubernetes auth, and tests login flow.
 	- Useful for evaluating how Vault creates and maps identities during Kubernetes auth.
 	- Includes behavior validation related to entities and aliases.
 
 #### <img src="https://cdn.simpleicons.org/jsonwebtokens" alt="JWT" width="18" /> JWT
 
-- [JWT Authentication Setup and Login Script](auth-jwt/jwt-authentication-setup-and-login.sh)
+- [JWT Authentication Setup and Login Script](auth/jwt/jwt-authentication-setup-and-login.sh)
 	- Configures Vault JWT auth with a local RSA key pair and issuer binding.
 	- Creates per-user JWT roles, signs demo JWTs, and validates login for each configured user.
 	- Optionally creates and reads a KV v2 demo secret to confirm post-login policy access.
 
-- [JWT Bound Claims Glob Runbook](auth-jwt/jwt-bound-claims-glob-runbook.md)
+- [JWT Bound Claims Glob Runbook](auth/jwt/jwt-bound-claims-glob-runbook.md)
 	- Reproduces JWT claim validation failures for nested namespace paths when `bound_claims_type` uses exact string matching.
 	- Demonstrates the fix with `bound_claims_type="glob"` and wildcard `namespace_path` patterns.
 	- Includes case-sensitivity checks, token-claim decoding, and cleanup commands.
 
 #### <img src="https://icons.veryicon.com/png/o/business/cloud-desktop/personal-ldap.png" alt="OpenLDAP" width="18" /> LDAP
 
-- [OpenLDAP LDAP Auth Reproduction](auth-ldap/openldap-ldap-auth-repro.md)
+- [OpenLDAP LDAP Auth Reproduction](auth/ldap/openldap-ldap-auth-repro.md)
 	- End-to-end OpenLDAP + Vault LDAP auth runbook with Docker-hosted LDAP and Kubernetes-hosted Vault.
 	- Includes generation of 200 sample users, group mapping tests, and nested-group inheritance behavior checks.
 
 #### <img src="https://cdn.simpleicons.org/vault" alt="Vault" width="18" /> Token
 
-- [Token Role `allowed_policies` vs `allowed_policies_glob` KB](auth-token/token-role-allowed-policies-glob-kb.md)
+- [Token Role `allowed_policies` vs `allowed_policies_glob` KB](auth/token/token-role-allowed-policies-glob-kb.md)
 	- Covers token role failures where requested token policies are not a subset of `allowed_policies` or `allowed_policies_glob`.
 	- Clarifies that token roles support glob patterns (not regex) and includes practical examples.
 
-- [Generate a New Root Token Using Unseal Keys Runbook](auth-token/generate-root-token-from-unseal-keys-runbook.md)
+- [Generate a New Root Token Using Unseal Keys Runbook](auth/token/generate-root-token-from-unseal-keys-runbook.md)
 	- Step-by-step runbook for generating a new Vault root token when the original has been lost, using existing Shamir unseal key shares.
 
 ### Secrets Engines
 
 #### <img src="https://cdn.simpleicons.org/jfrog" alt="JFrog" width="18" /> Artifactory
 
-- [Artifactory Plugin Registration Script](secrets-artifactory/artifactory-plugin-registration.sh)
+- [Artifactory Plugin Registration Script](secrets/artifactory/artifactory-plugin-registration.sh)
 	- Amazon Linux setup script for Vault Enterprise + JFrog Artifactory secrets plugin registration.
 	- Includes plugin checksum validation and flattened plugin directory layout to avoid execution path errors.
 
 #### <img src="https://icons.veryicon.com/png/o/business/cloud-desktop/personal-ldap.png" alt="OpenLDAP" width="18" /> LDAP
 
-- [LDAP Secrets Engine Setup Repro](secrets-ldap/setup-ldap-secrets-engine-repro.md)
+- [LDAP Secrets Engine Setup Repro](secrets/ldap/setup-ldap-secrets-engine-repro.md)
 	- OpenLDAP + Vault LDAP secrets engine setup focused on bind account and static-role password rotation timing.
-	- Uses [secrets-ldap/openldap-deployment.yaml](secrets-ldap/openldap-deployment.yaml) as the backing Kubernetes manifest.
+	- Uses [secrets/ldap/openldap-deployment.yaml](secrets/ldap/openldap-deployment.yaml) as the backing Kubernetes manifest.
 
-- [LDAP UI Capabilities Self Bug Repro](secrets-ldap/ldap-ui-capabilities-self-bug.md)
+- [LDAP UI Capabilities Self Bug Repro](secrets/ldap/ldap-ui-capabilities-self-bug.md)
 	- Reproduces a Vault UI regression where the LDAP library set `check-out` action is visible in `1.20.4`, missing in `1.20.7` through `1.20.10` and `1.21.5`, and restored in `2.0.0`.
 	- Includes OpenLDAP container setup, scoped policy creation, UI navigation steps, and version-specific screenshots.
 
-- [RHDS + Vault LDAP Secrets Engine Reproduction](secrets-ldap/red-hat-directory-server/rhds-ldap-integration-repro.md)
+- [RHDS + Vault LDAP Secrets Engine Reproduction](secrets/ldap/red-hat-directory-server/rhds-ldap-integration-repro.md)
 	- End-to-end reproduction using 389 Directory Server (open source RHDS equivalent) with the Vault LDAP secrets engine on Vault 1.16.7.
 	- Covers static-role creation for 10 pre-existing LDAP users, automatic and manual `rotate-role` validation, and `rotate-root` bind-account rotation.
 
 #### <img src="https://icons.veryicon.com/png/o/education-technology/edit-job-operator/oracle-2.png" alt="Oracle" width="18" /> Oracle Database
 
-- [Oracle Database Plugin Setup](secrets-oracle-db/oracle-database-plugin-setup.md)
+- [Oracle Database Plugin Setup](secrets/database/oracle-db/oracle-database-plugin-setup.md)
 	- Rapid Oracle environment setup for testing Vault database plugin behavior with dynamic and static credentials.
 
 #### <img src="https://cdn.simpleicons.org/letsencrypt" alt="PKI" width="18" /> PKI (CMPv2)
 
-- [CMPv2 PKI Integration Guide](secrets-pki/cmpv2/cmpv2-pki-integration-guide.md)
+- [CMPv2 PKI Integration Guide](secrets/pki/cmpv2/cmpv2-pki-integration-guide.md)
 	- Markdown-only runbook for Vault PKI CMPv2 integration and proxy behavior validation.
 	- Includes concrete expected output blocks from a successful direct + proxied CMP IR repro.
 
-- [Vault Proxy TLS Behavior Repro](secrets-pki/cmpv2/vault-proxy-tls-behavior-repro.md)
+- [Vault Proxy TLS Behavior Repro](secrets/pki/cmpv2/vault-proxy-tls-behavior-repro.md)
 	- Reproduces HTTP client traffic into a local proxy with TLS-only Vault upstream.
 	- Validates that Vault can stay TLS-only while a front proxy handles plaintext listener and HTTPS re-encryption.
 
 #### <img src="https://cdn.simpleicons.org/rabbitmq" alt="RabbitMQ" width="18" /> RabbitMQ
 
-- [RabbitMQ Secrets Engine Repro](secrets-rabbitmq-db/rabbitmq-secrets-engine-repro.md)
+- [RabbitMQ Secrets Engine Repro](secrets/database/rabbitmq-db/rabbitmq-secrets-engine-repro.md)
 	- Simple RabbitMQ + Vault secrets engine runbook for dynamic credential issuance and lease revocation validation.
 	- Assumes an already-operational Vault cluster in Kubernetes and uses a local RabbitMQ container for testing.
 
 #### <img src="https://icons.veryicon.com/png/o/application/awesome-common-free-open-source-icon/aws-12.png" alt="AWS" width="18" /> AWS
 
-- [AWS Secrets Engine Upgrade Findings KB](secrets-aws/aws-secrets-engine-upgrade-findings-kb.md)
+- [AWS Secrets Engine Upgrade Findings KB](secrets/aws/aws-secrets-engine-upgrade-findings-kb.md)
 	- Discusses real-life errors faced by enterprise customers found in v1.19.x for `sts_endpoint`, `iam_endpoint`, and rotation schedule/window(s).
 
 #### <img src="https://cdn.simpleicons.org/vault" alt="Vault" width="18" /> KV
 
-- [KV v1 Secret Recovery Runbook](secrets-kv/kv-v1-secret-recovery-runbook.md)
+- [KV v1 Secret Recovery Runbook](secrets/kv/kv-v1-secret-recovery-runbook.md)
 	- Step-by-step reproduction for Vault Enterprise secret recovery using a loaded Raft snapshot.
 	- Covers secret deletion/overwrite simulation, snapshot load status checks, `vault recover`, and cleanup.
 
-- [KV v2 Soft-Delete, Destroy, Undelete, and Recovery Runbook](secrets-kv/kv-v2-soft-delete-destroy-undelete-recovery-runbook.md)
+- [KV v2 Soft-Delete, Destroy, Undelete, and Recovery Runbook](secrets/kv/kv-v2-soft-delete-destroy-undelete-recovery-runbook.md)
 	- Step-by-step lifecycle validation for KV v2 versioned secrets.
 	- Covers soft-delete, undelete, permanent destroy behavior, optional metadata delete, and cleanup.
 
-- [KV Path Migration Runbook (Same Mount)](secrets-kv/kv-path-migration-runbook.md)
+- [KV Path Migration Runbook (Same Mount)](secrets/kv/kv-path-migration-runbook.md)
 	- Instructions on how to copy a folder subtree and all secrets to a new path within the same KV mount.
 	- Includes a recursive script, dry-run mode, validation checks, and cleanup guidance.
 	- Clarifies when to use replication/snapshots versus manual copy and notes metadata/version-history limitations.
 
 #### <img src="https://cdn.simpleicons.org/vault" alt="Vault" width="18" /> TOTP
 
-- [TOTP Secrets Engine Repro](secrets-totp/totp-secrets-engine-repro.md)
+- [TOTP Secrets Engine Repro](secrets/totp/totp-secrets-engine-repro.md)
 	- Reproduction runbook for the Vault TOTP secrets engine, including setup and validation flow.
 
 #### <img src="https://cdn.simpleicons.org/snowflake" alt="Snowflake" width="18" /> Snowflake Database
 
-- [AppRole + Snowflake Database Secrets Engine Repro](secrets-snowflake-db/approle-snowflake-db-reproduction.md)
+- [AppRole + Snowflake Database Secrets Engine Repro](secrets/database/snowflake-db/approle-snowflake-db-reproduction.md)
 	- End-to-end setup for Vault database secrets engine with Snowflake using RSA key-pair authentication and static role rotation.
 	- Covers Snowflake service account creation, AppRole auth configuration, credential rotation verification, and optional SnowSQL connection validation.
 
 #### <img src="https://cdn.simpleicons.org/postgresql" alt="PostgreSQL" width="18" /> PostgreSQL Database
 
-- [PostgreSQL Database Secrets Engine Repro](secrets-postgresql-db/postgresql-database-secrets-engine-repro.md)
+- [PostgreSQL Database Secrets Engine Repro](secrets/database/postgresql-db/postgresql-database-secrets-engine-repro.md)
 	- PostgreSQL + Vault database secrets engine setup covering dynamic credentials, static role rotation, and custom password policies.
 	- Useful for validating credential lifecycle, lease revocation, and rotation timing behavior.
 
-- [PostgreSQL Static Role Denial of Service Repro](secrets-postgresql-db/postgresql-static-role-denial-of-service-repro.md)
+- [PostgreSQL Static Role Denial of Service Repro](secrets/database/postgresql-db/postgresql-static-role-denial-of-service-repro.md)
 	- Reproduces static role rotation pressure when the backing PostgreSQL target is unavailable or decommissioned.
 	- Useful for incident response drills and understanding cleanup/recovery patterns for stale static roles.
 
@@ -238,31 +238,31 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 ### Vault Policies
 
-- [Sentinel EGP and RGP Governing Policies KB](sys-policies/sentinel-egp-rgp-governing-policies-kb.md)
+- [Sentinel EGP and RGP Governing Policies KB](sys/policies/sentinel-egp-rgp-governing-policies-kb.md)
 	- Break-fix KB for understanding and validating Sentinel Endpoint Governing Policies (EGP) and Role Governing Policies (RGP).
 	- Includes practical policy examples, denial signatures, and validation/cleanup commands.
-- [Priority Matching in ACL Policies KB](sys-policies/priority-matching-policies.md)
+- [Priority Matching in ACL Policies KB](sys/policies/priority-matching-policies.md)
 	- Actionable KB explaining how Vault determines the winning path when multiple policies match a request.
 	- Covers capability union vs. exact-match priority rules, namespace expansion, and common wild-card pitfalls.
 
 ### Seal / Unseal
 
-- [Transit Auto-Unseal Runbook](seal-transit/transit-auto-unseal-runbook.md)
+- [Transit Auto-Unseal Runbook](seal/transit/transit-auto-unseal-runbook.md)
 	- Local reproduction for Vault transit-based auto-unseal using two dev servers (transit + auto-unseal).
 	- Includes a mock HCL config file (`vault-transit-auto-unseal.hcl`) and step-by-step startup, init, restart, and validation flow.
 
-- [KB: Circular Transit Auto-Unseal Dependency (Double Transit)](seal-transit/double-transit-autounseal-dependency-kb.md)
+- [KB: Circular Transit Auto-Unseal Dependency (Double Transit)](seal/transit/double-transit-autounseal-dependency-kb.md)
 	- Documents a support case where two Vault clusters were configured to transit-unseal each other.
 
-- [AWS KMS Auto-Unseal Runbook (EC2 + Vault Enterprise)](seal-awskms/awskms-auto-unseal-runbook.md)
+- [AWS KMS Auto-Unseal Runbook (EC2 + Vault Enterprise)](seal/awskms/awskms-auto-unseal-runbook.md)
 	- Single-node EC2 (Amazon Linux 2023) setup for Vault Enterprise with `awskms` seal and `raft` storage.
 	- Includes license setup, systemd service configuration, restart validation, and cleanup guidance.
 
-- [Azure Key Vault Auto-Unseal Runbook (Linux VM + Vault Enterprise)](seal-azure/azurekeyvault-auto-unseal-runbook.md)
+- [Azure Key Vault Auto-Unseal Runbook (Linux VM + Vault Enterprise)](seal/azure/azurekeyvault-auto-unseal-runbook.md)
 	- Single-node Azure Ubuntu 22.04 VM setup for Vault Enterprise with `azurekeyvault` seal and `raft` storage.
 	- Covers App Registration creation, client secret generation, Key Vault Crypto User role assignment, and seal stanza configuration.
 
-- [Azure Key Vault Auto-Unseal: US Gov Cloud Bug (`go-kms-wrapping` ≤ v2.0.14)](seal-azure/azurekeyvault-auto-unseal-gov-cloud.md)
+- [Azure Key Vault Auto-Unseal: US Gov Cloud Bug (`go-kms-wrapping` ≤ v2.0.14)](seal/azure/azurekeyvault-auto-unseal-gov-cloud.md)
 	- Bug in `go-kms-wrapping` where the Azure AD authentication endpoint is hard-coded to public cloud, causing Vault startup failures for US Government Cloud tenants. Filed as [VAULT-44389](https://hashicorp.atlassian.net/browse/VAULT-44389).
 	- Covers two independent issues: an invalid `environment` config value and a hard-coded auth endpoint; both affect US Government Cloud tenants.
 	- Affected: all Vault versions using `go-kms-wrapping/wrappers/azurekeyvault/v2` ≤ v2.0.14; workarounds available.
@@ -285,7 +285,7 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 #### <img src="https://cdn.simpleicons.org/kubernetes" alt="CSI" width="18" /> Vault CSI Provider
 
-- [Vault CSI Provider TLS CA Bundle Runbook](vault-csi-provider/vault-csi-provider-tls-ca-bundle-runbook.md)
+- [Vault CSI Provider TLS CA Bundle Runbook](kubernetes/vault-csi-provider/vault-csi-provider-tls-ca-bundle-runbook.md)
 	- Reproduces and fixes CSI login failures caused by an untrusted Vault TLS issuer.
 	- Shows how to mount the CA bundle into both the CSI provider and the Vault Agent sidecar, then align `SecretProviderClass` with `vaultCACertPath`.
 
@@ -311,62 +311,65 @@ If you do not use Homebrew, install equivalent packages with your OS package man
 
 ### System Backend - Vault (sys/)
 
-- [Vault sys/raw Endpoint KB](sys-raw/sys-raw-kb.md)
+- [Vault Audit Log JQ Queries KB](sys/audit/vault-audit-jq-queries-kb.md)
+	- Practical `jq` query cookbook for Vault audit logs to identify hot namespaces, busy paths, root usage, failing auth flows, and noisy clients.
+
+- [Vault sys/raw Endpoint KB](sys/raw/sys-raw-kb.md)
 	- KB for working with Vault's raw storage endpoint safely and understanding when it is appropriate to use it.
 	- Includes background on `raw_storage_endpoint`, example raw reads, and cautions about bypassing normal validation.
 
-- [Vault sys/raw Inspector Script](sys-raw/sys-raw-inspector.sh)
+- [Vault sys/raw Inspector Script](sys/raw/sys-raw-inspector.sh)
 	- Bash utility for walking logical/auth storage under `/sys/raw` and exporting an ASCII tree.
 	- Includes recursive search mode for locating UUIDs or other strings inside raw storage responses without using Python.
 
-- [Vault Encryption Key Rotation + Rekey Runbook](sys-rotate/vault-encryption-key-rotation-and-rekey-runbook.md)
+- [Vault Encryption Key Rotation + Rekey Runbook](sys/rotate/vault-encryption-key-rotation-and-rekey-runbook.md)
 	- Step-by-step runbook for rotating the Vault encryption key term (`sys/rotate`) and rekeying Shamir unseal shares (`vault operator rekey`).
 	- Includes least-privilege policy example, command syntax gotchas, and post-change validation checks.
 
-- [sys/health Best Practices KB](sys-health/sys-health-best-practices-kb.md)
+- [sys/health Best Practices KB](sys/health/sys-health-best-practices-kb.md)
 	- Covers how `sys/health` status codes and query parameters work, including `standbycode`, `performancestandbycode`, `drsecondarycode`, and the boolean `standbyok`/`perfstandbyok` flags.
 
-- [AWS Auto Scaling Runbook for Vault `sys/health`](sys-health/aws-asg-sys-health-runbook.md)
+- [AWS Auto Scaling Runbook for Vault `sys/health`](sys/health/aws-asg-sys-health-runbook.md)
 	- Step-by-step AWS CLI runbook to create an ALB target group and Auto Scaling Group using Vault `sys/health` endpoint checks for automated unhealthy-instance replacement.
 
 ### Known Bugs & Regressions
 
-- [Azure Key Vault Auto-Unseal: US Gov Cloud Bug (`go-kms-wrapping` ≤ v2.0.14)](seal-azure/azurekeyvault-auto-unseal-gov-cloud.md)
+- [Azure Key Vault Auto-Unseal: US Gov Cloud Bug (`go-kms-wrapping` ≤ v2.0.14)](seal/azure/azurekeyvault-auto-unseal-gov-cloud.md)
 	- Bug in `go-kms-wrapping` where the Azure AD authentication endpoint is hard-coded to public cloud, causing Vault startup failures for US Government Cloud tenants. Filed as [VAULT-44389](https://hashicorp.atlassian.net/browse/VAULT-44389).
 	- Covers two independent issues: an invalid `environment` config value and a hard-coded auth endpoint; both affect US Government Cloud tenants.
 	- Affected: all Vault versions using `go-kms-wrapping/wrappers/azurekeyvault/v2` ≤ v2.0.14; workarounds available.
 
-- [AWS Secrets Engine Upgrade Findings (`1.19.1` → `1.19.9/1.19.10`)](secrets-aws/aws-secrets-engine-upgrade-findings-kb.md)
+- [AWS Secrets Engine Upgrade Findings (`1.19.1` → `1.19.9/1.19.10`)](secrets/aws/aws-secrets-engine-upgrade-findings-kb.md)
 	- Multiple bugs introduced and inadvertently reintroduced across Vault `1.19.x`: STS client initialization failures, root config write timeouts, IAM signature/region failures, and `rotation_schedule`/window regressions in `1.19.9`.
 	- Impacted large enterprise customers across multiple support tickets.
 
-- [LDAP Secrets Engine UI `check-out` Regression in `1.20.7`–`1.20.10` and `1.21.5`](secrets-ldap/ldap-ui-capabilities-self-bug.md)
+- [LDAP Secrets Engine UI `check-out` Regression in `1.20.7`–`1.20.10` and `1.21.5`](secrets/ldap/ldap-ui-capabilities-self-bug.md)
 	- Vault UI regression in `1.20.7`–`1.20.10` and `1.21.5` where the LDAP Library Set `check-out` action disappears from the browser GUI for scoped users.
 	- Restored in `2.0.0`; includes version-specific screenshots and a runnable repro.
 
 ### Vault Associate Exam Prep
 
-- [Vault Associate Exam Guide](vault-associate-cert/vault-associate-exam-guide.md)
+- [Vault Associate Exam Guide](certification/vault-associate-cert/vault-associate-exam-guide.md)
 	- Guide covering the Vault Associate Exam: format, rubric, and external resources.
 
 ### Vault Professional Exam Prep
 
-- [Vault Professional Exam Guide](vault-professional-cert/vault-professional-exam-guide.md)
+- [Vault Professional Exam Guide](certification/vault-professional-cert/vault-professional-exam-guide.md)
 	- Guide covering the Vault Professional Exam: format, rubric, and lab scenarios.
 
-	- [Lab 1: Transit Auto-Unseal and Node Join](vault-professional-cert/lab-01-transit-auto-unseal-and-node-join.md)
+	- [Lab 1: Transit Auto-Unseal and Node Join](certification/vault-professional-cert/lab-01-transit-auto-unseal-and-node-join.md)
 		- Hands-on runbook for configuring a transit-backed auto-unseal flow and joining a node to a cluster.
 
-	- [Lab 2: AppRole + response wrapping + database secrets engine](vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md)
+	- [Lab 2: AppRole + response wrapping + database secrets engine](certification/vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md)
 		- Hands-on runbook for AppRole login with wrapped `secret_id`, JSON output capture, and PostgreSQL dynamic credentials validation.
 
-	- [Lab 3: Vault Agent + AppRole auto-auth + templating](vault-professional-cert/lab-03-vault-agent-approle-templating.md)
+	- [Lab 3: Vault Agent + AppRole auto-auth + templating](certification/vault-professional-cert/lab-03-vault-agent-approle-templating.md)
 		- Hands-on runbook for configuring Vault Agent with AppRole auto-auth, validating `secret_id` retention, and rendering a template with dynamic KV v2 secrets.
 		
-	- [Lab 4: Performance replication with path filtering](vault-professional-cert/lab-04-pr-replication-path-filtering.md)
+	- [Lab 4: Performance replication with path filtering](certification/vault-professional-cert/lab-04-pr-replication-path-filtering.md)
 		- Practical PR setup and verification flow focused on primary/secondary behavior and path filter validation.
 
-	- [Lab 5: Policies, namespaces, and KV v2 operations](vault-professional-cert/lab-05-policy-kvv2-namespaces.md)
+	- [Lab 5: Policies, namespaces, and KV v2 operations](certification/vault-professional-cert/lab-05-policy-kvv2-namespaces.md)
 		- Traditional runbook to practice namespace-aware login context, policy inheritance boundaries, and KV v2 path precision tests.
 
 

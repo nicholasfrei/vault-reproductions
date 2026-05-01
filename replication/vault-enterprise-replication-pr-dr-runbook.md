@@ -320,6 +320,6 @@ vault read sys/replication/dr/status
 - [Disaster recovery replication API docs](https://developer.hashicorp.com/vault/api-docs/system/replication/replication-dr)
 - [Troubleshoot and tune enterprise replication](https://developer.hashicorp.com/vault/tutorials/enterprise/troubleshoot-tune-enterprise-replication)
 - [Merkle Corruption Reindex KB](./vault-replication-merkle-corruption-reindex-kb.md)
-- [PR Path Filtering Lab](../vault-professional-cert/lab-04-pr-replication-path-filtering.md)
+- [PR Path Filtering Lab](../certification/vault-professional-cert/lab-04-pr-replication-path-filtering.md)
 - [Vault Raft Quorum Break and Restore Runbook](../kubernetes/vault-raft-quorum-break-and-restore-runbook.md)
 - [Vault Telemetry Grafana Repro](../telemetry/vault-telemetry-grafana-repro.md)

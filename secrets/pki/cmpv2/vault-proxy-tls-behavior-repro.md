@@ -36,10 +36,10 @@ This runbook validates network and listener behavior only. CMP transaction valid
 Apply the issuer and certificate, then upgrade the Helm release with TLS values.
 
 ```bash
-kubectl apply -f secrets-pki/cmpv2/vault-ca-issuer.yaml
-kubectl apply -f secrets-pki/cmpv2/vault-certificate.yaml
+kubectl apply -f secrets/pki/cmpv2/vault-ca-issuer.yaml
+kubectl apply -f secrets/pki/cmpv2/vault-certificate.yaml
 kubectl wait --for=condition=Ready certificate/vault-server-tls -n vault --timeout=180s
-helm upgrade vault hashicorp/vault -n vault --reuse-values -f secrets-pki/cmpv2/vault-tls-values.yaml --timeout 10m
+helm upgrade vault hashicorp/vault -n vault --reuse-values -f secrets/pki/cmpv2/vault-tls-values.yaml --timeout 10m
 ```
 
 Success criteria:
@@ -75,7 +75,7 @@ Expected:
 Deploy the proxy that accepts HTTP and forwards to Vault over HTTPS.
 
 ```bash
-kubectl apply -f secrets-pki/cmpv2/vault-proxy.yaml
+kubectl apply -f secrets/pki/cmpv2/vault-proxy.yaml
 kubectl rollout status deploy/vault-cmp-proxy -n vault --timeout=180s
 ```
 
@@ -152,5 +152,5 @@ If Vault must validate original client TLS certificates for identity, avoid TLS 
 Remove proxy and test path if this environment was dedicated to the repro:
 
 ```bash
-kubectl delete -f secrets-pki/cmpv2/vault-proxy.yaml --ignore-not-found
+kubectl delete -f secrets/pki/cmpv2/vault-proxy.yaml --ignore-not-found
 ```

@@ -117,7 +117,7 @@ In this lab, the CSI provider connects to the existing Vault service in `vault-1
 
 Use the values file already included in this repository:
 
-- `vault-csi-provider/values-csi-ca.yaml`
+- `kubernetes/vault-csi-provider/values-csi-ca.yaml`
 
 Relevant contents:
 
@@ -170,7 +170,7 @@ helm repo update
 helm upgrade --install vault hashicorp/vault \
   --namespace vault-csi-lab \
   --version 0.32.0 \
-  -f vault-csi-provider/values-csi-ca.yaml
+  -f kubernetes/vault-csi-provider/values-csi-ca.yaml
 ```
 
 ## Step 7: Verify the CA Bundle Is Mounted into the CSI Daemonset

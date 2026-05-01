@@ -28,7 +28,7 @@ The two manifests created for this scenario are:
 - Vault Kubernetes auth method enabled and configured
 - A working database secrets engine setup for dynamic creds
   - This runbook uses PostgreSQL examples for dynamic secrets.
-  - If needed, reuse your setup from `secrets-postgresql-db/postgresql-database-secrets-engine-repro.md`.
+  - If needed, reuse your setup from `secrets/database/postgresql-db/postgresql-database-secrets-engine-repro.md`.
 
 ## 1) Install VSO (if not already installed)
 

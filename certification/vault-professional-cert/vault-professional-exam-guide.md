@@ -119,17 +119,17 @@ External Resources:
 
 Generic Resources:
 
-- Transit auto-unseal baseline: [seal-transit/transit-auto-unseal-runbook.md](../seal-transit/transit-auto-unseal-runbook.md)
-- PGP recovery key setup helper: [setup/setup-pgp-keys-for-vault.sh](../setup/setup-pgp-keys-for-vault.sh)
-- PostgreSQL secrets engine baseline: [secrets-postgresql-db/postgresql-database-secrets-engine-repro.md](../secrets-postgresql-db/postgresql-database-secrets-engine-repro.md)
-- Replication concepts and recovery context: [replication/vault-replication-merkle-corruption-reindex-kb.md](../replication/vault-replication-merkle-corruption-reindex-kb.md)
-- Namespace and policy-heavy examples: [auth-userpass/userpass-entity-metadata-dynamic-policy-repro.md](../auth-userpass/userpass-entity-metadata-dynamic-policy-repro.md)
-- Sentinel EGP/RGP governance examples: [sys-policies/sentinel-egp-rgp-governing-policies-kb.md](../sys-policies/sentinel-egp-rgp-governing-policies-kb.md)
+- Transit auto-unseal baseline: [seal/transit/transit-auto-unseal-runbook.md](../../seal/transit/transit-auto-unseal-runbook.md)
+- PGP recovery key setup helper: [setup/setup-pgp-keys-for-vault.sh](../../setup/setup-pgp-keys-for-vault.sh)
+- PostgreSQL secrets engine baseline: [secrets/database/postgresql-db/postgresql-database-secrets-engine-repro.md](../../secrets/database/postgresql-db/postgresql-database-secrets-engine-repro.md)
+- Replication concepts and recovery context: [replication/vault-replication-merkle-corruption-reindex-kb.md](../../replication/vault-replication-merkle-corruption-reindex-kb.md)
+- Namespace and policy-heavy examples: [auth/userpass/userpass-entity-metadata-dynamic-policy-repro.md](../../auth/userpass/userpass-entity-metadata-dynamic-policy-repro.md)
+- Sentinel EGP/RGP governance examples: [sys/policies/sentinel-egp-rgp-governing-policies-kb.md](../../sys/policies/sentinel-egp-rgp-governing-policies-kb.md)
 
 Mock lab Resources:
 
-- Lab 1: Transit auto-unseal and node join walkthrough: [vault-professional-cert/lab-01-transit-auto-unseal-and-node-join.md](./lab-01-transit-auto-unseal-and-node-join.md)
-- Lab 2: AppRole + wrapping + PostgreSQL walkthrough: [vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md](./lab-02-approle-wrapping-and-postgresql.md)
-- Lab 3: Vault Agent + AppRole auto-auth + templating walkthrough: [vault-professional-cert/lab-03-vault-agent-approle-templating.md](./lab-03-vault-agent-approle-templating.md)
-- Lab 4: Performance replication with path filtering: [vault-professional-cert/lab-04-pr-replication-path-filtering.md](./lab-04-pr-replication-path-filtering.md)
-- Lab 5: Policies + KV v2 + namespaces walkthrough: [vault-professional-cert/lab-05-policy-kvv2-namespaces.md](./lab-05-policy-kvv2-namespaces.md)
+- Lab 1: Transit auto-unseal and node join walkthrough: [certification/vault-professional-cert/lab-01-transit-auto-unseal-and-node-join.md](./lab-01-transit-auto-unseal-and-node-join.md)
+- Lab 2: AppRole + wrapping + PostgreSQL walkthrough: [certification/vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md](./lab-02-approle-wrapping-and-postgresql.md)
+- Lab 3: Vault Agent + AppRole auto-auth + templating walkthrough: [certification/vault-professional-cert/lab-03-vault-agent-approle-templating.md](./lab-03-vault-agent-approle-templating.md)
+- Lab 4: Performance replication with path filtering: [certification/vault-professional-cert/lab-04-pr-replication-path-filtering.md](./lab-04-pr-replication-path-filtering.md)
+- Lab 5: Policies + KV v2 + namespaces walkthrough: [certification/vault-professional-cert/lab-05-policy-kvv2-namespaces.md](./lab-05-policy-kvv2-namespaces.md)
