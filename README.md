@@ -12,7 +12,7 @@ I hope you find this repository helpful in your journey with Vault.
 
 If you are new to this repo, use this quick path:
 
-1. Pick a category from [Scenario Index](#scenario-index) based on the issue type (`auth/`, `secrets/`, `kubernetes/`, `seal/`, `sys/`, `replication/`, etc.).
+1. Pick a category from [Scenario Index](#scenario-index) based on the issue type (`auth/`, `secrets/`, `kubernetes/`, `seal/`, `sys/`, `sys/replication/`, etc.).
 2. Open the linked runbook/KB and complete the preconditions listed in that file before running commands.
 3. Follow the validation and cleanup steps so your lab stays reproducible between runs.
 
@@ -54,11 +54,16 @@ vault-reproductions/
 ├── images/
 ├── kubernetes/
 ├── linux/
-├── replication/
 ├── seal/
 ├── secrets/
 ├── setup/
 ├── sys/
+│   ├── audit/
+│   ├── health/
+│   ├── policies/
+│   ├── raw/
+│   ├── replication/
+│   └── rotate/
 ├── telemetry/
 └── vault-mcp-server/
 ```
@@ -174,16 +179,6 @@ vault-reproductions/
 - [Vault Logrotate KB](linux/vault-logrotate-kb.md)
 	- Practical Linux/systemd-focused guidance for Vault logrotate configuration and troubleshooting.
 	- Includes directive-by-directive explanations, safer rotation recommendations, and validation steps.
-
-### Replication
-
-- [Vault Enterprise Replication Runbook (PR + DR)](replication/vault-enterprise-replication-pr-dr-runbook.md)
-	- Troubleshooting guide for already-configured Performance Replication and Disaster Recovery replication clusters.
-	- Covers merkle sync/diff issues, failover/failback commands, and merkle corruption remediations.
-
-- [Merkle Corruption Reindex KB](replication/vault-replication-merkle-corruption-reindex-kb.md)
-	- KB for resolving PR/DR replication stuck in `merkle-diff`/`merkle-sync` due to corrupted primary merkle trees.
-	- Covers primary-first reindex strategy, write-lock expectations, validation checkpoints, and rollback cautions.
 
 ### Seal
 
@@ -336,6 +331,16 @@ vault-reproductions/
 - [Vault sys/raw Inspector Script](sys/raw/sys-raw-inspector.sh)
 	- Bash utility for walking logical/auth storage under `/sys/raw` and exporting an ASCII tree.
 	- Includes recursive search mode for locating UUIDs or other strings inside raw storage responses without using Python.
+
+#### Replication
+
+- [Vault Enterprise Replication Runbook (PR + DR)](sys/replication/vault-enterprise-replication-pr-dr-runbook.md)
+	- Troubleshooting guide for already-configured Performance Replication and Disaster Recovery replication clusters.
+	- Covers merkle sync/diff issues, failover/failback commands, and merkle corruption remediations.
+
+- [Merkle Corruption Reindex KB](sys/replication/vault-replication-merkle-corruption-reindex-kb.md)
+	- KB for resolving PR/DR replication stuck in `merkle-diff`/`merkle-sync` due to corrupted primary merkle trees.
+	- Covers primary-first reindex strategy, write-lock expectations, validation checkpoints, and rollback cautions.
 
 #### Rotate
 

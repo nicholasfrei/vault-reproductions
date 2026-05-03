@@ -88,6 +88,6 @@ Internal repo practice material:
 - [secrets/totp/totp-secrets-engine-repro.md](../../secrets/totp/totp-secrets-engine-repro.md) — broader engine familiarity (5a, 5d)
 - [sys/rotate/vault-encryption-key-rotation-and-rekey-runbook.md](../../sys/rotate/vault-encryption-key-rotation-and-rekey-runbook.md) — seal/unseal fundamentals, key rotation/rekey concepts (7a-7c, 8c)
 - [seal/awskms/awskms-auto-unseal-runbook.md](../../seal/awskms/awskms-auto-unseal-runbook.md) and [seal/azure/azurekeyvault-auto-unseal-runbook.md](../../seal/azure/azurekeyvault-auto-unseal-runbook.md) — auto-unseal concepts in practice (7b, 8b-8e)
-- [replication/vault-enterprise-replication-pr-dr-runbook.md](../../replication/vault-enterprise-replication-pr-dr-runbook.md) — DR vs performance replication concepts (8d)
+- [sys/replication/vault-enterprise-replication-pr-dr-runbook.md](../../sys/replication/vault-enterprise-replication-pr-dr-runbook.md) — DR vs performance replication concepts (8d)
 - [kubernetes/vso-k8s-auth-static-dynamic/vso-k8s-auth-static-dynamic-repro.md](../../kubernetes/vso-k8s-auth-static-dynamic/vso-k8s-auth-static-dynamic-repro.md) — VSO objective coverage (9b)
 - [vault-professional-cert/lab-03-vault-agent-approle-templating.md](../vault-professional-cert/lab-03-vault-agent-approle-templating.md) — very useful for Vault Agent fundamentals (9a) even though it lives under professional prep
