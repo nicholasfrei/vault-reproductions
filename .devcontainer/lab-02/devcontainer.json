@@ -10,7 +10,7 @@
   "customizations": {
     "codespaces": {
       "openFiles": [
-        "vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md"
+        "certification/vault-professional-cert/lab-02-approle-wrapping-and-postgresql.md"
       ]
     },
     "vscode": {

@@ -7,7 +7,8 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "hashicorp.hcl"
+        "hashicorp.hcl",
+        "davidanson.vscode-markdownlint"
       ],
       "settings": {
         "workbench.editorAssociations": {
