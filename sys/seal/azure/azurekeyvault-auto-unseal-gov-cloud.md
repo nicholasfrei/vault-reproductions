@@ -1,4 +1,4 @@
-# Azure Auto Unseal: US Government Cloud Bug in `go-kms-wrapping` v2.0.14 and Earlier [Draft]
+# Azure Auto Unseal: US Government Cloud Bug in `go-kms-wrapping` v2.0.14 and Earlier
 
 I worked with a customer who was deploying Vault on AKS in the Azure US Government Cloud and configuring Azure Key Vault Auto Unseal. Vault was failing to start on every attempt. We ended up hitting both of the issues documented here in sequence: first, a startup failure caused by an invalid `environment` config value — the customer had used a string from a different HashiCorp library that doesn't apply to the seal config — and then, after correcting that, a second failure caused by a bug in `go-kms-wrapping` where the Azure authentication endpoint is hard-coded to the public cloud and never updated for Gov Cloud tenants. 
 
