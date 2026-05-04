@@ -1,4 +1,4 @@
-# Vault MCP Server Setup
+# Vault MCP Server Guide
 
 This guide connects `vault-mcp-server` to your existing Kubernetes Vault cluster for use with GitHub Copilot in VS Code.
 

@@ -198,7 +198,7 @@ vault-reproductions/
 
 #### Database
 
-- [Oracle Database Plugin Setup](secrets/database/oracle-db/oracle-database-plugin-setup.md)
+- [Oracle Database Secrets Engine Repro](secrets/database/oracle-db/oracle-database-secrets-engine-repro.md)
 	- Rapid Oracle environment setup for testing Vault database plugin behavior with dynamic and static credentials.
 
 - [PostgreSQL Database Secrets Engine Repro](secrets/database/postgresql-db/postgresql-database-secrets-engine-repro.md)
@@ -213,7 +213,7 @@ vault-reproductions/
 	- Simple RabbitMQ + Vault secrets engine runbook for dynamic credential issuance and lease revocation validation.
 	- Assumes an already-operational Vault cluster in Kubernetes and uses a local RabbitMQ container for testing.
 
-- [AppRole + Snowflake Database Secrets Engine Repro](secrets/database/snowflake-db/approle-snowflake-db-reproduction.md)
+- [AppRole + Snowflake Database Secrets Engine Runbook](secrets/database/snowflake-db/approle-snowflake-db-runbook.md)
 	- End-to-end setup for Vault database secrets engine with Snowflake using RSA key-pair authentication and static role rotation.
 	- Covers Snowflake service account creation, AppRole auth configuration, credential rotation verification, and optional SnowSQL connection validation.
 
@@ -293,7 +293,7 @@ vault-reproductions/
 	- Break-fix KB for understanding and validating Sentinel Endpoint Governing Policies (EGP) and Role Governing Policies (RGP).
 	- Includes practical policy examples, denial signatures, and validation/cleanup commands.
 
-- [Priority Matching in ACL Policies KB](sys/policies/priority-matching-policies.md)
+- [Priority Matching in ACL Policies KB](sys/policies/priority-matching-policies-kb.md)
 	- Actionable KB explaining how Vault determines the winning path when multiple policies match a request.
 	- Covers capability union vs. exact-match priority rules, namespace expansion, and common wild-card pitfalls.
 
@@ -359,7 +359,7 @@ vault-reproductions/
 
 ### Vault MCP Server
 
-- [Vault MCP Server Setup](vault-mcp-server/vault-mcp-server-setup.md)
+- [Vault MCP Server Guide](vault-mcp-server/vault-mcp-server-guide.md)
 	- Connects `vault-mcp-server` to an existing Kubernetes Vault cluster via port-forward.
 	- Covers binary install, policy and token creation, and VS Code / Claude Desktop MCP client configuration.
 	- Includes a policy file scoped to KV v2, mount management, and PKI operations.

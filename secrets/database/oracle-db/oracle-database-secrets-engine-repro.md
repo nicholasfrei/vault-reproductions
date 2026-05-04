@@ -1,4 +1,4 @@
-# Oracle Database Plugin Reproduction
+# Oracle Database Secrets Engine Reproduction
 
 This reproduction provides a complete setup for testing Vault's Oracle Database secrets engine on an AWS EC2 instance running Amazon Linux.
 
