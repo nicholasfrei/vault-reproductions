@@ -53,7 +53,10 @@ vault-reproductions/
 ├── certification/
 ├── images/
 ├── kubernetes/
+│   ├── vault-csi-provider/
+│   └── vso/
 ├── linux/
+│   ├── logrotate/
 ├── secrets/
 ├── setup/
 ├── sys/
