@@ -95,7 +95,7 @@ Keep this value handy; you will plug it into the HCL config in the next step.
 
 This repository includes a **mock HCL config template** for the auto-unseal Vault:
 
-- `seal-transit-auto-unseal/vault-transit-auto-unseal.hcl`
+- `sys/seal/transit/vault-transit-auto-unseal.hcl`
 
 Key elements of the config:
 

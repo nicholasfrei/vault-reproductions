@@ -12,7 +12,7 @@ I hope you find this repository helpful in your journey with Vault.
 
 If you are new to this repo, use this quick path:
 
-1. Pick a category from [Scenario Index](#scenario-index) based on the issue type (`auth/`, `secrets/`, `kubernetes/`, `seal/`, `sys/`, `sys/replication/`, etc.).
+1. Pick a category from [Scenario Index](#scenario-index) based on the issue type (`auth/`, `secrets/`, `kubernetes/`, `sys/`, `sys/seal/`, `sys/replication/`, etc.).
 2. Open the linked runbook/KB and complete the preconditions listed in that file before running commands.
 3. Follow the validation and cleanup steps so your lab stays reproducible between runs.
 
@@ -54,7 +54,6 @@ vault-reproductions/
 ├── images/
 ├── kubernetes/
 ├── linux/
-├── seal/
 ├── secrets/
 ├── setup/
 ├── sys/
@@ -63,7 +62,8 @@ vault-reproductions/
 │   ├── policies/
 │   ├── raw/
 │   ├── replication/
-│   └── rotate/
+│   ├── rotate/
+│   └── seal/
 ├── telemetry/
 └── vault-mcp-server/
 ```
@@ -179,34 +179,6 @@ vault-reproductions/
 - [Vault Logrotate KB](linux/vault-logrotate-kb.md)
 	- Practical Linux/systemd-focused guidance for Vault logrotate configuration and troubleshooting.
 	- Includes directive-by-directive explanations, safer rotation recommendations, and validation steps.
-
-### Seal
-
-#### AWSKMS
-
-- [AWS KMS Auto-Unseal Runbook (EC2 + Vault Enterprise)](seal/awskms/awskms-auto-unseal-runbook.md)
-	- Single-node EC2 (Amazon Linux 2023) setup for Vault Enterprise with `awskms` seal and `raft` storage.
-	- Includes license setup, systemd service configuration, restart validation, and cleanup guidance.
-
-#### Azure
-
-- [Azure Key Vault Auto-Unseal Runbook (Linux VM + Vault Enterprise)](seal/azure/azurekeyvault-auto-unseal-runbook.md)
-	- Single-node Azure Ubuntu 22.04 VM setup for Vault Enterprise with `azurekeyvault` seal and `raft` storage.
-	- Covers App Registration creation, client secret generation, Key Vault Crypto User role assignment, and seal stanza configuration.
-
-- [Azure Key Vault Auto-Unseal: US Gov Cloud Bug (`go-kms-wrapping` ≤ v2.0.14)](seal/azure/azurekeyvault-auto-unseal-gov-cloud.md)
-	- Bug in `go-kms-wrapping` where the Azure AD authentication endpoint is hard-coded to public cloud, causing Vault startup failures for US Government Cloud tenants. Filed as [VAULT-44389](https://hashicorp.atlassian.net/browse/VAULT-44389).
-	- Covers two independent issues: an invalid `environment` config value and a hard-coded auth endpoint; both affect US Government Cloud tenants.
-	- Affected: all Vault versions using `go-kms-wrapping/wrappers/azurekeyvault/v2` <= v2.0.14; workarounds available.
-
-#### Transit
-
-- [Transit Auto-Unseal Runbook](seal/transit/transit-auto-unseal-runbook.md)
-	- Local reproduction for Vault transit-based auto-unseal using two dev servers (transit + auto-unseal).
-	- Includes a mock HCL config file (`vault-transit-auto-unseal.hcl`) and step-by-step startup, init, restart, and validation flow.
-
-- [KB: Circular Transit Auto-Unseal Dependency (Double Transit)](seal/transit/double-transit-autounseal-dependency-kb.md)
-	- Documents a support case where two Vault clusters were configured to transit-unseal each other.
 
 ### Secrets
 
@@ -348,6 +320,34 @@ vault-reproductions/
 	- Step-by-step runbook for rotating the Vault encryption key term (`sys/rotate`) and rekeying Shamir unseal shares (`vault operator rekey`).
 	- Includes least-privilege policy example, command syntax gotchas, and post-change validation checks.
 
+#### Seal
+
+##### AWSKMS
+
+- [AWS KMS Auto-Unseal Runbook (EC2 + Vault Enterprise)](sys/seal/awskms/awskms-auto-unseal-runbook.md)
+	- Single-node EC2 (Amazon Linux 2023) setup for Vault Enterprise with `awskms` seal and `raft` storage.
+	- Includes license setup, systemd service configuration, restart validation, and cleanup guidance.
+
+##### Azure
+
+- [Azure Key Vault Auto-Unseal Runbook (Linux VM + Vault Enterprise)](sys/seal/azure/azurekeyvault-auto-unseal-runbook.md)
+	- Single-node Azure Ubuntu 22.04 VM setup for Vault Enterprise with `azurekeyvault` seal and `raft` storage.
+	- Covers App Registration creation, client secret generation, Key Vault Crypto User role assignment, and seal stanza configuration.
+
+- [Azure Key Vault Auto-Unseal: US Gov Cloud Bug (`go-kms-wrapping` ≤ v2.0.14)](sys/seal/azure/azurekeyvault-auto-unseal-gov-cloud.md)
+	- Bug in `go-kms-wrapping` where the Azure AD authentication endpoint is hard-coded to public cloud, causing Vault startup failures for US Government Cloud tenants. Filed as [VAULT-44389](https://hashicorp.atlassian.net/browse/VAULT-44389).
+	- Covers two independent issues: an invalid `environment` config value and a hard-coded auth endpoint; both affect US Government Cloud tenants.
+	- Affected: all Vault versions using `go-kms-wrapping/wrappers/azurekeyvault/v2` <= v2.0.14; workarounds available.
+
+##### Transit
+
+- [Transit Auto-Unseal Runbook](sys/seal/transit/transit-auto-unseal-runbook.md)
+	- Local reproduction for Vault transit-based auto-unseal using two dev servers (transit + auto-unseal).
+	- Includes a mock HCL config file (`vault-transit-auto-unseal.hcl`) and step-by-step startup, init, restart, and validation flow.
+
+- [KB: Circular Transit Auto-Unseal Dependency (Double Transit)](sys/seal/transit/double-transit-autounseal-dependency-kb.md)
+	- Documents a support case where two Vault clusters were configured to transit-unseal each other.
+
 ### Telemetry
 
 - [Vault Telemetry Grafana Repro](telemetry/vault-telemetry-grafana-repro.md)
@@ -365,7 +365,7 @@ vault-reproductions/
 
 ## Known Bugs & Regressions
 
-- [Azure Key Vault Auto-Unseal: US Gov Cloud Bug (`go-kms-wrapping` ≤ v2.0.14)](seal/azure/azurekeyvault-auto-unseal-gov-cloud.md)
+- [Azure Key Vault Auto-Unseal: US Gov Cloud Bug (`go-kms-wrapping` ≤ v2.0.14)](sys/seal/azure/azurekeyvault-auto-unseal-gov-cloud.md)
 	- Bug in `go-kms-wrapping` where the Azure AD authentication endpoint is hard-coded to public cloud, causing Vault startup failures for US Government Cloud tenants. Filed as [VAULT-44389](https://hashicorp.atlassian.net/browse/VAULT-44389).
 	- Covers two independent issues: an invalid `environment` config value and a hard-coded auth endpoint; both affect US Government Cloud tenants.
 	- Affected: all Vault versions using `go-kms-wrapping/wrappers/azurekeyvault/v2` ≤ v2.0.14; workarounds available.
