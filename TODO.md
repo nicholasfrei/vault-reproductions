@@ -1,11 +1,6 @@
-# TODO Runbooks / KBs to Add
+# TODO
 
-- AWS ASG Information
-  - Custom health checks and auto scaling 
-- JQ Audit Logs Queries / Helpful Commands
-
-- **Replication (Enterprise)**
-  - Region loss simulation and service restoration timeline.
+- JQ **Audit Logs** Queries / Helpful Commands
 - **Seal / Unseal**
   - Multi-seal and Seal HA: config patterns, startup order, failure modes.
   - Auto-unseal migration (Shamir → KMS/HSM) with rollback considerations.

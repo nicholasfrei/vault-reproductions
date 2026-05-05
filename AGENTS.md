@@ -46,6 +46,22 @@ If a document spans types (for example both theory and a long procedure), pick t
 - Follow a rough outline: Overview, Objective, Prerequisites, Steps, Validation, Cleanup, References.
 - Include exact error strings when documenting failures so users can search logs quickly.
 
+## README scenario index formatting
+- Keep `README.md` as the canonical scenario index and preserve all existing entries unless explicitly asked to remove content.
+- In `## Scenario Index`, keep the legend line for content type terms (`runbook`, `kb`, `repro`, `guide`).
+- For each scenario item, use this structure:
+	1. Link line (the scenario title and path)
+	2. Inline backtick tags (for example: ``runbook`` ``sys`` ``seal``)
+	3. Collapsible details block:
+	   - `<details>`
+	   - `<summary>Details</summary>`
+	   - Original description bullets
+	   - `</details>`
+- Preserve the existing section hierarchy (for example `###`, `####`, `#####`) and do not flatten categories.
+- Keep content changes minimal when reformatting: prefer structural changes for readability, not rewriting scenario meaning.
+- When adding new scenarios, follow the same index entry pattern and place them in the correct existing section.
+	- As this project grows, it's important to make sure we don't have overlapping content. 
+
 ## Scope guardrails
 - Keep edits small and logically grouped.
 - Do not modify unrelated files.
