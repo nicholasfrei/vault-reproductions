@@ -569,6 +569,27 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Covers primary-first reindex strategy, write-lock expectations, validation checkpoints, and rollback cautions.
   </details>
 
+- [Logshipper Buffer vs. `trailing_logs` — Replication vs. HA Lag KB](sys/replication/logshipper-vs-trailing-logs-kb.md)
+  `kb` `sys` `replication` `raft` `enterprise`
+  <details>
+  <summary>Details</summary>
+
+  - Explains the architectural distinction between `trailing_logs` (intracluster Raft HA) and `logshipper_buffer_length` (intercluster Enterprise replication WAL shipping).
+  - Covers failure modes, lag diagnosis via `sys/replication/status`, and tuning recommendations for both parameters.
+  </details>
+
+#### Raft
+
+- [Performance Secondary Raft Snapshot Loop — High Lease Volume KB](sys/raft/raft-snapshot-loop-high-lease-volume-kb.md)
+  `kb` `sys` `raft` `enterprise`
+  <details>
+  <summary>Details</summary>
+
+  - Documents a real incident where a follower node on a performance secondary cluster entered a permanent Raft snapshot loop due to extreme memory pressure and 6M+ active leases.
+  - Covers triage path (ruling out intercluster replication, confirming intracluster Raft lag), why a clean node rejoin did not break the loop, and the role of `trailing_logs` tuning as a preventive measure.
+  - Includes observed metrics: 40 GB `vault.db`, 1.5-hour snapshot cycles, 175k index lag, and sustained 90%+ RAM utilization with 10+ GB swap.
+  </details>
+
 #### Rotate
 
 - [Vault Encryption Key Rotation + Rekey Runbook](sys/rotate/vault-encryption-key-rotation-and-rekey-runbook.md)
