@@ -31,11 +31,17 @@ This repo is consumed by multiple AI coding tools. To avoid drift, instructions 
     - `create-script.md` — reproduction shell scripts.
 - `.ai/skills/` — reusable agent skills (Anthropic Agent Skills format with `name` + `description` frontmatter):
     - `customer-reply/SKILL.md` — drafting Zendesk-ready Vault support replies.
+    - `diagnose-issue/SKILL.md` — structured Vault (and HashiCorp ecosystem) diagnosis using official-docs web research.
+    - `find-vault-bugs/SKILL.md` — source-level Vault Enterprise bug investigation using the local enterprise repo, official docs, GitHub issues/PRs, and git history to identify fixes and version coverage.
 - `.github/copilot-instructions.md` — always-on Copilot context for VS Code; summarizes this file.
 - `.github/instructions/*.instructions.md` — Copilot per-file rules with `applyTo` glob; thin mirrors of `.ai/instructions/`.
 - `.github/prompts/customer-reply.prompt.md` — Copilot Chat slash prompt that loads the customer-reply skill.
+- `.github/prompts/diagnose-issue.prompt.md` — Copilot Chat slash prompt that loads the diagnose-issue skill.
+- `.github/prompts/find-vault-bugs.prompt.md` — Copilot Chat slash prompt that loads the find-vault-bugs skill.
 - `.cursor/rules/*.mdc` — Cursor adapters; `project.mdc` is `alwaysApply: true`, others reference `.ai/` files via `@`-includes.
 - `.opencode/commands/customer-reply.md` — opencode slash command for the customer-reply skill.
+- `.opencode/commands/diagnose-issue.md` — opencode slash command for the diagnose-issue skill.
+- `.opencode/commands/find-vault-bugs.md` — opencode slash command for the find-vault-bugs skill.
 - `.opencode/skills/` — symlink to `.ai/skills/` so opencode auto-discovers them.
 
 When updating authoring rules, edit the file under `.ai/` (or this `AGENTS.md` for project-wide rules). The thin adapter files under `.github/`, `.cursor/`, and `.opencode/` should remain pointers and not accumulate drift.
