@@ -20,6 +20,26 @@ New Markdown writeups should live under the existing topic directory (for exampl
 
 If a document spans types (for example both theory and a long procedure), pick the primary intent for the filename, or split into a KB plus a runbook and cross-link them.
 
+## AI tooling layout
+
+This repo is consumed by multiple AI coding tools. To avoid drift, instructions are stored once and referenced by each tool's adapter:
+
+- `AGENTS.md` (this file) — canonical project rules. Read by opencode, Cursor, modern IBM agents, and any tool that follows the AGENTS.md convention.
+- `.ai/instructions/` — task-scoped authoring rules (one source of truth):
+    - `create-kb.md` — KB articles (`*-kb.md`).
+    - `create-runbook.md` — runbooks (`*-runbook.md`).
+    - `create-script.md` — reproduction shell scripts.
+- `.ai/skills/` — reusable agent skills (Anthropic Agent Skills format with `name` + `description` frontmatter):
+    - `customer-reply/SKILL.md` — drafting Zendesk-ready Vault support replies.
+- `.github/copilot-instructions.md` — always-on Copilot context for VS Code; summarizes this file.
+- `.github/instructions/*.instructions.md` — Copilot per-file rules with `applyTo` glob; thin mirrors of `.ai/instructions/`.
+- `.github/prompts/customer-reply.prompt.md` — Copilot Chat slash prompt that loads the customer-reply skill.
+- `.cursor/rules/*.mdc` — Cursor adapters; `project.mdc` is `alwaysApply: true`, others reference `.ai/` files via `@`-includes.
+- `.opencode/commands/customer-reply.md` — opencode slash command for the customer-reply skill.
+- `.opencode/skills/` — symlink to `.ai/skills/` so opencode auto-discovers them.
+
+When updating authoring rules, edit the file under `.ai/` (or this `AGENTS.md` for project-wide rules). The thin adapter files under `.github/`, `.cursor/`, and `.opencode/` should remain pointers and not accumulate drift.
+
 ## Repository intent
 - Build reproducible Vault scenarios with instructions and commands.
 	- Keep instructions explicit, copy/paste friendly, and easy to validate.

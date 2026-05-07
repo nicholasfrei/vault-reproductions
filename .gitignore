@@ -1,8 +1,21 @@
+# Vault License
+vault.hclic
+
+# Mac metadata files
+.DS_Store
+
+# Ignore Drafts
+drafts/
+
+# AI related files
+.ai/
+.cursor/
+.opencode/
+.github/
+
+# Misc. files
 init.json
 init-pgp.txt
 pgp-keys/
 *.pem
 *.der
-.cursor/
-vault.hclic
-.DS_Store
