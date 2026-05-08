@@ -67,6 +67,14 @@ If you want Bob to discover these automatically in a real repo, place them at th
 
 This keeps the Bob examples easy to browse while making it obvious that they are templates or adapter skins rather than the primary source of truth.
 
+## Where do I go from here?
+
+If you want to go more in-depth on skills, best practices, and what others are doing in the tech community, I recommend checking out the links below:
+
+- [Awesome Copilot](https://github.com/github/awesome-copilot/blob/main/README.md)
+- [Make My Repo AI-Ready Skill](https://github.com/github/awesome-copilot/blob/main/skills/ai-ready/SKILL.md)
+- [Learning Hub: What Are Agents, Skills, and Instructions?](https://awesome-copilot.github.com/learning-hub/what-are-agents-skills-instructions/)
+
 ## References
 
 - IBM Bob IDE docs: `https://internal.bob.ibm.com/docs/ide/features/skills`
