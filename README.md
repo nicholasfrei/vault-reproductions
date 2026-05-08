@@ -77,6 +77,26 @@ vault-reproductions/
 
 Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused behavior demo, `guide` = broader walkthrough.
 
+### AI Tools
+
+#### IBM Bob
+
+- [IBM Bob Getting Started Guide](ai-tools/ibm-bob-getting-started.md)
+  `guide` `ai-tools` `bob`
+  <details>
+  <summary>Details</summary>
+
+  - Quick-start guide for IBM Bob, including helpful links, installation instructions, and next steps for learning how to create skills and use Bob effectively.
+  </details>
+
+- [IBM Bob Skills KB](ai-tools/ibm-bob-skills-kb.md)
+  `kb` `ai-tools` `bob`
+  <details>
+  <summary>Details</summary>
+
+  - Overview of IBM Bob project skills, including layout, minimum file format, and sample skills to reference for creating your own reusable instructions.
+  </details>
+
 ### Auth
 
 #### <img src="https://cdn.simpleicons.org/jsonwebtokens" alt="JWT" width="18" /> JWT
