@@ -28,7 +28,8 @@ This repo is consumed by multiple AI coding tools. To avoid drift, instructions 
 - `.ai/instructions/` — task-scoped authoring rules (one source of truth):
     - `create-kb.md` — KB articles (`*-kb.md`).
     - `create-runbook.md` — runbooks (`*-runbook.md`).
-    - `create-script.md` — reproduction shell scripts.
+    - `create-script.md` — reproduction shell scripts (`*.sh`).
+	- `internal-tools.md` — context on internal Vault tools.
 - `.ai/skills/` — reusable agent skills (Anthropic Agent Skills format with `name` + `description` frontmatter):
     - `customer-reply/SKILL.md` — drafting Zendesk-ready Vault support replies.
     - `diagnose-issue/SKILL.md` — structured Vault (and HashiCorp ecosystem) diagnosis using official-docs web research.
