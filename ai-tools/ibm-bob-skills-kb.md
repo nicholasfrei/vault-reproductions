@@ -51,19 +51,17 @@ Use this skill when the user asks for <task type>.
 
 ## Sample Skills to Reference
 
-In this repo, I've created very basic templates of sample skills and placed them in `ai-tools/ibm-bob-sample/.bob/skills/`. Each skill has a `SKILL.md` file with instructions and steps for the AI to follow. You can use these as a starting point for creating your own skills, or as examples to share with your team.
+In this repo, I've created very basic templates of sample skills and placed them in `ai-tools/.bob/skills/`. Each skill has a `SKILL.md` file with instructions and steps for the AI to follow. You can use these as a starting point for creating your own skills, or as examples to share with your team.
 
 - [Customer Reply Skill Template](../ai-tools/.bob/skills/customer-reply/SKILL.md)
 - [Diagnose Issue Skill Template](../ai-tools/.bob/skills/diagnose-issue/SKILL.md)
 - [Find Vault Bugs Skill Template](../ai-tools/.bob/skills/find-vault-bugs/SKILL.md)
 
-
-For any repo, a practical pattern is:
-
 If you want Bob to discover these automatically in a real repo, place them at the repo root under `.bob/skills/`.
 
 - skills/instructions: `.bob/skills/`
 - one folder per skill: `customer-reply/`, `diagnose-issue/`, `find-vault-bugs/`
+- a `SKILL.md` file in each skill folder with the instructions and steps for that skill
 
 This keeps the Bob examples easy to browse while making it obvious that they are templates or adapter skins rather than the primary source of truth.
 
