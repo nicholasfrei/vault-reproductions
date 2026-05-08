@@ -1,4 +1,4 @@
-# IBM Bob Project Skills KB
+# IBM Bob - How to Create and Use Skills with Templates
 
 ## Overview
 
