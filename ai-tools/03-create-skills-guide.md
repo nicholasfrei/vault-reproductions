@@ -1,20 +1,16 @@
-# IBM Bob - How to Create and Use Skills with Templates
+# IBM Bob Guide #3 - Skills and Templates Guide
 
 ## Overview
 
-If you're new to IBM Bob and want to create reusable skills for your project, this KB provides a simple template and recommended pattern to get you started. It is intended as a lightweight reference for sharing example skill files with teammates, not as a deep workflow guide. If you need more information about how to use skills in the IBM Bob IDE, please refer to the official documentation linked at the end of this KB.
+A "skill" is a reusable instruction file that can be invoked by the AI to perform a specific task. Skills are defined by a `SKILL.md` file that includes metadata, instructions, and steps for the AI to follow. In a skill, you can reference files, tools, commands, and other helpful context. By creating clear, descriptive, and detailed skills, you improve the AI's chances of successfully completing the task and producing the desired output. 
 
-A "skill" is a reusable instruction file that can be invoked by the AI to perform a specific task. Skills are defined by a `SKILL.md` file that includes metadata, instructions, and steps for the AI to follow. In a skill, you can reference files, tools, commands, and other helpful context. By creating clear, descriptive, and detailed skills, you improve the AI's chances of successfully completing the task and producing the desired output. Skills can also be shared across projects and teams, especially for common tasks like replying to a customer or diagnosing an issue.
+Skills can also be shared across projects and teams, especially for common tasks like replying to a customer or diagnosing an issue. By making the skill more detailed, you are preventing the AI from giving inaccurate or unhelpful responses that come from vague prompts. It also helps prevent unncessary "course correction" prompts.
 
-## Introduction
+## Prerequisites
 
-In this KB, I want to introduce skills at a very beginner-friendly level, showing:
-
-- what the minimum `SKILL.md` file should look like
-- where the files should live in a repository
-- how to keep Bob examples separate from other AI tool adapters
-
-If you're looking for more advanced tips, please feel free to reach out. 
+- Bob is installed and working
+- You have reviewed [IBM Bob Guide #2 - Create AGENTS.md and Project Rules](./02-create-agents-guide.md)
+- You understand the basics of how Bob uses repository instructions
 
 ## Layout and Minimum File Format
 
@@ -65,6 +61,34 @@ If you want Bob to discover these automatically in a real repo, place them at th
 
 This keeps the Bob examples easy to browse while making it obvious that they are templates or adapter skins rather than the primary source of truth.
 
+## How to Create Your First Skill
+
+Use this simple workflow when creating a new skill:
+
+1. Pick a repeatable task Bob should handle well.
+2. Create a folder under `.bob/skills/<skill-name>/`.
+3. Add a `SKILL.md` file with a clear `name` and `description`.
+4. Write short instructions that tell Bob when to use the skill and what output to produce.
+5. Test the skill in a repository and refine the instructions if Bob's behavior is too vague.
+
+Good beginner skill ideas include:
+
+- draft a customer reply
+- summarize logs or errors
+- create a documentation outline
+- review a pull request for a specific type of risk
+
+The best skills are narrow enough to be reliable and specific enough to drive consistent results.
+
+## Validation
+
+You have completed Guide #3 when you can do all of the following:
+
+- explain the purpose of a Bob skill
+- identify the `.bob/skills/` directory structure
+- create a simple `SKILL.md` file
+- point to sample skill templates for future reuse
+
 ## Where do I go from here?
 
 If you want to go more in-depth on skills, best practices, and what others are doing in the tech community, I recommend checking out the links below:
@@ -75,4 +99,6 @@ If you want to go more in-depth on skills, best practices, and what others are d
 
 ## References
 
-- IBM Bob IDE docs: `https://internal.bob.ibm.com/docs/ide/features/skills`
+- [IBM Bob IDE docs](https://internal.bob.ibm.com/docs/ide/features/skills)
+- [#1 - IBM Bob - Getting Started Guide](./01-install-ibm-bob-guide.md)
+- [#2 - IBM Bob - Create AGENTS.md and Project Rules](./02-create-agents-guide.md)
