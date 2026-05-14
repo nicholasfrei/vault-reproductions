@@ -175,6 +175,9 @@ vault plugin deregister \
   vault-plugin-database-oracle
 ```
 
+When you use `-download=true` flag, the plugin is replicated to a DR secondary and will be present after a DR promotion or failover. This does not replace host-level prerequisites on the DR node, so make sure the Oracle Instant Client libraries and any required OS packages are installed there as well.
+
+
 ### 2. Create Password Policies
 
 ```bash
