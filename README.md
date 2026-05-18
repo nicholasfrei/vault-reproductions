@@ -541,6 +541,15 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Covers how `sys/health` status codes and query parameters work, including `standbycode`, `performancestandbycode`, `drsecondarycode`, and the boolean `standbyok`/`perfstandbyok` flags.
   </details>
 
+- [Consul Health Check Misconfiguration with `sys/health`](sys/health/consul-health-check-misconfiguration-kb.md)
+  `kb` `sys` `health` `consul` `replication`
+  <details>
+  <summary>Details</summary>
+
+  - Documents a production incident where `standbycode=503` in a static Consul health check removed all performance standbys from the load balancer pool during an election, concentrating ~7× baseline traffic onto the new active node.
+  - Covers the lease restoration gate that blocked standbys from re-promoting to performance standby, the resulting audit sink timeout cascade (`event not processed by enough sink nodes`), and how the two factors extended the outage beyond a normal election window.
+  </details>
+
 - [AWS Auto Scaling Runbook for Vault `sys/health`](sys/health/aws-asg-sys-health-runbook.md)
   `runbook` `sys` `health`
   <details>
