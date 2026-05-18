@@ -703,6 +703,19 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Documents a support case where two Vault clusters were configured to transit-unseal each other.
   </details>
 
+#### Sync
+
+- [Azure KV Secrets Sync `panic: not struct` Repro](sys/sync/azure-kv-secrets-sync-panic-repro.md)
+  `repro` `sys` `sync` `azure` `enterprise`
+  <details>
+  <summary>Details</summary>
+
+  - Reproduces a fatal `panic: not struct` in Vault `1.21.5+ent` triggered by writing a `sys/sync/destinations/azure-kv` destination with `disable_strict_networking=true`.
+  - Includes Azure App Registration, Key Vault, and RBAC role setup using the Azure CLI.
+  - Covers Secrets Sync activation, KV v2 test data, sync destination creation, association, and validation that the secret appears in Azure Key Vault.
+  - Confirms the panic is resolved in `2.0.0+ent`.
+  </details>
+
 ### Telemetry
 
 - [Vault Telemetry Grafana Repro](telemetry/vault-telemetry-grafana-repro.md)
@@ -742,6 +755,11 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
 - [LDAP Secrets Engine UI `check-out` Regression in `1.20.6`–`1.20.10` and `1.21.5`](secrets/ldap/ldap-ui-capabilities-self-bug.md)
 	- Vault UI regression in `1.20.6`–`1.20.10` and `1.21.5` where the LDAP Library Set `check-out` action disappears from the browser GUI for scoped users.
 	- Resolved in `1.20.11`, `1.21.6`, `2.0.0` and onward.
+
+- [Azure KV Secrets Sync `panic: not struct` (`1.21.5+ent`)](sys/sync/azure-kv-secrets-sync-panic-repro.md)
+	- `panic: not struct` in `storeCreateUpdateHandler` when writing a `sys/sync/destinations/azure-kv` destination with `disable_strict_networking=true` on `1.21.5+ent`.
+	- The request is forwarded via gRPC from a standby node; `github.com/fatih/structs.New()` receives a nil value at `logical_system_sync_stores_ent.go:622`.
+	- Resolved in `2.0.0+ent`.
 
 ----
 
