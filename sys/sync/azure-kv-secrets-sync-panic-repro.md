@@ -1,10 +1,10 @@
-# Azure Secrets Sync: `panic: not struct` Bug in `1.21.5+ent` Repro
+# Azure Secrets Sync: `panic: not struct` Bug in `1.21.4+ent` and `1.21.5+ent` Repro
 
 ## Overview
 
-In Vault Enterprise `1.21.5+ent`, writing a `sys/sync/destinations/azure-kv` destination that includes `disable_strict_networking=true` triggers a fatal panic: `panic: not struct`. The panic originates in `logical_system_sync_stores_ent.go` where `github.com/fatih/structs.New()` is called with a nil or non-struct value. It is consistently reproduced when the `vault write` request is forwarded from a standby or performance standby node to the active via gRPC.
+In Vault Enterprise `1.21.4+ent` and `1.21.5+ent`, writing a `sys/sync/destinations/azure-kv` destination that includes `disable_strict_networking=true` triggers a fatal panic: `panic: not struct`. The panic originates in `logical_system_sync_stores_ent.go` where `github.com/fatih/structs.New()` is called with a nil or non-struct value. 
 
-This repro confirms the behavior on `1.21.5+ent` and validates that `2.0.0+ent` resolves it.
+This repro confirms the behavior on `1.21.4+ent` or `1.21.5+ent` and validates that `2.0.0+ent` resolves it.
 
 ## Objective
 
@@ -17,7 +17,7 @@ This repro confirms the behavior on `1.21.5+ent` and validates that `2.0.0+ent` 
 
 | Version | Behavior |
 |---------|----------|
-| `1.21.5+ent` | Panics with `panic: not struct` when `disable_strict_networking=true` is present |
+| `1.21.4+ent` and `1.21.5+ent` | Panics with `panic: not struct` |
 | `2.0.0+ent` | Fixed - works as expected |
 
 ## Prerequisites
@@ -25,7 +25,7 @@ This repro confirms the behavior on `1.21.5+ent` and validates that `2.0.0+ent` 
 - Vault Enterprise `2.0.0+ent`
 - Vault Enterprise license
 - Azure account with these permissions [docs](https://docs.prod.secops.hashicorp.services/doormat/azure/secrets_engine/):
-  - ``Application.ReadWrite.OwnedBy` at the tenant level
+  - `Application.ReadWrite.OwnedBy` at the tenant level
   - `GroupMember.ReadWrite.All` at the tenant level
   - `User Access Admin` at the subscription level 
 - Access to the [Azure Portal](https://portal.azure.com)
@@ -179,7 +179,7 @@ options               map[disable_strict_networking:true granularity:secret-key 
 type                  azure-kv
 ```
 
-Expected panic on `1.21.5+ent` (reproduced by sending the request through a standby node):
+Expected panic on `1.21.4+ent` and `1.21.5+ent` (reproduced by sending the request through a standby node):
 
 ```text
 panic: not struct
