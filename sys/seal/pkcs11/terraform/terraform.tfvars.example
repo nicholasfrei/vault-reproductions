@@ -1,0 +1,29 @@
+aws_region     = "us-east-1"
+aws_profile    = null
+name_prefix    = "vault-hsm-deadlock"
+key_name       = "<ec2_key_pair_name>"
+admin_ssh_cidr = "<your_admin_ip_cidr>"
+
+# Leave null to use the latest Amazon Linux 2023 x86_64 AMI from SSM.
+ami_id = null
+
+instance_type    = "m6i.large"
+root_volume_size = 40
+
+vault_version = "1.19.15"
+
+# Prefer setting these with environment variables instead of committing them:
+# export TF_VAR_vault_license="$(cat /path/to/vault.hclic)"
+# export TF_VAR_hsm_password='<hsm_crypto_user_password>'
+vault_license = "<vault_license_text>"
+hsm_user      = "vault_user"
+hsm_password  = "<hsm_crypto_user_password>"
+
+hsm_token_label     = "cavium"
+hsm_key_label       = "vault-hsm-key"
+hsm_hmac_key_label  = "vault-hsm-hmac-key"
+pkcs11_max_parallel = 1
+
+extra_tags = {
+  Owner = "<email_or_name>"
+}

@@ -663,6 +663,17 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Includes license setup, systemd service configuration, restart validation, and cleanup guidance.
   </details>
 
+##### PKCS11
+
+- [AWS CloudHSM PKCS11 Seal Wrap KV Latency Reproduction Runbook](sys/seal/pkcs11/aws-cloudhsm-pkcs11-sealwrap-kv-latency-runbook.md)
+  `runbook` `sys` `seal` `pkcs11` `cloudhsm`
+  <details>
+  <summary>Details</summary>
+
+  - End-to-end six-node Vault Enterprise lab on Amazon Linux 2023 with AWS CloudHSM PKCS#11 auto-unseal, five Raft voters, and one non-voter.
+  - Enables a seal-wrapped KV v2 engine, loads configurable high-volume secrets, and injects CloudHSM network latency with `tc netem` to investigate `POTENTIAL DEADLOCK` logs.
+  </details>
+
 ##### Azure
 
 - [Azure Key Vault Auto-Unseal Runbook (Linux VM + Vault Enterprise)](sys/seal/azure/azurekeyvault-auto-unseal-runbook.md)

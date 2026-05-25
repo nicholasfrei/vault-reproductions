@@ -1,0 +1,354 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+exec > >(tee /var/log/vault-cloudhsm-user-data.log | logger -t vault-cloudhsm-user-data -s 2>/dev/console) 2>&1
+
+NODE_ID="${node_id}"
+NODE_PRIVATE_IP="${node_private_ip}"
+VAULT_VERSION="${vault_version}"
+VAULT_LOG_LEVEL="${vault_log_level}"
+HSM_USER="${hsm_user}"
+HSM_PASSWORD=$(printf '%s' "${hsm_password_b64}" | base64 -d)
+HSM_TOKEN_LABEL="${hsm_token_label}"
+HSM_KEY_LABEL="${hsm_key_label}"
+HSM_HMAC_KEY_LABEL="${hsm_hmac_key_label}"
+PKCS11_LIB_PATH="${pkcs11_lib_path}"
+PKCS11_MAX_PARALLEL="${pkcs11_max_parallel}"
+RETRY_JOIN_BLOCKS=$(cat <<'RETRY_JOIN_EOF'
+${retry_join_blocks}
+RETRY_JOIN_EOF
+)
+RETRY_JOIN_AS_NON_VOTER="${retry_join_as_non_voter}"
+VAULT_LICENSE_B64="${vault_license_b64}"
+
+dnf -y update
+dnf -y install jq unzip wget openssl iproute iproute-tc tar shadow-utils libtool-ltdl python3
+
+id vault >/dev/null 2>&1 || useradd --system --home /etc/vault.d --shell /bin/false vault
+
+mkdir -p /etc/vault.d /opt/vault/data /var/log/vault /opt/vault/scripts
+chown -R vault:vault /etc/vault.d /opt/vault /var/log/vault
+chmod 0750 /etc/vault.d /opt/vault/data
+chmod 0755 /opt/vault/scripts
+
+cd /tmp
+if [ ! -x /usr/local/bin/vault ] || ! /usr/local/bin/vault version | grep -q "Vault v$${VAULT_VERSION}+ent"; then
+  rm -f vault "vault_$${VAULT_VERSION}+ent.hsm_linux_amd64.zip"
+  wget "https://releases.hashicorp.com/vault/$${VAULT_VERSION}+ent.hsm/vault_$${VAULT_VERSION}+ent.hsm_linux_amd64.zip"
+  unzip -o "vault_$${VAULT_VERSION}+ent.hsm_linux_amd64.zip"
+  mv vault /usr/local/bin/vault
+  chmod 0755 /usr/local/bin/vault
+fi
+
+if [ ! -f /opt/cloudhsm/lib/libcloudhsm_pkcs11.so ]; then
+  cd /tmp
+  wget -O cloudhsm-pkcs11-latest.amzn2023.x86_64.rpm https://s3.amazonaws.com/cloudhsmv2-software/CloudHsmClient/Amzn2023/cloudhsm-pkcs11-latest.amzn2023.x86_64.rpm
+  dnf -y install ./cloudhsm-pkcs11-latest.amzn2023.x86_64.rpm
+fi
+
+cd /tmp
+wget -O cloudhsm-cli-latest.amzn2023.x86_64.rpm https://s3.amazonaws.com/cloudhsmv2-software/CloudHsmClient/Amzn2023/cloudhsm-cli-latest.amzn2023.x86_64.rpm || true
+dnf -y install ./cloudhsm-cli-latest.amzn2023.x86_64.rpm || true
+
+printf '%s' "$VAULT_LICENSE_B64" | base64 -d > /etc/vault.d/vault.hclic
+chown root:vault /etc/vault.d/vault.hclic
+chmod 0640 /etc/vault.d/vault.hclic
+
+cat > /etc/vault.d/vault.env <<EOF
+VAULT_LICENSE_PATH=/etc/vault.d/vault.hclic
+VAULT_HSM_PIN=$${HSM_USER}:$${HSM_PASSWORD}
+EOF
+chown root:vault /etc/vault.d/vault.env
+chmod 0640 /etc/vault.d/vault.env
+
+cat > /etc/vault.d/vault.hcl <<EOF
+ui = true
+disable_mlock = true
+log_level = "$${VAULT_LOG_LEVEL}"
+
+api_addr = "http://$${NODE_PRIVATE_IP}:8200"
+cluster_addr = "http://$${NODE_PRIVATE_IP}:8201"
+
+listener "tcp" {
+  address     = "0.0.0.0:8200"
+  tls_disable = 1
+}
+
+storage "raft" {
+  path    = "/opt/vault/data"
+  node_id = "$${NODE_ID}"
+EOF
+
+if [ "$RETRY_JOIN_AS_NON_VOTER" = "true" ]; then
+  printf '  retry_join_as_non_voter = true\n' >> /etc/vault.d/vault.hcl
+fi
+
+printf '%s\n' "$RETRY_JOIN_BLOCKS" >> /etc/vault.d/vault.hcl
+
+cat >> /etc/vault.d/vault.hcl <<EOF
+}
+
+seal "pkcs11" {
+  lib              = "$${PKCS11_LIB_PATH}"
+  slot             = "2305843009213693953"
+  key_label        = "$${HSM_KEY_LABEL}"
+  hmac_key_label   = "$${HSM_HMAC_KEY_LABEL}"
+  generate_key     = "true"
+  force_rw_session = "true"
+  max_parallel     = $${PKCS11_MAX_PARALLEL}
+}
+EOF
+
+chown root:vault /etc/vault.d/vault.hcl
+chmod 0640 /etc/vault.d/vault.hcl
+
+cat > /etc/systemd/system/vault.service <<'EOF'
+[Unit]
+Description=HashiCorp Vault
+Documentation=https://developer.hashicorp.com/vault/docs
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=vault
+Group=vault
+ExecStart=/usr/local/bin/vault server -config=/etc/vault.d/vault.hcl
+ExecReload=/bin/kill --signal HUP $MAINPID
+KillMode=process
+KillSignal=SIGINT
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+EnvironmentFile=/etc/vault.d/vault.env
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+cat > /opt/vault/scripts/configure-cloudhsm-pkcs11.sh <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+: "$${CLOUDHSM_CLUSTER_ID:?Set CLOUDHSM_CLUSTER_ID}"
+AWS_REGION="$${AWS_REGION:-us-east-1}"
+CUSTOMER_CA_PATH="$${CUSTOMER_CA_PATH:-/opt/cloudhsm/etc/customerCA.crt}"
+
+if [ ! -f "$CUSTOMER_CA_PATH" ]; then
+  printf 'Missing CloudHSM customer CA certificate at %s\n' "$CUSTOMER_CA_PATH" >&2
+  exit 1
+fi
+
+sudo /opt/cloudhsm/bin/configure-pkcs11 \
+  --cluster-id "$CLOUDHSM_CLUSTER_ID" \
+  --region "$AWS_REGION" \
+  --hsm-ca-cert "$CUSTOMER_CA_PATH"
+
+sudo /opt/cloudhsm/bin/configure-pkcs11 --disable-key-availability-check || true
+
+sudo /opt/cloudhsm/bin/configure-cli \
+  --cluster-id "$CLOUDHSM_CLUSTER_ID" \
+  --region "$AWS_REGION" \
+  --hsm-ca-cert "$CUSTOMER_CA_PATH"
+EOF
+chmod 0755 /opt/vault/scripts/configure-cloudhsm-pkcs11.sh
+
+cat > /opt/vault/scripts/kv-sealwrap-load.sh <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+: "$${VAULT_ADDR:?Set VAULT_ADDR}"
+: "$${VAULT_TOKEN:?Set VAULT_TOKEN}"
+
+TOTAL_SECRETS="$${TOTAL_SECRETS:-10000}"
+CONCURRENCY="$${CONCURRENCY:-100}"
+PAYLOAD_SIZE_BYTES="$${PAYLOAD_SIZE_BYTES:-30000}"
+MOUNT="$${MOUNT:-swkv}"
+MODE="$${MODE:-write-read}"
+
+PAYLOAD_FILE=$(mktemp)
+RESULT_DIR=$(mktemp -d)
+PROGRESS_PID=""
+cleanup() {
+  if [ -n "$PROGRESS_PID" ] && kill -0 "$PROGRESS_PID" 2>/dev/null; then
+    kill "$PROGRESS_PID" 2>/dev/null || true
+  fi
+  rm -f "$PAYLOAD_FILE"
+  rm -rf "$RESULT_DIR"
+}
+trap cleanup EXIT
+
+printf 'starting mode=%s total_secrets=%s concurrency=%s payload_size_bytes=%s mount=%s vault_addr=%s\n' \
+  "$MODE" "$TOTAL_SECRETS" "$CONCURRENCY" "$PAYLOAD_SIZE_BYTES" "$MOUNT" "$VAULT_ADDR"
+
+python3 - <<PY > "$PAYLOAD_FILE"
+size = int("$PAYLOAD_SIZE_BYTES")
+print("x" * size)
+PY
+
+progress_reporter() {
+  local phase="$1"
+  while true; do
+    sleep 5
+    local done_count err_count
+    done_count=$(find "$RESULT_DIR" -name "$${phase}-*.out" 2>/dev/null | wc -l)
+    err_count=$(find "$RESULT_DIR" -name "$${phase}-*.err" -size +0c 2>/dev/null | wc -l)
+    printf '[progress] phase=%s completed=%s/%s errors=%s elapsed=%ss\n' \
+      "$phase" "$done_count" "$TOTAL_SECRETS" "$err_count" "$(( $(date +%s) - START_EPOCH ))"
+  done
+}
+
+write_one() {
+  local i="$1"
+  local payload
+  payload=$(< "$PAYLOAD_FILE")
+  vault kv put "$${MOUNT}/load/$${i}" \
+    index="$i" \
+    payload="$payload" \
+    created_at="$(date -u +%FT%TZ)" \
+    > "$RESULT_DIR/write-$${i}.out" 2> "$RESULT_DIR/write-$${i}.err"
+}
+
+read_one() {
+  local i="$1"
+  vault kv get -format=json "$${MOUNT}/load/$${i}" \
+    > "$RESULT_DIR/read-$${i}.out" 2> "$RESULT_DIR/read-$${i}.err"
+}
+
+run_parallel() {
+  local fn="$1"
+  local fail=0
+  local pids=()
+
+  for i in $(seq 1 "$TOTAL_SECRETS"); do
+    while [ "$(jobs -rp | wc -l)" -ge "$CONCURRENCY" ]; do
+      sleep 0.1
+    done
+
+    "$fn" "$i" &
+    pids+=("$!")
+  done
+
+  for pid in "$${pids[@]}"; do
+    wait "$pid" || fail=1
+  done
+
+  return "$fail"
+}
+
+START_EPOCH=$(date +%s)
+
+case "$MODE" in
+  write)
+    progress_reporter write & PROGRESS_PID=$!
+    run_parallel write_one || true
+    kill "$PROGRESS_PID" 2>/dev/null || true; PROGRESS_PID=""
+    ;;
+  read)
+    progress_reporter read & PROGRESS_PID=$!
+    run_parallel read_one || true
+    kill "$PROGRESS_PID" 2>/dev/null || true; PROGRESS_PID=""
+    ;;
+  write-read)
+    progress_reporter write & PROGRESS_PID=$!
+    run_parallel write_one || true
+    kill "$PROGRESS_PID" 2>/dev/null || true; PROGRESS_PID=""
+    progress_reporter read & PROGRESS_PID=$!
+    run_parallel read_one || true
+    kill "$PROGRESS_PID" 2>/dev/null || true; PROGRESS_PID=""
+    ;;
+  *)
+    printf 'Unsupported MODE=%s\n' "$MODE" >&2
+    exit 1
+    ;;
+esac
+
+END_EPOCH=$(date +%s)
+ERROR_COUNT=$(python3 - "$RESULT_DIR" <<'PY'
+import os
+import sys
+
+count = 0
+for root, _, files in os.walk(sys.argv[1]):
+    for name in files:
+        path = os.path.join(root, name)
+        if name.endswith(".err") and os.path.getsize(path) > 0:
+            count += 1
+
+print(count)
+PY
+)
+
+printf 'mode=%s total_secrets=%s concurrency=%s payload_size_bytes=%s duration_seconds=%s error_files=%s\n' \
+  "$MODE" "$TOTAL_SECRETS" "$CONCURRENCY" "$PAYLOAD_SIZE_BYTES" "$((END_EPOCH - START_EPOCH))" "$ERROR_COUNT"
+
+if [ "$ERROR_COUNT" -gt 0 ]; then
+  printf 'First error files:\n' >&2
+  python3 - "$RESULT_DIR" <<'PY' >&2
+import os
+import sys
+
+result_dir = sys.argv[1]
+matches = []
+
+for root, _, files in os.walk(result_dir):
+    for name in files:
+        path = os.path.join(root, name)
+        if name.endswith(".err") and os.path.getsize(path) > 0:
+            matches.append(path)
+
+for path in sorted(matches)[:10]:
+    print(path)
+PY
+  exit 1
+fi
+EOF
+chmod 0755 /opt/vault/scripts/kv-sealwrap-load.sh
+
+cat > /opt/vault/scripts/apply-cloudhsm-latency.sh <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+: "$${CLOUDHSM_IPS:?Set CLOUDHSM_IPS to one or more HSM ENI private IPs}"
+NETEM_LATENCY="$${NETEM_LATENCY:-5000ms}"
+NETEM_JITTER="$${NETEM_JITTER:-1000ms}"
+FIRST_HSM_IP=$(printf '%s\n' $CLOUDHSM_IPS | awk 'NR==1 {print $1}')
+PRIMARY_IFACE=$(ip route get "$FIRST_HSM_IP" | awk '{for (i=1;i<=NF;i++) if ($i=="dev") print $(i+1)}')
+
+sudo tc qdisc replace dev "$PRIMARY_IFACE" root handle 1: prio
+sudo tc qdisc replace dev "$PRIMARY_IFACE" parent 1:3 handle 30: netem delay "$NETEM_LATENCY" "$NETEM_JITTER" distribution normal
+sudo tc filter del dev "$PRIMARY_IFACE" protocol ip parent 1: prio 3 2>/dev/null || true
+
+for HSM_IP in $CLOUDHSM_IPS; do
+  for PORT in 2223 2224 2225; do
+    sudo tc filter add dev "$PRIMARY_IFACE" protocol ip parent 1: prio 3 u32 \
+      match ip dst "$HSM_IP"/32 \
+      match ip dport "$PORT" 0xffff \
+      flowid 1:3
+  done
+done
+
+sudo tc qdisc show dev "$PRIMARY_IFACE"
+sudo tc filter show dev "$PRIMARY_IFACE" parent 1:
+EOF
+chmod 0755 /opt/vault/scripts/apply-cloudhsm-latency.sh
+
+cat > /opt/vault/scripts/remove-cloudhsm-latency.sh <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+: "$${CLOUDHSM_IPS:?Set CLOUDHSM_IPS to one or more HSM ENI private IPs}"
+FIRST_HSM_IP=$(printf '%s\n' $CLOUDHSM_IPS | awk 'NR==1 {print $1}')
+PRIMARY_IFACE=$(ip route get "$FIRST_HSM_IP" | awk '{for (i=1;i<=NF;i++) if ($i=="dev") print $(i+1)}')
+
+sudo tc qdisc del dev "$PRIMARY_IFACE" root 2>/dev/null || true
+sudo tc qdisc show dev "$PRIMARY_IFACE"
+EOF
+chmod 0755 /opt/vault/scripts/remove-cloudhsm-latency.sh
+
+chown -R root:vault /opt/vault/scripts
+
+systemctl daemon-reload
+systemctl enable vault
+
+# Vault intentionally is not started until CloudHSM is initialized and the PKCS11 client is configured.
+touch /var/log/vault-cloudhsm-user-data-complete
