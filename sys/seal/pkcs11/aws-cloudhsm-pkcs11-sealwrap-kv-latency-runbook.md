@@ -474,6 +474,7 @@ for HOST in \
   ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
     "pkill -f 'bash /opt/vault/scripts/kv-sealwrap-load.sh'"
 done
+```
 
 ## Step 12: Watch for Potential Deadlock Logs
 
