@@ -459,11 +459,7 @@ export TEST_VAULT_TOKEN='<root_token_value>'
 
 ```bash
 for HOST in \
-  "$VAULT_1_PUBLIC_IP" \
-  "$VAULT_2_PUBLIC_IP" \
-  "$VAULT_3_PUBLIC_IP" \
-  "$VAULT_4_PUBLIC_IP" \
-  "$VAULT_5_PUBLIC_IP"; do
+  "$VAULT_1_PUBLIC_IP"; do
   ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
     "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN='$TEST_VAULT_TOKEN' TOTAL_SECRETS=10000 CONCURRENCY=200 PAYLOAD_SIZE_BYTES=8000 MODE=read /opt/vault/scripts/kv-sealwrap-load.sh" &
 done

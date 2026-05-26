@@ -102,6 +102,11 @@ EOF
 chown root:vault /etc/vault.d/vault.hcl
 chmod 0640 /etc/vault.d/vault.hcl
 
+cat > /etc/profile.d/vault.sh <<'EOF'
+export VAULT_ADDR=http://127.0.0.1:8200
+EOF
+chmod 0644 /etc/profile.d/vault.sh
+
 cat > /etc/systemd/system/vault.service <<'EOF'
 [Unit]
 Description=HashiCorp Vault
