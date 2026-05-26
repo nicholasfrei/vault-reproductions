@@ -466,6 +466,15 @@ done
 wait
 ```
 
+If you need to kill the process/load for any reason, you can run this command:
+
+```bash
+for HOST in \
+  "$VAULT_1_PUBLIC_IP"; do
+  ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
+    "pkill -f 'bash /opt/vault/scripts/kv-sealwrap-load.sh'"
+done
+
 ## Step 12: Watch for Potential Deadlock Logs
 
 Run this from your workstation:
@@ -497,6 +506,21 @@ for HOST in \
   "$VAULT_6_PUBLIC_IP"; do
   ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
     "sudo CLOUDHSM_IPS='$CLOUDHSM_IPS' /opt/vault/scripts/remove-cloudhsm-latency.sh"
+done
+```
+
+Check if latency is removed:
+
+```bash
+for HOST in \
+  "$VAULT_1_PUBLIC_IP" \
+  "$VAULT_2_PUBLIC_IP" \
+  "$VAULT_3_PUBLIC_IP" \
+  "$VAULT_4_PUBLIC_IP" \
+  "$VAULT_5_PUBLIC_IP"; do
+  printf '\n===== %s =====\n' "$HOST"
+  ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
+  "sudo tc -s qdisc show dev ens5"
 done
 ```
 
