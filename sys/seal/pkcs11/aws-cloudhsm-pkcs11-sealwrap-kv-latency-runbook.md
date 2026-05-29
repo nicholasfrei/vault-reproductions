@@ -540,6 +540,36 @@ vault status
 vault kv get swkv/load/1 >/dev/null
 ```
 
+## Step 14: Test on `1.16.24+ent.hsm`
+
+Run this to change the Vault binary on the Vault nodes:
+
+```bash
+for HOST in \
+  "$VAULT_1_PUBLIC_IP" \
+  "$VAULT_2_PUBLIC_IP" \
+  "$VAULT_3_PUBLIC_IP" \
+  "$VAULT_4_PUBLIC_IP" \
+  "$VAULT_5_PUBLIC_IP" \
+  "$VAULT_6_PUBLIC_IP"; do
+  ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" bash <<'EOF'
+    set -euo pipefail
+    sudo systemctl stop vault
+    sudo rm -rf /opt/vault/data/*
+    curl -fsSL -o /tmp/vault.zip \
+      "https://releases.hashicorp.com/vault/1.16.24+ent.hsm/vault_1.16.24+ent.hsm_linux_amd64.zip"
+    sudo unzip -o /tmp/vault.zip vault -d /usr/local/bin/
+    sudo chmod 755 /usr/local/bin/vault
+    rm -f /tmp/vault.zip
+    which vault
+    /usr/local/bin/vault version
+    sudo systemctl start vault
+EOF
+done
+```
+
+Then repeat Steps 10 through 12 to see if the older version has the same behavior under latency.
+
 ## Cleanup
 
 Destroy the Terraform-managed lab from `sys/seal/pkcs11/terraform`:
