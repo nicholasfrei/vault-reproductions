@@ -436,7 +436,7 @@ Run this from your workstation to apply latency on every Vault node. The script 
 
 Important: Vault's `POTENTIAL DEADLOCK` detector (from `sasha-s/go-deadlock`) only fires when a single lock holder is blocked for at least 30 seconds. To reliably surface the seal-wrap deadlock, at least one HSM PKCS#11 call needs to block for 30+ seconds. This doesn't necessarily need to be during a leadership transfer. This error has appeared during reads to the seal-wrapped KV. 
 
-`NETEM_LATENCY=5000ms` with `NETEM_JITTER=1000ms` is applied per packet on egress to the CloudHSM ENIs. A single PKCS#11 operation requires multiple TLS round trips, so effective per-call latency is well above 5 seconds — which is why this value reliably crosses the 30-second deadlock-detector threshold during seal-wrap initialization.
+`NETEM_LATENCY=50ms` with `NETEM_JITTER=25ms` is applied per packet on egress to the CloudHSM ENIs. A single PKCS#11 operation requires multiple TLS round trips, so effective per-call latency is well above 5 seconds — which is why this value reliably crosses the 30-second deadlock-detector threshold during seal-wrap initialization.
 
 ```bash
 for HOST in \
@@ -447,8 +447,9 @@ for HOST in \
   "$VAULT_5_PUBLIC_IP" \
   "$VAULT_6_PUBLIC_IP"; do
   ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
-    "sudo CLOUDHSM_IPS='$CLOUDHSM_IPS' NETEM_LATENCY=5000ms NETEM_JITTER=1000ms /opt/vault/scripts/apply-cloudhsm-latency.sh"
+    "sudo CLOUDHSM_IPS='$CLOUDHSM_IPS' NETEM_LATENCY=50ms NETEM_JITTER=25ms /opt/vault/scripts/apply-cloudhsm-latency.sh"
 done
+wait
 ```
 
 After adding latency, read secrets from the seal-wrapped KV to simulate load and trigger the potential deadlock.
@@ -457,11 +458,13 @@ After adding latency, read secrets from the seal-wrapped KV to simulate load and
 export TEST_VAULT_TOKEN='<root_token_value>'
 ```
 
+Test reads to the seal wrapped backend. 
+
 ```bash
 for HOST in \
   "$VAULT_1_PUBLIC_IP"; do
   ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
-    "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN='$TEST_VAULT_TOKEN' TOTAL_SECRETS=10000 CONCURRENCY=200 PAYLOAD_SIZE_BYTES=8000 MODE=read /opt/vault/scripts/kv-sealwrap-load.sh" &
+    "sudo env VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN='$TEST_VAULT_TOKEN' TOTAL_SECRETS=10000 CONCURRENCY=250 PAYLOAD_SIZE_BYTES=8000 MODE=read /opt/vault/scripts/kv-sealwrap-load.sh" &
 done
 wait
 ```
@@ -470,9 +473,14 @@ If you need to kill the process/load for any reason, you can run this command:
 
 ```bash
 for HOST in \
-  "$VAULT_1_PUBLIC_IP"; do
+  "$VAULT_1_PUBLIC_IP" \
+  "$VAULT_2_PUBLIC_IP" \
+  "$VAULT_3_PUBLIC_IP" \
+  "$VAULT_4_PUBLIC_IP" \
+  "$VAULT_5_PUBLIC_IP" \
+  "$VAULT_6_PUBLIC_IP"; do
   ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
-    "pkill -f 'bash /opt/vault/scripts/kv-sealwrap-load.sh'"
+    "sudo pkill -f 'bash /opt/vault/scripts/kv-sealwrap-load.sh'"
 done
 ```
 
