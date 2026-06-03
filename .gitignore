@@ -19,3 +19,18 @@ init-pgp.txt
 pgp-keys/
 *.pem
 *.der
+
+# Terraform local state and user variables
+**/.terraform/
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/terraform.tfvars
+**/terraform.tfvars.json
+
+# CloudHSM lab bootstrap artifacts (lab CA + signed cluster cert)
+customerRootCA.key
+customerRootCA.crt
+customerRootCA.srl
+*_ClusterCsr.csr
+*_CustomerHsmCertificate.crt
+*.hclic

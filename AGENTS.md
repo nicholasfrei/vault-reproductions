@@ -68,3 +68,12 @@ If a document spans types (for example both theory and a long procedure), pick t
 - Do not rename files or restructure folders unless explicitly requested.
 - Do not run `git commit` or `git push`. 
 - Do not append "coauthored by: AI" to commits; I'm only using AI to help with editing/formatting, not to generate original content.
+
+## AI tooling layout
+
+- `AGENTS.md` (this file) - shared workspace context and cross-repo guidance.
+- `.ai/skills/` - shared reusable skills.
+  - `customer-reply/SKILL.md` - drafting Vault customer replies.
+  - `diagnose-issue/SKILL.md` - structured Vault diagnosis and doc research.
+  - `find-vault-bugs/SKILL.md` - source-level Vault Enterprise bug and fix investigation.
+  - `internal-tools/SKILL.md` - internal Vault tooling and local repo selection guidance.
