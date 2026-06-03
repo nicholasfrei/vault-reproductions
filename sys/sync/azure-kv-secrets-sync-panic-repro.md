@@ -1,28 +1,35 @@
-# Azure Secrets Sync: `panic: not struct` Bug in `1.21.4+ent` and `1.21.5+ent` Repro
+# Azure & AWS Secrets Sync: `panic: not struct` Bug in `1.21.4+ent` and `1.21.5+ent` Repro
 
 ## Overview
 
-In Vault Enterprise `1.21.4+ent` and `1.21.5+ent`, writing a `sys/sync/destinations/azure-kv` destination that includes `disable_strict_networking=true` triggers a fatal panic: `panic: not struct`. The panic originates in `logical_system_sync_stores_ent.go` where `github.com/fatih/structs.New()` is called with a nil or non-struct value. 
+In Vault Enterprise `1.21.4+ent` and `1.21.5+ent`, writing a `sys/sync/destinations/azure-kv` destination that includes `disable_strict_networking=true` triggers a fatal panic: `panic: not struct`. The panic originates in `logical_system_sync_stores_ent.go` where `github.com/fatih/structs.New()` is called with a nil or non-struct value.
 
-This repro confirms the behavior on `1.21.4+ent` or `1.21.5+ent` and validates that `2.0.0+ent` resolves it.
+This repro confirms the behavior on affected versions and validates the fix in `1.20.12+ent`, `1.21.7+ent`, and later releases (including `2.0.0+ent`).
 
 ## Objective
 
 - Create the Azure prerequisites needed for the sync destination
-- Activate Vault Secrets Sync on an existing `2.0.0+ent` Kubernetes cluster
+- Activate Vault Secrets Sync on an existing Vault Enterprise Kubernetes cluster
 - Create an Azure KV destination and sync association
 - Verify the synced secret appears in Azure Key Vault
 
-## Affected Versions
+## Version Information
 
 | Version | Behavior |
 |---------|----------|
 | `1.21.4+ent` and `1.21.5+ent` | Panics with `panic: not struct` |
-| `2.0.0+ent` | Fixed - works as expected |
+| `1.20.12+ent` | Fixed - works as expected |
+| `1.21.7+ent` | Fixed - works as expected |
+| `2.0.0+ent` and later | Fixed - works as expected |
+
+## Fix Availability
+
+- `1.21.x` fix PR: [PR - 1.21.x - 15011](https://github.com/hashicorp/vault-enterprise/pull/15011)
+- `1.20.x` fix PR: [PR - 1.20.x - 15050](https://github.com/hashicorp/vault-enterprise/pull/15050)
 
 ## Prerequisites
 
-- Vault Enterprise `2.0.0+ent`
+- Vault Enterprise (for fix validation, use `1.20.12+ent`, `1.21.7+ent`, or later)
 - Vault Enterprise license
 - Azure account with these permissions [docs](https://docs.prod.secops.hashicorp.services/doormat/azure/secrets_engine/):
   - `Application.ReadWrite.OwnedBy` at the tenant level
@@ -102,7 +109,7 @@ Seal Type                <anything>
 Initialized              true
 Sealed                   false
 ...
-Version                  2.0.0+ent
+Version                  <vault-version>
 ...
 HA Enabled               true
 HA Cluster               https://<vault_addr>:8201
@@ -168,7 +175,7 @@ vault write sys/sync/destinations/azure-kv/my-azure-kv \
   disable_strict_networking=true
 ```
 
-Expected output on `2.0.0+ent`:
+Expected output on fixed versions (`1.20.12+ent`, `1.21.7+ent`, `2.0.0+ent`, and later):
 
 ```text
 Key                   Value
