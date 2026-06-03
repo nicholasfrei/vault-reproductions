@@ -12,6 +12,7 @@ drafts/
 .cursor/
 .opencode/
 .github/
+.hermes/
 
 # Misc. files
 init.json
