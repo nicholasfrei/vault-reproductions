@@ -102,6 +102,7 @@ extra_tags = {
 Set the Vault license and HSM crypto user password as environment variables to avoid writing secrets to disk. Terraform will pass them to the Vault nodes for the systemd service environment:
 
 ```bash
+export AWS_REGION="us-east-1"
 export TF_VAR_vault_license="$(cat /path/to/vault.hclic)"
 export TF_VAR_hsm_password='<hsm_crypto_user_password>'
 ```
@@ -172,7 +173,7 @@ Run this on your workstation.
 
 ```bash
 aws cloudhsmv2 describe-clusters \
-  --region us-east-1 \
+  --region $AWS_REGION \
   --filters clusterIds="$CLOUDHSM_CLUSTER_ID" \
   --query 'Clusters[0].[State,Hsms[0].State,SecurityGroup]' \
   --output table
@@ -182,7 +183,7 @@ Wait until the HSM exists and the cluster is ready to initialize. The HSM must r
 
 ```bash
 while [ "$(aws cloudhsmv2 describe-clusters \
-  --region us-east-1 \
+  --region $AWS_REGION \
   --filters clusterIds="$CLOUDHSM_CLUSTER_ID" \
   --query 'Clusters[0].Hsms[0].State' \
   --output text)" != "ACTIVE" ]; do
@@ -195,7 +196,7 @@ Then download the cluster CSR:
 
 ```bash
 aws cloudhsmv2 describe-clusters \
-  --region us-east-1 \
+  --region $AWS_REGION \
   --filters clusterIds="$CLOUDHSM_CLUSTER_ID" \
   --query 'Clusters[0].Certificates.ClusterCsr' \
   --output text > "${CLOUDHSM_CLUSTER_ID}_ClusterCsr.csr"
@@ -223,7 +224,7 @@ Initialize the cluster:
 
 ```bash
 aws cloudhsmv2 initialize-cluster \
-  --region us-east-1 \
+  --region $AWS_REGION \
   --cluster-id "$CLOUDHSM_CLUSTER_ID" \
   --signed-cert "file://${CLOUDHSM_CLUSTER_ID}_CustomerHsmCertificate.crt" \
   --trust-anchor file://customerRootCA.crt
@@ -233,7 +234,7 @@ Wait until the cluster state is `INITIALIZED`:
 
 ```bash
 aws cloudhsmv2 describe-clusters \
-  --region us-east-1 \
+  --region $AWS_REGION \
   --filters clusterIds="$CLOUDHSM_CLUSTER_ID" \
   --query 'Clusters[0].State' \
   --output text
@@ -261,7 +262,7 @@ for HOST in \
   "$VAULT_6_PUBLIC_IP"; do
   scp -i "$SSH_PRIVATE_KEY" customerRootCA.crt ec2-user@"$HOST":/tmp/customerRootCA.crt
   ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
-    "sudo mkdir -p /opt/cloudhsm/etc && sudo cp /tmp/customerRootCA.crt /opt/cloudhsm/etc/customerCA.crt && sudo chmod 0644 /opt/cloudhsm/etc/customerCA.crt && sudo CLOUDHSM_CLUSTER_ID=$CLOUDHSM_CLUSTER_ID AWS_REGION=us-east-1 /opt/vault/scripts/configure-cloudhsm-pkcs11.sh"
+    "sudo mkdir -p /opt/cloudhsm/etc && sudo cp /tmp/customerRootCA.crt /opt/cloudhsm/etc/customerCA.crt && sudo chmod 0644 /opt/cloudhsm/etc/customerCA.crt && sudo CLOUDHSM_CLUSTER_ID=$CLOUDHSM_CLUSTER_ID AWS_REGION=$AWS_REGION /opt/vault/scripts/configure-cloudhsm-pkcs11.sh"
 done
 ```
 
@@ -271,7 +272,7 @@ Get the HSM ENI private IPs for later latency injection:
 
 ```bash
 export CLOUDHSM_IPS=$(aws cloudhsmv2 describe-clusters \
-  --region us-east-1 \
+  --region $AWS_REGION \
   --filters clusterIds="$CLOUDHSM_CLUSTER_ID" \
   --query 'Clusters[0].Hsms[].EniIp' \
   --output text)
@@ -579,13 +580,13 @@ AWS CloudHSM also retains a cluster backup by default (typically 7 to 90 days) a
 
 ```bash
 aws cloudhsmv2 describe-backups \
-  --region us-east-1 \
+  --region $AWS_REGION \
   --filters clusterIds="$CLOUDHSM_CLUSTER_ID" \
   --query 'Backups[].[BackupId,BackupState,CreateTimestamp]' \
   --output table
 
 aws cloudhsmv2 delete-backup \
-  --region us-east-1 \
+  --region $AWS_REGION \
   --backup-id <backup_id>
 ```
 
