@@ -106,7 +106,7 @@ export TF_VAR_vault_license="$(cat /path/to/vault.hclic)"
 export TF_VAR_hsm_password='<hsm_crypto_user_password>'
 ```
 
-AWS CloudHSM enforces password complexity on the crypto user (minimum 7 characters, with at least one upper-case letter, one lower-case letter, one digit, and one special character). Pick a value that satisfies those rules now — if it does not, CloudHSM will reject it interactively in Step 6 and Vault will fail to log in to the HSM.
+AWS CloudHSM enforces password complexity on the crypto user (minimum 7 characters, with at least one upper-case letter, one lower-case letter, & one digit). Pick a value that satisfies those rules now — if it does not, CloudHSM will reject it interactively in Step 6 and Vault will fail to log in to the HSM.
 
 The CloudHSM crypto user and password are placed on the Vault nodes for the systemd service in this step, but the user itself is not created inside CloudHSM until Step 6.
 
