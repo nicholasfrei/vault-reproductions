@@ -364,7 +364,8 @@ export VAULT_ADDR=http://127.0.0.1:8200
 vault login <root_token>
 
 vault operator raft list-peers
-vault operator raft autopilot state
+vault operator raft autopilot state 
+done
 ```
 
 Success looks like:
@@ -413,56 +414,53 @@ Terraform stages the workload script at `/opt/vault/scripts/kv-sealwrap-load.sh`
 Use the initial root token from Step 7. If you would prefer to scope the workload, create a dedicated token first with a policy that grants `create`, `update`, and `read` on `swkv/*`, and use that instead.
 
 ```bash
-export VAULT_ADDR=http://127.0.0.1:8200
 export VAULT_TOKEN=<root_token>
-export TOTAL_SECRETS=10000
-export CONCURRENCY=100
-export PAYLOAD_SIZE_BYTES=8000
-export MODE=write-read
-
-/opt/vault/scripts/kv-sealwrap-load.sh
+for HOST in \
+  "$VAULT_1_PUBLIC_IP"; do
+  ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
+    "sudo env VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN='$VAULT_TOKEN' TOTAL_SECRETS=5000 CONCURRENCY=100 PAYLOAD_SIZE_BYTES=8000 MODE=write-read /opt/vault/scripts/kv-sealwrap-load.sh" &
+done
+wait
 ```
 
 Success looks like:
 
 ```text
-mode=write-read total_secrets=10000 concurrency=100 payload_size_bytes=8000 duration_seconds=<seconds> error_files=0
+mode=write-read total_secrets=5000 concurrency=100 payload_size_bytes=8000 duration_seconds=<seconds> error_files=0
 ```
 
 This process will take a 15-20 minutes. So, feel free to step away from the keyboard while it runs.
 
-## Step 11: Add CloudHSM Latency With tc netem
+## Step 11: Reproduce the Issue / Quorum Loss Under Latency
 
 Run this from your workstation to apply latency on every Vault node. The script is staged by Terraform at `/opt/vault/scripts/apply-cloudhsm-latency.sh`.
 
 Important: Vault's `POTENTIAL DEADLOCK` detector (from `sasha-s/go-deadlock`) only fires when a single lock holder is blocked for at least 30 seconds. To reliably surface the seal-wrap deadlock, at least one HSM PKCS#11 call needs to block for 30+ seconds. This doesn't necessarily need to be during a leadership transfer. This error has appeared during reads to the seal-wrapped KV. 
 
-`NETEM_LATENCY=50ms` with `NETEM_JITTER=25ms` is applied per packet on egress to the CloudHSM ENIs. A single PKCS#11 operation requires multiple TLS round trips, so effective per-call latency is well above 5 seconds — which is why this value reliably crosses the 30-second deadlock-detector threshold during seal-wrap initialization.
+`NETEM_LATENCY=` with `NETEM_JITTER=` is applied per packet on egress to the CloudHSM ENIs.
 
 ```bash
 for HOST in \
   "$VAULT_1_PUBLIC_IP"; do
   ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
-    "sudo CLOUDHSM_IPS='$CLOUDHSM_IPS' NETEM_LATENCY=100ms NETEM_JITTER=50ms /opt/vault/scripts/apply-cloudhsm-latency.sh"
+    "sudo CLOUDHSM_IPS='$CLOUDHSM_IPS' NETEM_LATENCY=250ms NETEM_JITTER=50ms /opt/vault/scripts/apply-cloudhsm-latency.sh"
 done
 wait
 ```
-
-After adding latency, read secrets from the seal-wrapped KV to simulate load and trigger the potential deadlock.
-
-```bash
-export TEST_VAULT_TOKEN='<root_token_value>'
-```
-
-Test reads to the seal wrapped backend. 
 
 ```bash
 for HOST in \
   "$VAULT_1_PUBLIC_IP"; do
   ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
-    "sudo env VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN='$TEST_VAULT_TOKEN' TOTAL_SECRETS=10000 CONCURRENCY=200 PAYLOAD_SIZE_BYTES=8000 MODE=read /opt/vault/scripts/kv-sealwrap-load.sh" &
+    "sudo env VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN='$VAULT_TOKEN' TOTAL_SECRETS=10000 CONCURRENCY=300 PAYLOAD_SIZE_BYTES=8000 MODE=read /opt/vault/scripts/kv-sealwrap-load.sh" &
 done
 wait
+```
+
+When monitoring this, keep an eye on the logs for these errors (open in a new terminal to the leader node):
+
+```bash
+journalctl -u vault -f | grep -iE "POTENTIAL DEADLOCK:|lost leadership|SIGSEGV:|raft"
 ```
 
 If you need to kill the process/load for any reason, you can run this command:
