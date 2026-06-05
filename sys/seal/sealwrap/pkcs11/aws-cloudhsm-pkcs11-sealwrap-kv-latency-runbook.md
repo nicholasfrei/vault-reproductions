@@ -437,13 +437,13 @@ Run this from your workstation to apply latency on every Vault node. The script 
 
 Important: Vault's `POTENTIAL DEADLOCK` detector (from `sasha-s/go-deadlock`) only fires when a single lock holder is blocked for at least 30 seconds. To reliably surface the seal-wrap deadlock, at least one HSM PKCS#11 call needs to block for 30+ seconds. This doesn't necessarily need to be during a leadership transfer. This error has appeared during reads to the seal-wrapped KV. 
 
-`NETEM_LATENCY=` with `NETEM_JITTER=` is applied per packet on egress to the CloudHSM ENIs.
+`NETEM_LATENCY=` with `NETEM_JITTER=` is applied per packet on egress to the CloudHSM ENIs. I've been able to reproduce the error with around ~250-750ms of latency and concurrency of 250-350+. The idea is to add enough latency to cause the lock to be held for 30+ seconds, but not enough concurrency to cause the node to OOM or crash. Feel free to adjust those values in the command below if you are not seeing `POTENTIAL DEADLOCK` messages in the logs after a few minutes. 
 
 ```bash
 for HOST in \
   "$VAULT_1_PUBLIC_IP"; do
   ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
-    "sudo CLOUDHSM_IPS='$CLOUDHSM_IPS' NETEM_LATENCY=250ms NETEM_JITTER=50ms /opt/vault/scripts/apply-cloudhsm-latency.sh"
+    "sudo CLOUDHSM_IPS='$CLOUDHSM_IPS' NETEM_LATENCY=750ms NETEM_JITTER=250ms /opt/vault/scripts/apply-cloudhsm-latency.sh"
 done
 wait
 ```
@@ -452,7 +452,7 @@ wait
 for HOST in \
   "$VAULT_1_PUBLIC_IP"; do
   ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
-    "sudo env VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN='$VAULT_TOKEN' TOTAL_SECRETS=10000 CONCURRENCY=300 PAYLOAD_SIZE_BYTES=8000 MODE=read /opt/vault/scripts/kv-sealwrap-load.sh" &
+    "sudo env VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN='$VAULT_TOKEN' TOTAL_SECRETS=5000 CONCURRENCY=350 PAYLOAD_SIZE_BYTES=8000 MODE=read /opt/vault/scripts/kv-sealwrap-load.sh" &
 done
 wait
 ```
@@ -463,7 +463,7 @@ When monitoring this, keep an eye on the logs for these errors (open in a new te
 journalctl -u vault -f | grep -iE "POTENTIAL DEADLOCK:|lost leadership|SIGSEGV:|raft"
 ```
 
-If you need to kill the process/load for any reason, you can run this command:
+If you need to kill the load, you can run this command:
 
 ```bash
 for HOST in \
@@ -475,6 +475,21 @@ for HOST in \
   "$VAULT_6_PUBLIC_IP"; do
   ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
     "sudo pkill -f 'bash /opt/vault/scripts/kv-sealwrap-load.sh'"
+done
+```
+
+If you need to clear the cache, you can run this command:
+
+```bash
+for HOST in \
+  "$VAULT_1_PUBLIC_IP" \
+  "$VAULT_2_PUBLIC_IP" \
+  "$VAULT_3_PUBLIC_IP" \
+  "$VAULT_4_PUBLIC_IP" \
+  "$VAULT_5_PUBLIC_IP" \
+  "$VAULT_6_PUBLIC_IP"; do
+  ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
+    "sudo systemctl restart vault"
 done
 ```
 

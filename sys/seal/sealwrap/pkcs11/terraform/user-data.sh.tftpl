@@ -173,14 +173,18 @@ MODE="$${MODE:-write-read}"
 PAYLOAD_FILE=$(mktemp)
 RESULT_DIR=$(mktemp -d)
 PROGRESS_PID=""
+VMSTAT_PID=""
 cleanup() {
   if [ -n "$PROGRESS_PID" ] && kill -0 "$PROGRESS_PID" 2>/dev/null; then
     kill "$PROGRESS_PID" 2>/dev/null || true
   fi
+  [ -n "$VMSTAT_PID" ] && kill "$VMSTAT_PID" 2>/dev/null || true
   rm -f "$PAYLOAD_FILE"
   rm -rf "$RESULT_DIR"
 }
 trap cleanup EXIT
+vmstat -t 5 &
+VMSTAT_PID=$!
 
 printf 'starting mode=%s total_secrets=%s concurrency=%s payload_size_bytes=%s mount=%s vault_addr=%s\n' \
   "$MODE" "$TOTAL_SECRETS" "$CONCURRENCY" "$PAYLOAD_SIZE_BYTES" "$MOUNT" "$VAULT_ADDR"
