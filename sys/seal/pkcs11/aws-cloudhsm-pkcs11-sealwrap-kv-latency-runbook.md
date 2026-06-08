@@ -651,6 +651,70 @@ rm -f "${CLOUDHSM_CLUSTER_ID}_CustomerHsmCertificate.crt"
 rm -f /tmp/vault-hsm-nodes.json
 ```
 
+## Conclusion
+
+Testing across the stock binary and a custom binary without the `go-deadlock` detector, both on `m6i.2xlarge` instances (8 vCPU, 32 GB RAM) under identical load and latency conditions, reveals that the quorum loss is not caused by CPU exhaustion or raw lock contention. It is caused by the interaction between the seal-wrap mutex and Vault's embedded `sasha-s/go-deadlock` detector.
+
+Under added HSM latency, every seal-wrap read holds the `sealWrapBackend` mutex for the full round-trip duration to the HSM. With `pkcs11_max_parallel=1` serializing PKCS#11 calls, that duration exceeds the `go-deadlock` 30-second threshold. When the detector fires, it calls `runtime.Stack(buf, true)` to collect a full goroutine stack trace for every goroutine in the process. This operation acquires the Go runtime's scheduler lock, driving `idleprocs` to zero, all 8 logical processors are occupied by the stack scan, for the duration of the emission.
+
+The `GODEBUG=schedtrace=1000` output captures this precisely. In the stock binary, the scheduler transitions from a healthy baseline immediately after the first `POTENTIAL DEADLOCK` fires:
+
+```text
+# Before
+idleprocs=8  runqueue=0  [ 0 0 0 0 0 0 0 0 ]
+
+# After first POTENTIAL DEADLOCK
+idleprocs=0  needspinning=1  runqueue=62 → 104 → 195
+```
+
+With idleprocs=0, no processor is available to schedule the Raft heartbeat goroutine. It sits in the runqueue behind 60–200 other goroutines. Raft heartbeat timeouts on the follower nodes fire before the goroutine is ever dispatched, and the leader steps down.
+
+In the custom binary, idleprocs stays at 6–8 throughout the entire run, including during burst phases that produce the same 60K–79K context switches per second as the stock binary. The runqueue remains at 0. Without the deadlock detector emitting stack traces, the scheduler is never monopolized, the Raft heartbeat goroutine always has a processor available, and quorum holds.
+
+The root cause chain:
+
+```text
+  → seal-wrap mutex held > 30s
+  → go-deadlock detector fires runtime.Stack(all goroutines)
+  → Go scheduler lock held; idleprocs drops to 0
+  → runqueue accumulates (60–195 goroutines)
+  → Raft heartbeat goroutine cannot be scheduled
+  → followers time out (2–4s contact failures)
+  → leader steps down, quorum lost
+```
+
+### Isolated Confirmation: `runtime.Stack(buf, true)` Alone Breaks Quorum
+
+To confirm that `runtime.Stack(buf, true)` is the direct cause, independent of HSM latency, seal wrap, or the `go-deadlock` library, a colleague of mine wrote a minimal test against a live Raft cluster with no other workload:
+
+```go
+func TestStacksBreaksCluster(t *testing.T) {
+    conf, opts := teststorage.ClusterSetup(nil, nil, teststorage.RaftBackendSetup)
+    cluster := vault.NewTestCluster(t, conf, opts)
+
+    workers := 500
+    {
+        var wg sync.WaitGroup
+
+        for i := 0; i < workers; i++ {
+            wg.Add(1)
+            go func() {
+                buf := make([]byte, 1024*16)
+                defer wg.Done()
+                for i := 0; i < 1000; i++ {
+                    runtime.Stack(buf, true)
+                }
+            }()
+        }
+        wg.Wait()
+    }
+
+    t.Log(cluster.RootToken)
+}
+```
+
+500 goroutines each calling `runtime.Stack(buf, true)` 1000 times in a loop broke Raft quorum with no HSM, seal wrap or deadlock detector. This confirms that the scheduler exhaustion is connected to `runtime.Stack(buf, true)` under concurrency, and that the seal-wrap path is the trigger in production because it is what causes the `go-deadlock` detector to emit those scans at scale.
+
 ## References
 
 - https://developer.hashicorp.com/vault/docs/configuration/seal/pkcs11
