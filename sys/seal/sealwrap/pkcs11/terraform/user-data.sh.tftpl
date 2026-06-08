@@ -57,6 +57,7 @@ chmod 0640 /etc/vault.d/vault.hclic
 cat > /etc/vault.d/vault.env <<EOF
 VAULT_LICENSE_PATH=/etc/vault.d/vault.hclic
 VAULT_HSM_PIN=$${HSM_USER}:$${HSM_PASSWORD}
+GODEBUG=schedtrace=1000
 EOF
 chown root:vault /etc/vault.d/vault.env
 chmod 0640 /etc/vault.d/vault.env
