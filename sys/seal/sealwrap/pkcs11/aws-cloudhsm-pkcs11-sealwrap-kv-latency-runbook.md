@@ -579,6 +579,45 @@ done
 
 Then repeat Steps 10 through 12 to see if the older version has the same behavior under latency.
 
+## Step 15: Test Behavior on `1.19.15+ent.hsm` with `m6i.2xlarge` Instances (8 vCPU, 32 GB RAM)
+
+This test is to prove whether the `POTENTIAL DEADLOCK` behavior is influenced by resources or some other factor. Upgrading from `m6i.large` (2 vCPU, 8 GB RAM) to `m6i.2xlarge` (8 vCPU, 32 GB RAM) allows us to determine whether the lock contention is a fundamental property of the seal-wrap path under HSM latency or a symptom of resource pressure on smaller instances.
+
+In `sys/seal/pkcs11/terraform/terraform.tfvars`, change `instance_type`:
+
+```hcl
+instance_type = "m6i.2xlarge"
+```
+
+Run `terraform apply` to replace the instances. After apply completes, re-run Step 3 to re-export the updated public and private IP variables — instance replacement changes the public IPs.
+
+The CloudHSM cluster and crypto user from Steps 4 and 6 are still intact. Skip those steps. Run Steps 5, 7, 8, 9, and 10 in order on the new instances before applying latency.
+
+Apply HSM latency to the active node:
+
+```bash
+for HOST in \
+  "$VAULT_1_PUBLIC_IP"; do
+  ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
+    "sudo CLOUDHSM_IPS='$CLOUDHSM_IPS' NETEM_LATENCY=1500ms NETEM_JITTER=250ms /opt/vault/scripts/apply-cloudhsm-latency.sh"
+done
+wait
+```
+
+Run the seal-wrapped KV read workload:
+
+```bash
+for HOST in \
+  "$VAULT_1_PUBLIC_IP"; do
+  ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" \
+    "sudo env VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN='$VAULT_TOKEN' TOTAL_SECRETS=10000 CONCURRENCY=1250 PAYLOAD_SIZE_BYTES=8000 MODE=read /opt/vault/scripts/kv-sealwrap-load.sh" &
+done
+wait
+```
+
+Monitor Vault logs on the active node using the method in Step 12. `POTENTIAL DEADLOCK` messages should appear within the first minute if the behavior reproduces on this instance size.
+
+
 ## Cleanup
 
 Destroy the Terraform-managed lab from `sys/seal/pkcs11/terraform`:
