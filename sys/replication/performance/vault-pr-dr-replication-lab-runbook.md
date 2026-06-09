@@ -235,6 +235,7 @@ Run this on the active DR secondary node (`dr-1`):
 ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$DR_1_PUBLIC_IP" "
 vault write sys/replication/dr/secondary/enable \
   token='$wrapping_token_from_step_10'
+sleep 10
 vault read sys/replication/dr/status
 "
 ```
@@ -250,7 +251,7 @@ primary_cluster_addr   https://10.0.10.10:8201
 state                  stream-wals
 ```
 
-## Enable Audit devices
+## Step 9: Enable Audit devices
 
 Enable a file and syslog audit device: 
 
@@ -258,6 +259,7 @@ Enable a file and syslog audit device:
 ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$PRIMARY_1_PUBLIC_IP" "
 vault audit enable file file_path=/var/log/vault/vault_audit.log
 vault audit enable syslog tag=vault-audit
+vault audit list --detailed
 "
 ```
 
@@ -271,69 +273,51 @@ file/      file      n/a            replicated     file_path=/var/log/vault/vaul
 syslog/    syslog    n/a            replicated     tag=vault-audit
 ```
 
-## Step 12: 
+## Step 10: Create Policies and User on the Primary 
 
-Create 10,000 policies and then login with a user created with these policies attached:
+Create 1,000 policies and then login with a user created with these policies attached:
 
 ```bash
 # enable userpass auth method
 vault auth enable userpass 2>/dev/null || true
 
-seq -f 'test-policy-%05g' 1 10000 | paste -sd, > /tmp/testuser-policies.csv
-# create a user with all 10,000 policies attached
+# create 1,000 policies with a single wildcard capability
+for i in $(seq -f '%05g' 1 1000); do
+  vault policy write "test-policy-${i}" - <<EOF
+path "*" {
+  capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+EOF
+done
+
+seq -f 'test-policy-%05g' 1 1000 | paste -sd, > /tmp/testuser-policies.csv
+
+# create a user with all 1,000 policies attached
 vault write auth/userpass/users/testuser \
   password="Password1!" \
   token_policies=@/tmp/testuser-policies.csv
+
 # verify the user was created with all policies attached
 vault read auth/userpass/users/testuser
+```
+
+## Step 11: Create Secrets on the Primary with the User Created Above
+
+```bash
+# Enable KV secrets engine at kv/ with version 2
+vault secrets enable -version=2 kv
+
 # login with the user
 vault login -method=userpass username=testuser password="Password1!"
-```
 
-## Validation
-
-### Check full replication status from the primary
-
-```bash
-ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$PRIMARY_1_PUBLIC_IP"
-```
-
-```bash
-vault read -format=json sys/replication/status
-```
-
-Success looks like:
-
-```text
-The dr and performance sections both show mode=primary.
-Each secondary's known_secondaries list includes the secondary cluster ID.
-connection_state=ready for each secondary.
-```
-
-### Write a secret on the primary and verify it replicates to the PR secondary
-
-Run on the primary:
-
-```bash
-export VAULT_ADDR=http://127.0.0.1:8200
-vault secrets enable -path=kv kv-v2
-vault kv put kv/test message="hello from primary"
-vault kv get kv/test
-```
-
-Run on the PR secondary (use a primary-issued token — PR secondaries use primary tokens):
-
-```bash
-ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$PR_1_PUBLIC_IP"
-
-vault kv get kv/test
-```
-
-Success looks like:
-
-```text
-Key        Value
-message    hello from primary
+# Create some load on the primary cluster and check `replication_primary_canary_age_ms` on the secondaries to see how quickly the changes are replicated.
+for i in $(seq 1 100); do
+  vault kv put "kv/test-d2-$i" data=data >/dev/null &
+  while [ "$(jobs -r | wc -l)" -ge 10 ]; do
+    sleep 0.1
+  done
+done
+wait
 ```
 
 ## Cleanup
