@@ -4,11 +4,11 @@
 
 This runbook deploys a nine-node Vault Enterprise lab across three integrated-storage clusters using Terraform on AWS. The three clusters form a full replication topology:
 
-- Primary cluster (3 nodes): source of truth for performance replication and DR replication.
-- Performance replication secondary cluster (3 nodes): receives a filtered or full copy of policies, mounts, and secrets from the primary.
-- DR secondary cluster (3 nodes): a standby replica of the primary that can be promoted during a disaster recovery event.
-
-Each cluster runs Vault Enterprise `2.0.0+ent` on Amazon Linux 2023 EC2 instances. All nine nodes share a VPC and security group so that inter-cluster replication traffic on ports 8200 and 8201 is permitted without additional configuration.
+- Primary cluster (3 nodes)
+- Performance replication secondary cluster (3 nodes)
+- DR secondary cluster (3 nodes)
+  
+All clusters use AWS KMS auto unseal. Each cluster runs Vault Enterprise `2.0.0+ent`. All nodes share a VPC and security group so that inter-cluster replication traffic on ports 8200 and 8201 is permitted without additional configuration.
 
 ## Objective
 
