@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+exec > >(tee /var/log/vault-user-data.log | logger -t vault-user-data -s 2>/dev/console) 2>&1
+
+NODE_ID="${node_id}"
+NODE_PRIVATE_IP="${node_private_ip}"
+CLUSTER_NAME="${cluster_name}"
+VAULT_VERSION="${vault_version}"
+VAULT_LOG_LEVEL="${vault_log_level}"
+RETRY_JOIN_BLOCKS=$(cat <<'RETRY_JOIN_EOF'
+${retry_join_blocks}
+RETRY_JOIN_EOF
+)
+VAULT_LICENSE_B64="${vault_license_b64}"
+KMS_KEY_ID="${kms_key_id}"
+AWS_REGION="${aws_region}"
+
+# ─── System packages ──────────────────────────────────────────────────────────
+
+# Full system update (rsyslog is excluded by yum.conf above).
+yum -y update
+
+yum -y install jq unzip wget openssl iproute tar shadow-utils
+
+# ─── Vault user and directories ───────────────────────────────────────────────
+
+id vault >/dev/null 2>&1 || useradd --system --home /etc/vault.d --shell /bin/false vault
+
+mkdir -p /etc/vault.d /opt/vault/data /var/log/vault /opt/vault/scripts
+chown -R vault:vault /etc/vault.d /opt/vault /var/log/vault
+chmod 0750 /etc/vault.d /opt/vault/data
+chmod 0755 /opt/vault/scripts
+
+# ─── Install Vault Enterprise ─────────────────────────────────────────────────
+
+cd /tmp
+if [ ! -x /usr/local/bin/vault ] || ! /usr/local/bin/vault version 2>/dev/null | grep -q "Vault v$${VAULT_VERSION}+ent"; then
+  rm -f vault "vault_$${VAULT_VERSION}+ent_linux_amd64.zip"
+  wget "https://releases.hashicorp.com/vault/$${VAULT_VERSION}+ent/vault_$${VAULT_VERSION}+ent_linux_amd64.zip"
+  unzip -o "vault_$${VAULT_VERSION}+ent_linux_amd64.zip" vault
+  mv vault /usr/local/bin/vault
+  chmod 0755 /usr/local/bin/vault
+  restorecon -v /usr/local/bin/vault
+  rm -f "vault_$${VAULT_VERSION}+ent_linux_amd64.zip"
+fi
+
+# ─── Vault license ────────────────────────────────────────────────────────────
+
+printf '%s' "$VAULT_LICENSE_B64" | base64 -d > /etc/vault.d/vault.hclic
+chown root:vault /etc/vault.d/vault.hclic
+chmod 0640 /etc/vault.d/vault.hclic
+
+# ─── vault.env ────────────────────────────────────────────────────────────────
+
+cat > /etc/vault.d/vault.env <<EOF
+VAULT_LICENSE_PATH=/etc/vault.d/vault.hclic
+EOF
+chown root:vault /etc/vault.d/vault.env
+chmod 0640 /etc/vault.d/vault.env
+
+# ─── vault.hcl ────────────────────────────────────────────────────────────────
+
+cat > /etc/vault.d/vault.hcl <<EOF
+ui            = true
+disable_mlock = true
+log_level     = "$${VAULT_LOG_LEVEL}"
+cluster_name  = "$${CLUSTER_NAME}"
+
+api_addr     = "http://$${NODE_PRIVATE_IP}:8200"
+cluster_addr = "http://$${NODE_PRIVATE_IP}:8201"
+
+listener "tcp" {
+  address     = "0.0.0.0:8200"
+  tls_disable = 1
+}
+
+adaptive_overload_protection {
+  disable_write_controller = true
+}
+
+storage "raft" {
+  path    = "/opt/vault/data"
+  node_id = "$${NODE_ID}"
+EOF
+
+printf '%s\n' "$RETRY_JOIN_BLOCKS" >> /etc/vault.d/vault.hcl
+
+cat >> /etc/vault.d/vault.hcl <<EOF
+}
+
+seal "awskms" {
+  region     = "$${AWS_REGION}"
+  kms_key_id = "$${KMS_KEY_ID}"
+}
+EOF
+
+chown root:vault /etc/vault.d/vault.hcl
+chmod 0640 /etc/vault.d/vault.hcl
+
+# ─── Shell profile ────────────────────────────────────────────────────────────
+
+cat > /etc/profile.d/vault.sh <<'EOF'
+export VAULT_ADDR=http://127.0.0.1:8200
+EOF
+chmod 0644 /etc/profile.d/vault.sh
+
+# ─── systemd unit ─────────────────────────────────────────────────────────────
+
+cat > /etc/systemd/system/vault.service <<'EOF'
+[Unit]
+Description=HashiCorp Vault
+Documentation=https://developer.hashicorp.com/vault/docs
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=vault
+Group=vault
+ExecStart=/usr/local/bin/vault server -config=/etc/vault.d/vault.hcl
+ExecReload=/bin/kill --signal HUP $MAINPID
+KillMode=process
+KillSignal=SIGINT
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+EnvironmentFile=/etc/vault.d/vault.env
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+chown -R root:vault /opt/vault/scripts
+
+systemctl daemon-reload
+systemctl enable vault
+systemctl start vault
+
+touch /var/log/vault-user-data-complete
