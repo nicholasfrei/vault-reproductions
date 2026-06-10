@@ -142,9 +142,9 @@ Set the SSH key path:
 export SSH_PRIVATE_KEY=<path_to_private_key>
 ```
 
-## Step 4: Initialize the Primary Cluster
+## Step 4: Initialize and Join the Clusters
 
-Initialize and unseal the 3 clusters: 
+Initialize node 1 of each cluster. With AWS KMS auto-unseal, each node unseals automatically after `vault operator init`.
 
 ```bash
 for HOST in \
@@ -153,9 +153,46 @@ do
   ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" "
     export VAULT_ADDR=http://127.0.0.1:8200
     vault status
-    vault operator init -format=json > /tmp/vault-primary-init.json
-    chmod 0600 /tmp/vault-primary-init.json
-    jq -r '.root_token' /tmp/vault-primary-init.json | VAULT_ADDR=http://127.0.0.1:8200 vault login -
+    vault operator init -format=json > /tmp/vault-init.json
+    chmod 0600 /tmp/vault-init.json
+    jq -r '.root_token' /tmp/vault-init.json | VAULT_ADDR=http://127.0.0.1:8200 vault login -
+  "
+done
+```
+
+Join nodes 2 and 3 to each cluster using the private IP of node 1 as the leader address. After joining, each node restarts its seal mechanism and auto-unseals via KMS.
+
+```bash
+# Primary cluster — nodes 2 and 3 join primary-1
+for HOST in "$PRIMARY_2_PUBLIC_IP" "$PRIMARY_3_PUBLIC_IP"; do
+  ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" "
+    export VAULT_ADDR=http://127.0.0.1:8200
+    vault operator raft join http://10.0.10.10:8200
+    sudo systemctl restart vault
+    sleep 5
+    vault status
+  "
+done
+
+# PR secondary cluster — nodes 2 and 3 join pr-1
+for HOST in "$PR_2_PUBLIC_IP" "$PR_3_PUBLIC_IP"; do
+  ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" "
+    export VAULT_ADDR=http://127.0.0.1:8200
+    vault operator raft join http://10.0.10.20:8200
+    sudo systemctl restart vault
+    sleep 5
+    vault status
+  "
+done
+
+# DR secondary cluster — nodes 2 and 3 join dr-1
+for HOST in "$DR_2_PUBLIC_IP" "$DR_3_PUBLIC_IP"; do
+  ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" "
+    export VAULT_ADDR=http://127.0.0.1:8200
+    vault operator raft join http://10.0.10.30:8200
+    sudo systemctl restart vault
+    sleep 5
+    vault status
   "
 done
 ```
@@ -257,7 +294,7 @@ Enable a file and syslog audit device:
 
 ```bash
 ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$PRIMARY_1_PUBLIC_IP" "
-vault audit enable file file_path=/var/log/vault/vault_audit.log
+vault audit enable file file_path=/var/log/vault/vault_audit_log.log
 vault audit enable syslog tag=vault-audit
 vault audit list --detailed
 "
@@ -301,7 +338,7 @@ vault write auth/userpass/users/testuser \
 vault read auth/userpass/users/testuser
 ```
 
-## Step 11: Create Secrets on the Primary with the User Created Above
+## Step 11: Enable Secrets Engine And Login with the User
 
 ```bash
 # Enable KV secrets engine at kv/ with version 2
@@ -309,16 +346,28 @@ vault secrets enable -version=2 kv
 
 # login with the user
 vault login -method=userpass username=testuser password="Password1!"
+```
 
-# Create some load on the primary cluster and check `replication_primary_canary_age_ms` on the secondaries to see how quickly the changes are replicated.
-for i in $(seq 1 100); do
+## Step 12: Run some tests! 
+
+Small Test
+
+```bash
+for i in $(seq 1 500); do
   vault kv put "kv/test-d2-$i" data=data >/dev/null &
-  while [ "$(jobs -r | wc -l)" -ge 10 ]; do
+  while [ "$(jobs -r | wc -l)" -ge 25 ]; do
     sleep 0.1
   done
 done
-wait
 ```
+
+Large Test
+
+```bash
+head -c 50000 /dev/urandom | base64 | tr -d '\n' > /tmp/blob.txt
+seq 1 10000 | xargs -P 50 -I {} vault kv put "kv/test-d2-{}" data=@/tmp/blob.txt >/dev/null
+```
+
 
 ## Cleanup
 
