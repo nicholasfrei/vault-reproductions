@@ -101,7 +101,7 @@ Terraform creates:
 
 - VPC, internet gateway, route table, and three public subnets in `us-east-1`.
 - One security group shared by all nine nodes with intra-group rules for ports 8200 and 8201.
-- Nine Amazon Linux 2023 EC2 instances with fixed private IPs.
+- Nine RHEL8 EC2 instances with fixed private IPs.
 - Vault Enterprise `2.0.0+ent`, license file, `vault.hcl`, `vault.env`, and systemd unit on each node.
 - Vault is enabled and started automatically on every node.
 

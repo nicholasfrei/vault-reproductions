@@ -21,7 +21,7 @@ AWS_REGION="${aws_region}"
 # Full system update (rsyslog is excluded by yum.conf above).
 yum -y update
 
-yum -y install jq unzip wget openssl iproute tar shadow-utils
+yum -y install jq unzip wget openssl iproute tar shadow-utils rsyslog
 
 # ─── Vault user and directories ───────────────────────────────────────────────
 
@@ -65,6 +65,7 @@ cat > /etc/vault.d/vault.hcl <<EOF
 ui            = true
 disable_mlock = true
 log_level     = "$${VAULT_LOG_LEVEL}"
+log_file      = "/var/log/vault/vault_audit_log.log"
 cluster_name  = "$${CLUSTER_NAME}"
 
 api_addr     = "http://$${NODE_PRIVATE_IP}:8200"
@@ -105,6 +106,35 @@ export VAULT_ADDR=http://127.0.0.1:8200
 EOF
 chmod 0644 /etc/profile.d/vault.sh
 
+# ─── journald namespace config ───────────────────────────────────────────────
+# Configures the vault journald namespace (systemd-journald@vault.service).
+# LogNamespace=vault in vault.service causes systemd to route vault logs
+# through this namespace instead of the default journal.
+
+mkdir -p /etc/systemd/journald.conf.d
+cat > /etc/systemd/journald@vault.conf <<'EOF'
+[Journal]
+Compress=yes
+Storage=persistent
+LineMax=250k
+SystemMaxUse=1G
+SystemKeepFree=5G
+EOF
+
+# ─── rsyslog vault-audit drop-in ─────────────────────────────────────────────
+# Routes syslog audit events tagged vault-audit to /var/log/vault/vault_audit_log.log
+# and stops further processing so they don't also land in /var/log/messages.
+# MaxMessageSize is set to match journald LineMax so large audit entries
+# are not truncated before reaching the log file.
+
+cat > /etc/rsyslog.d/vault-audit.conf <<'EOF'
+$MaxMessageSize 250k
+if $programname == "vault-audit" then /var/log/vault/vault_audit_log.log
+& stop
+EOF
+
+systemctl reload-or-restart rsyslog
+
 # ─── systemd unit ─────────────────────────────────────────────────────────────
 
 cat > /etc/systemd/system/vault.service <<'EOF'
@@ -125,6 +155,7 @@ Restart=on-failure
 RestartSec=5
 LimitNOFILE=65536
 EnvironmentFile=/etc/vault.d/vault.env
+LogNamespace=vault
 
 [Install]
 WantedBy=multi-user.target
