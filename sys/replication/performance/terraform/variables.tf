@@ -64,7 +64,7 @@ variable "root_volume_size" {
 variable "vault_version" {
   description = "Vault Enterprise version to install. Do not include the +ent suffix."
   type        = string
-  default     = "2.0.0"
+  default     = "1.19.6"
 }
 
 variable "vault_license" {

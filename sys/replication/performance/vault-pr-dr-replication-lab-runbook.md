@@ -8,7 +8,7 @@ This runbook deploys a nine-node Vault Enterprise lab across three integrated-st
 - Performance replication secondary cluster (3 nodes)
 - DR secondary cluster (3 nodes)
   
-All clusters use AWS KMS auto unseal. Each cluster runs Vault Enterprise `2.0.0+ent`. All nodes share a VPC and security group so that inter-cluster replication traffic on ports 8200 and 8201 is permitted without additional configuration.
+All clusters use AWS KMS auto unseal. Each cluster runs Vault Enterprise `1.19.6+ent`. All nodes share a VPC and security group so that inter-cluster replication traffic on ports 8200 and 8201 is permitted without additional configuration.
 
 ## Objective
 
@@ -77,7 +77,7 @@ admin_ssh_cidr = "<your_admin_ip_cidr>"
 instance_type    = "m6i.large"
 root_volume_size = 40
 
-vault_version   = "2.0.0"
+vault_version   = "1.19.6"
 vault_log_level = "info"
 ```
 
@@ -102,7 +102,7 @@ Terraform creates:
 - VPC, internet gateway, route table, and three public subnets in `us-east-1`.
 - One security group shared by all nine nodes with intra-group rules for ports 8200 and 8201.
 - Nine RHEL8 EC2 instances with fixed private IPs.
-- Vault Enterprise `2.0.0+ent`, license file, `vault.hcl`, `vault.env`, and systemd unit on each node.
+- Vault Enterprise `1.19.6+ent`, license file, `vault.hcl`, `vault.env`, and systemd unit on each node.
 - Vault is enabled and started automatically on every node.
 
 ## Step 3: Capture Terraform Outputs
@@ -232,7 +232,6 @@ Run this on the active PR secondary node (`pr-1`):
 ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$PR_1_PUBLIC_IP" "
 vault write sys/replication/performance/secondary/enable \
   token='$wrapping_token_from_step_8'
-vault read sys/replication/performance/status
 "
 ```
 
@@ -272,8 +271,6 @@ Run this on the active DR secondary node (`dr-1`):
 ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$DR_1_PUBLIC_IP" "
 vault write sys/replication/dr/secondary/enable \
   token='$wrapping_token_from_step_10'
-sleep 10
-vault read sys/replication/dr/status
 "
 ```
 
@@ -286,6 +283,18 @@ last_remote_wal        <wal_index>
 mode                   secondary
 primary_cluster_addr   https://10.0.10.10:8201
 state                  stream-wals
+```
+
+### Step 8b: After Enabling Replication, Restart All Nodes
+
+```bash
+for HOST in "$PRIMARY_1_PUBLIC_IP" "$PRIMARY_2_PUBLIC_IP" "$PRIMARY_3_PUBLIC_IP" \
+"$PR_1_PUBLIC_IP" "$PR_2_PUBLIC_IP" "$PR_3_PUBLIC_IP" \
+"$DR_1_PUBLIC_IP" "$DR_2_PUBLIC_IP" "$DR_3_PUBLIC_IP"; do
+  ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$HOST" "
+    sudo systemctl restart vault
+  "
+done
 ```
 
 ## Step 9: Enable Audit devices
@@ -319,13 +328,15 @@ Create 1,000 policies and then login with a user created with these policies att
 vault auth enable userpass 2>/dev/null || true
 
 # create 1,000 policies with a single wildcard capability
-for i in $(seq -f '%05g' 1 1000); do
-  vault policy write "test-policy-${i}" - <<EOF
+cat > /tmp/test-policy.hcl <<'EOF'
 path "*" {
   capabilities = ["create", "read", "update", "delete", "list", "sudo"]
 }
 EOF
-done
+
+seq -f '%05g' 1 1000 | xargs -P 100 -I {} sh -c '
+  vault policy write "test-policy-{}" /tmp/test-policy.hcl
+'
 
 seq -f 'test-policy-%05g' 1 1000 | paste -sd, > /tmp/testuser-policies.csv
 
@@ -348,26 +359,14 @@ vault secrets enable -version=2 kv
 vault login -method=userpass username=testuser password="Password1!"
 ```
 
-## Step 12: Run some tests! 
+## Step 12: Generate Baseline Audit Load
 
-Small Test
-
-```bash
-for i in $(seq 1 500); do
-  vault kv put "kv/test-d2-$i" data=data >/dev/null &
-  while [ "$(jobs -r | wc -l)" -ge 25 ]; do
-    sleep 0.1
-  done
-done
-```
-
-Large Test
+Start with a simple concurrent write workload on the primary before changing the audit path:
 
 ```bash
-head -c 50000 /dev/urandom | base64 | tr -d '\n' > /tmp/blob.txt
-seq 1 10000 | xargs -P 50 -I {} vault kv put "kv/test-d2-{}" data=@/tmp/blob.txt >/dev/null
+head -c 80000 /dev/urandom | base64 | tr -d '\n' > /tmp/blob.txt
+seq 1 10000 | xargs -P 50 -I {} vault kv put "kv/test-d2-{}" data=@/tmp/blob.txt
 ```
-
 
 ## Cleanup
 

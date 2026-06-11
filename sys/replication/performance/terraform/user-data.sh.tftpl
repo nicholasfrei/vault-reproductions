@@ -121,14 +121,43 @@ SystemMaxUse=1G
 SystemKeepFree=5G
 EOF
 
-# ─── rsyslog vault-audit drop-in ─────────────────────────────────────────────
-# Routes syslog audit events tagged vault-audit to /var/log/vault/vault_audit_log.log
-# and stops further processing so they don't also land in /var/log/messages.
-# MaxMessageSize is set to match journald LineMax so large audit entries
-# are not truncated before reaching the log file.
+# ─── rsyslog base config and vault-audit drop-in ─────────────────────────────
+# Configure rsyslog to read from journald via imjournal, matching the host
+# configuration used during testing. MaxMessageSize is set to match journald
+# LineMax so large audit entries are not truncated before reaching disk.
 
-cat > /etc/rsyslog.d/vault-audit.conf <<'EOF'
+cat > /etc/rsyslog.conf <<'EOF'
+# rsyslog configuration file
+
+#### GLOBAL DIRECTIVES ####
+global(workDirectory="/var/lib/rsyslog")
+module(load="builtin:omfile" Template="RSYSLOG_TraditionalFileFormat")
+
+#### MODULES ####
+module(load="imuxsock"
+  SysSock.Use="off")
+module(load="imjournal"
+  UsePid="system"
+  StateFile="imjournal.state")
+
+# Include all config files in /etc/rsyslog.d/
+include(file="/etc/rsyslog.d/*.conf" mode="optional")
+
+#### RULES ####
+*.info;mail.none;authpriv.none;cron.none        /var/log/messages
+authpriv.*                                      /var/log/secure
+mail.*                                          -/var/log/maillog
+cron.*                                          /var/log/cron
+*.emerg                                         :omusrmsg:*
+uucp,news.crit                                  /var/log/spooler
+local7.*                                        /var/log/boot.log
+
 $MaxMessageSize 250k
+EOF
+
+# Route syslog audit events tagged vault-audit to /var/log/vault/vault_audit_log.log
+# and stop further processing so they don't also land in /var/log/messages.
+cat > /etc/rsyslog.d/vault-audit.conf <<'EOF'
 if $programname == "vault-audit" then /var/log/vault/vault_audit_log.log
 & stop
 EOF
