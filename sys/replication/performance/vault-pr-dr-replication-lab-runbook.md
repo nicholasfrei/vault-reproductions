@@ -303,8 +303,8 @@ Enable a file and syslog audit device:
 
 ```bash
 ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$PRIMARY_1_PUBLIC_IP" "
-vault audit enable file file_path=/var/log/vault/vault_audit_log.log
-vault audit enable syslog tag=vault-audit
+vault audit enable file file_path=/var/log/vault/vault_audit_log.log elide_list_responses=true
+vault audit enable syslog tag=vault-audit elide_list_responses=true
 vault audit list --detailed
 "
 ```

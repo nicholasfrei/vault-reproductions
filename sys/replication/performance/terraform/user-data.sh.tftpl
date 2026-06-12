@@ -76,10 +76,6 @@ listener "tcp" {
   tls_disable = 1
 }
 
-adaptive_overload_protection {
-  disable_write_controller = true
-}
-
 storage "raft" {
   path    = "/opt/vault/data"
   node_id = "$${NODE_ID}"
