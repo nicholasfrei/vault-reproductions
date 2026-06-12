@@ -2,7 +2,7 @@
 
 ## Overview
 
-This runbook builds a Vault Enterprise lab with 6 EC2 instances using integrated storage, AWS CloudHSM PKCS#11 auto-unseal, and a seal-wrapped KV v2 secrets engine (all using terraform). There are manual steps for CloudHSM initialization, CloudHSM crypto-user creation, Vault initialization, and the latency workload.
+This runbook builds a Vault Enterprise lab with 6 EC2 instances using integrated storage, AWS CloudHSM PKCS#11 auto-unseal, and a seal-wrapped KV v2 secrets engine (all using terraform). There are manual steps for CloudHSM initialization, CloudHSM crypto-user creation, Vault initialization, and the latency workload. Run this in a sandbox AWS account.
 
 The goal is to reproduce Vault log messages like:
 
@@ -15,8 +15,29 @@ goroutine <id> lock <addr>
 .../vault/sealwrap_backend_ent.go:292 vault.(*sealWrapBackend).privateGet
 ```
 
-Run this in a sandbox AWS account. 
+### Summary of Bug
 
+In Vault 1.17.0 a change was made to assist in diagnosing deadlocks in the sealwrap code. The deadlock detector adds overhead, and in extreme cases can prevent the Go scheduler from scheduling the goroutines needed to maintain Raft quorum. This would typically be seen on clusters receiving a high volume of requests to sealwrapped mounts, particularly after a restart or leadership change, since these result in Vault flushing its internal cache. 
+
+Vault 1.17.0 changed the sealwrap code to assist in diagnosing deadlocks. The deadlock detector adds overhead and, in extreme cases, can prevent the Go scheduler from scheduling the goroutines needed to maintain Raft quorum. [Pull Request for Docs Update](https://github.com/hashicorp/web-unified-docs/pull/2614/changes)
+
+[Vault Important Changes - Docs](https://developer.hashicorp.com/vault/docs/updates/important-changes#requests-for-sealwrapped-values-can-lead-to-raft-quorum-failures)
+
+### Versions Impacted
+
+- `1.17.x` 
+- `1.18.x`
+- `1.19.x` to `1.19.18`
+- `1.20.x` to `1.20.12`
+- `1.21.x` to `1.21.7`
+- `2.0.x` to `2.0.2` 
+
+### Fixed Versions
+- `1.19.19` and newer
+- `1.20.13` and newer
+- `1.21.8` and newer
+- `2.0.3` and newer
+  
 ## Objective
 
 - Deploy the AWS lab with Terraform in `us-east-1`.
