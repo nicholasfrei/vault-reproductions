@@ -119,21 +119,21 @@ terraform output -json dr_secondary_nodes > /tmp/vault-dr-nodes.json
 Export node IPs using `jq`:
 
 ```bash
-export PRIMARY_1_PUBLIC_IP=$(jq -r '."vault-humana-lab-primary-1".public_ip' /tmp/vault-primary-nodes.json)
-export PRIMARY_2_PUBLIC_IP=$(jq -r '."vault-humana-lab-primary-2".public_ip' /tmp/vault-primary-nodes.json)
-export PRIMARY_3_PUBLIC_IP=$(jq -r '."vault-humana-lab-primary-3".public_ip' /tmp/vault-primary-nodes.json)
+export PRIMARY_1_PUBLIC_IP=$(jq -r '."vault-lab-primary-1".public_ip' /tmp/vault-primary-nodes.json)
+export PRIMARY_2_PUBLIC_IP=$(jq -r '."vault-lab-primary-2".public_ip' /tmp/vault-primary-nodes.json)
+export PRIMARY_3_PUBLIC_IP=$(jq -r '."vault-lab-primary-3".public_ip' /tmp/vault-primary-nodes.json)
 
-export PR_1_PUBLIC_IP=$(jq -r '."vault-humana-lab-pr-1".public_ip' /tmp/vault-pr-nodes.json)
-export PR_2_PUBLIC_IP=$(jq -r '."vault-humana-lab-pr-2".public_ip' /tmp/vault-pr-nodes.json)
-export PR_3_PUBLIC_IP=$(jq -r '."vault-humana-lab-pr-3".public_ip' /tmp/vault-pr-nodes.json)
+export PR_1_PUBLIC_IP=$(jq -r '."vault-lab-pr-1".public_ip' /tmp/vault-pr-nodes.json)
+export PR_2_PUBLIC_IP=$(jq -r '."vault-lab-pr-2".public_ip' /tmp/vault-pr-nodes.json)
+export PR_3_PUBLIC_IP=$(jq -r '."vault-lab-pr-3".public_ip' /tmp/vault-pr-nodes.json)
 
-export DR_1_PUBLIC_IP=$(jq -r '."vault-humana-lab-dr-1".public_ip' /tmp/vault-dr-nodes.json)
-export DR_2_PUBLIC_IP=$(jq -r '."vault-humana-lab-dr-2".public_ip' /tmp/vault-dr-nodes.json)
-export DR_3_PUBLIC_IP=$(jq -r '."vault-humana-lab-dr-3".public_ip' /tmp/vault-dr-nodes.json)
+export DR_1_PUBLIC_IP=$(jq -r '."vault-lab-dr-1".public_ip' /tmp/vault-dr-nodes.json)
+export DR_2_PUBLIC_IP=$(jq -r '."vault-lab-dr-2".public_ip' /tmp/vault-dr-nodes.json)
+export DR_3_PUBLIC_IP=$(jq -r '."vault-lab-dr-3".public_ip' /tmp/vault-dr-nodes.json)
 
-export PRIMARY_1_PRIVATE_IP=$(jq -r '."vault-humana-lab-primary-1".private_ip' /tmp/vault-primary-nodes.json)
-export PR_1_PRIVATE_IP=$(jq -r '."vault-humana-lab-pr-1".private_ip' /tmp/vault-pr-nodes.json)
-export DR_1_PRIVATE_IP=$(jq -r '."vault-humana-lab-dr-1".private_ip' /tmp/vault-dr-nodes.json)
+export PRIMARY_1_PRIVATE_IP=$(jq -r '."vault-lab-primary-1".private_ip' /tmp/vault-primary-nodes.json)
+export PR_1_PRIVATE_IP=$(jq -r '."vault-lab-pr-1".private_ip' /tmp/vault-pr-nodes.json)
+export DR_1_PRIVATE_IP=$(jq -r '."vault-lab-dr-1".private_ip' /tmp/vault-dr-nodes.json)
 ```
 
 Set the SSH key path:

@@ -1,6 +1,6 @@
 aws_region     = "us-east-1"
 aws_profile    = null
-name_prefix    = "vault-pr-lab"
+name_prefix    = "vault-lab"
 key_name       = "<ec2_key_pair_name>"
 admin_ssh_cidr = "<your_admin_ip_cidr>"
 
