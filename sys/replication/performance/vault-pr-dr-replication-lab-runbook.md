@@ -359,13 +359,73 @@ vault secrets enable -version=2 kv
 vault login -method=userpass username=testuser password="Password1!"
 ```
 
-## Step 12: Generate Baseline Audit Load
+## Step 12: Create a Baseline Image to Work From
 
-Start with a simple concurrent write workload on the primary before changing the audit path:
+Create 3 namspaces
+```bash
+vault namespace create ns1
+vault namespace create ns2
+vault namespace create ns3
+```
+
+Load 50k secrets into each namespace:
 
 ```bash
-head -c 80000 /dev/urandom | base64 | tr -d '\n' > /tmp/blob.txt
+for ns in ns1 ns2 ns3; do
+  export VAULT_NAMESPACE="$ns"
+  vault secrets enable -version=2 kv
+  seq 1 50000 | xargs -P 50 -I {} vault kv put "kv/test-{}" data="data"
+  unset VAULT_NAMESPACE
+done
+```
+
+Create 10k AppRole roles in each namespace:
+
+```bash
+for ns in ns1 ns2 ns3; do
+  export VAULT_NAMESPACE="$ns"
+  vault auth enable -path=approle approle
+  seq 1 10000 | xargs -P 50 -I {} vault write auth/approle/role/"${ns}-role-{}" token_policies="default"
+  unset VAULT_NAMESPACE
+done
+```
+
+Create a snapshot of the primary cluster to use as a baseline image for future tests:
+
+```bash
+vault operator raft snapshot save /tmp/vault-primary-snapshot.snap
+```
+
+Delete a namespace to simulate a large delete operation:
+
+```bash
+vault namespace delete ns1
+```
+
+And watch the `replication_primary_canary_age_ms` metrics on `sys/replication/status` to see the replication lag from primary to secondary clusters or `sys/health` to see the replication lag from leader to standby nodes:
+
+```bash
+# Change this back/forth from `sys/health` to `sys/replication/status` to see the metrics from leader to standby vs primary to secondaries
+watch -n 1 "vault read -format=json sys/replication/status | grep -iE 'cluster_name|last_remote_wal|last_wal|replication_dr_mode|connection_status|replication_performance_mode|secondary_id|sync_total_keys|state|sync_progress|connection_stae|last_heartbeat_duration_ms|replication_primary_canary_age_ms|\"dr\"|\"performance\"'"
+```
+
+If you need to restore the snapshot to return to the baseline state, run this on the primary nodes:
+
+```bash
+vault operator raft snapshot restore -force /tmp/vault-primary-snapshot.snap
+```
+
+And if you want to simulate some r/w load on one of the secondary clusters to view the impact, as well, you can do this:
+
+```bash
+# write load
+head -c 5000 /dev/urandom | base64 | tr -d '\n' > /tmp/blob.txt
 seq 1 10000 | xargs -P 50 -I {} vault kv put "kv/test-d2-{}" data=@/tmp/blob.txt
+```
+
+```bash
+# read load
+seq 1 10000 | xargs -P 50 -I {} vault read "kv/test-d2-{}" token_policies="default"
 ```
 
 ## Cleanup
