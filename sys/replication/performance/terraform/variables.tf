@@ -76,7 +76,7 @@ variable "vault_license" {
 variable "vault_log_level" {
   description = "Vault server log level."
   type        = string
-  default     = "debug"
+  default     = "trace"
 }
 
 variable "extra_tags" {

@@ -11,7 +11,7 @@ instance_type    = "m6i.large"
 root_volume_size = 40
 
 vault_version   = "2.0.0"
-vault_log_level = "info"
+vault_log_level = "trace"
 
 # Set the Vault Enterprise license via an environment variable instead of
 # committing it here:
