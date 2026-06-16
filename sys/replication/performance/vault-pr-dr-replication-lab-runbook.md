@@ -324,6 +324,7 @@ syslog/    syslog    n/a            replicated     tag=vault-audit
 Create 1,000 policies and then login with a user created with these policies attached:
 
 ```bash
+ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$PRIMARY_1_PUBLIC_IP" "
 # enable userpass auth method
 vault auth enable userpass 2>/dev/null || true
 
@@ -347,34 +348,38 @@ vault write auth/userpass/users/testuser \
 
 # verify the user was created with all policies attached
 vault read auth/userpass/users/testuser
+"
 ```
 
 ## Step 11: Enable Secrets Engine And Login with the User
+
+SSH into the primary cluster 
 
 ```bash
 # Enable KV secrets engine at kv/ with version 2
 vault secrets enable -version=2 kv
 
-# login with the user
-vault login -method=userpass username=testuser password="Password1!"
+# login with the user (only run if you need a large audit log entry)
+# vault login -method=userpass username=testuser password="Password1!"
 ```
 
 ## Step 12: Create a Baseline Image to Work From
 
-Create 3 namspaces
+Create 3 namspaces:
+
 ```bash
 vault namespace create ns1
 vault namespace create ns2
 vault namespace create ns3
 ```
 
-Load 50k secrets into each namespace:
+Load 25k secrets into each namespace:
 
 ```bash
 for ns in ns1 ns2 ns3; do
   export VAULT_NAMESPACE="$ns"
   vault secrets enable -version=2 kv
-  seq 1 50000 | xargs -P 50 -I {} vault kv put "kv/test-{}" data="data"
+  seq 1 25000 | xargs -P 200 -I {} vault kv put "kv/test-{}" data="data"
   unset VAULT_NAMESPACE
 done
 ```
@@ -385,7 +390,17 @@ Create 10k AppRole roles in each namespace:
 for ns in ns1 ns2 ns3; do
   export VAULT_NAMESPACE="$ns"
   vault auth enable -path=approle approle
-  seq 1 10000 | xargs -P 50 -I {} vault write auth/approle/role/"${ns}-role-{}" token_policies="default"
+  seq 1 10000 | xargs -P 200 -I {} vault write auth/approle/role/"${ns}-role-{}" token_policies="default"
+  unset VAULT_NAMESPACE
+done
+```
+
+Create 10k approle tokens:
+
+```bash
+for ns in ns1 ns2 ns3; do
+  export VAULT_NAMESPACE="$ns"
+  seq 1 10000 | xargs -P 200 -I {} vault write auth/approle/role/"${ns}-role-{}"/secret-id 
   unset VAULT_NAMESPACE
 done
 ```
@@ -415,17 +430,19 @@ If you need to restore the snapshot to return to the baseline state, run this on
 vault operator raft snapshot restore -force /tmp/vault-primary-snapshot.snap
 ```
 
+### Other helpful commands: 
+
 And if you want to simulate some r/w load on one of the secondary clusters to view the impact, as well, you can do this:
 
 ```bash
 # write load
 head -c 5000 /dev/urandom | base64 | tr -d '\n' > /tmp/blob.txt
-seq 1 10000 | xargs -P 50 -I {} vault kv put "kv/test-d2-{}" data=@/tmp/blob.txt
+seq 1 10000 | xargs -P 50 -I {} vault kv put "kv/test-d2-{}" data=@/tmp/blob.txt > /dev/null
 ```
 
 ```bash
 # read load
-seq 1 10000 | xargs -P 50 -I {} vault read "kv/test-d2-{}" token_policies="default"
+seq 1 10000 | xargs -P 50 -I {} vault read "kv/test-d2-{}" token_policies="default" > /dev/null
 ```
 
 ## Cleanup
