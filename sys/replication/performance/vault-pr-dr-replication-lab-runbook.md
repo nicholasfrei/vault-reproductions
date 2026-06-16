@@ -297,7 +297,9 @@ for HOST in "$PRIMARY_1_PUBLIC_IP" "$PRIMARY_2_PUBLIC_IP" "$PRIMARY_3_PUBLIC_IP"
 done
 ```
 
-## Step 9: Enable Audit devices
+## Appendix: Some Additional Steps to Generate Load and Test Replication Performance
+
+### Step 9: Enable Audit devices
 
 Enable a file and syslog audit device: 
 
@@ -319,7 +321,7 @@ file/      file      n/a            replicated     file_path=/var/log/vault/vaul
 syslog/    syslog    n/a            replicated     tag=vault-audit
 ```
 
-## Step 10: Create Policies and User on the Primary 
+### Step 10: Create Policies and User on the Primary 
 
 Create 1,000 policies and then login with a user created with these policies attached:
 
@@ -351,7 +353,7 @@ vault read auth/userpass/users/testuser
 "
 ```
 
-## Step 11: Enable Secrets Engine And Login with the User
+### Step 11: Enable Secrets Engine And Login with the User
 
 SSH into the primary cluster 
 
@@ -363,7 +365,7 @@ vault secrets enable -version=2 kv
 # vault login -method=userpass username=testuser password="Password1!"
 ```
 
-## Step 12: Create a Baseline Image to Work From
+### Step 12: Create a Baseline Image to Work From
 
 Create 3 namspaces:
 
@@ -379,28 +381,19 @@ Load 25k secrets into each namespace:
 for ns in ns1 ns2 ns3; do
   export VAULT_NAMESPACE="$ns"
   vault secrets enable -version=2 kv
-  seq 1 25000 | xargs -P 200 -I {} vault kv put "kv/test-{}" data="data"
+  seq 1 25000 | xargs -P 50 -I {} vault kv put "kv/test-{}" data="data"
   unset VAULT_NAMESPACE
 done
 ```
 
-Create 10k AppRole roles in each namespace:
+Create 10k AppRole roles and tokens in each namespace:
 
 ```bash
 for ns in ns1 ns2 ns3; do
   export VAULT_NAMESPACE="$ns"
   vault auth enable -path=approle approle
-  seq 1 10000 | xargs -P 200 -I {} vault write auth/approle/role/"${ns}-role-{}" token_policies="default"
-  unset VAULT_NAMESPACE
-done
-```
-
-Create 10k approle tokens:
-
-```bash
-for ns in ns1 ns2 ns3; do
-  export VAULT_NAMESPACE="$ns"
-  seq 1 10000 | xargs -P 200 -I {} vault write auth/approle/role/"${ns}-role-{}"/secret-id 
+  seq 1 10000 | xargs -P 50 -I {} vault write auth/approle/role/"${ns}-role-{}" token_policies="default"
+  seq 1 10000 | xargs -P 50 -I {} vault write auth/approle/role/"${ns}-role-{}"/secret-id 
   unset VAULT_NAMESPACE
 done
 ```
