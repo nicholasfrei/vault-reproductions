@@ -104,24 +104,19 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
-data "aws_ami" "rhel8" {
+data "aws_ami" "hc_base_al2023" {
   count       = var.ami_id == null ? 1 : 0
   most_recent = true
-  owners      = ["309956199498"] # Red Hat, Inc.
+  owners      = ["888995627335"] # ami-prod account
 
   filter {
     name   = "name"
-    values = ["RHEL-8.*_HVM-*-x86_64-*-Hourly2-GP3"]
+    values = [format("hc-base-al2023-%s-*", var.ami_architecture)]
   }
 
   filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+    name   = "state"
+    values = ["available"]
   }
 }
 
@@ -300,7 +295,7 @@ resource "aws_iam_instance_profile" "vault_node" {
 resource "aws_instance" "primary" {
   count = length(local.primary_nodes)
 
-  ami                         = coalesce(var.ami_id, one(data.aws_ami.rhel8[*].image_id))
+  ami                         = coalesce(var.ami_id, one(data.aws_ami.hc_base_al2023[*].image_id))
   instance_type               = var.instance_type
   key_name                    = var.key_name
   subnet_id                   = aws_subnet.public[local.primary_nodes[count.index].subnet_index].id
@@ -345,7 +340,7 @@ resource "aws_instance" "primary" {
 resource "aws_instance" "pr_secondary" {
   count = length(local.pr_nodes)
 
-  ami                         = coalesce(var.ami_id, one(data.aws_ami.rhel8[*].image_id))
+  ami                         = coalesce(var.ami_id, one(data.aws_ami.hc_base_al2023[*].image_id))
   instance_type               = var.instance_type
   key_name                    = var.key_name
   subnet_id                   = aws_subnet.public[local.pr_nodes[count.index].subnet_index].id
@@ -390,7 +385,7 @@ resource "aws_instance" "pr_secondary" {
 resource "aws_instance" "dr_secondary" {
   count = length(local.dr_nodes)
 
-  ami                         = coalesce(var.ami_id, one(data.aws_ami.rhel8[*].image_id))
+  ami                         = coalesce(var.ami_id, one(data.aws_ami.hc_base_al2023[*].image_id))
   instance_type               = var.instance_type
   key_name                    = var.key_name
   subnet_id                   = aws_subnet.public[local.dr_nodes[count.index].subnet_index].id

@@ -44,9 +44,20 @@ variable "key_name" {
 }
 
 variable "ami_id" {
-  description = "Optional AMI ID override. Leave null to auto-resolve the latest RHEL 8 x86_64 AMI via AWS Marketplace SSM parameter."
+  description = "Optional AMI ID override. Leave null to auto-resolve the latest hc-base-al2023 AMI for the selected architecture."
   type        = string
   default     = null
+}
+
+variable "ami_architecture" {
+  description = "AMI architecture to resolve when ami_id is null. Defaults to x86_64 because the Vault setup scripts currently assume amd64 artifacts."
+  type        = string
+  default     = "x86_64"
+
+  validation {
+    condition     = contains(["x86_64", "arm64"], var.ami_architecture)
+    error_message = "ami_architecture must be x86_64 or arm64."
+  }
 }
 
 variable "instance_type" {

@@ -4,8 +4,11 @@ name_prefix    = "vault-lab"
 key_name       = "<ec2_key_pair_name>"
 admin_ssh_cidr = "<your_admin_ip_cidr>"
 
-# Leave null to use the latest Amazon Linux 2023 x86_64 AMI from SSM.
+# Leave null to use the latest hc-base-al2023 x86_64 AMI.
 ami_id = null
+
+# Keep x86_64 by default because the Vault setup scripts currently assume amd64 artifacts.
+ami_architecture = "x86_64"
 
 instance_type    = "m6i.large"
 root_volume_size = 40
