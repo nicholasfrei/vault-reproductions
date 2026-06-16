@@ -110,9 +110,20 @@ variable "vault_log_level" {
 }
 
 variable "ami_id" {
-  description = "Optional AMI ID. Leave null to use the latest Amazon Linux 2023 x86_64 AMI."
+  description = "Optional AMI ID. Leave null to use the latest hc-base-al2023 AMI for the selected architecture."
   type        = string
   default     = null
+}
+
+variable "ami_architecture" {
+  description = "AMI architecture to resolve when ami_id is null. Defaults to x86_64 because the Vault and CloudHSM setup scripts currently assume amd64 artifacts."
+  type        = string
+  default     = "x86_64"
+
+  validation {
+    condition     = contains(["x86_64", "arm64"], var.ami_architecture)
+    error_message = "ami_architecture must be x86_64 or arm64."
+  }
 }
 
 variable "root_volume_size" {

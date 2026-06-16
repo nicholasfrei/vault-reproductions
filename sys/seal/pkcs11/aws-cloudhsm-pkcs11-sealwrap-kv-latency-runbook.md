@@ -102,6 +102,7 @@ key_name       = "<ec2_key_pair_name>"
 admin_ssh_cidr = "<your_admin_ip_cidr>"
 
 ami_id           = null
+ami_architecture = "x86_64"
 instance_type    = "m6i.large"
 root_volume_size = 40
 
@@ -119,6 +120,8 @@ extra_tags = {
 ```
 
 `pkcs11_max_parallel = 1` forces Vault to serialize PKCS#11 calls into the HSM. This amplifies lock contention under added latency, which is the condition this runbook is trying to surface.
+
+`ami_architecture = "x86_64"` remains the default because the Vault Enterprise HSM artifact download and the CloudHSM client RPMs in this lab are currently wired for amd64.
 
 Set the Vault license and HSM crypto user password as environment variables to avoid writing secrets to disk. Terraform will pass them to the Vault nodes for the systemd service environment:
 

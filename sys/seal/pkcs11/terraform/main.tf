@@ -32,9 +32,20 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
-data "aws_ssm_parameter" "al2023" {
+data "aws_ami" "hc_base_al2023" {
   count = var.ami_id == null ? 1 : 0
-  name  = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+  filter {
+    name   = "name"
+    values = [format("hc-base-al2023-%s-*", var.ami_architecture)]
+  }
+
+  filter {
+    name   = "state"
+    values = ["available"]
+  }
+
+  most_recent = true
+  owners      = ["888995627335"] # ami-prod account
 }
 
 resource "aws_vpc" "this" {
@@ -202,7 +213,7 @@ resource "aws_iam_instance_profile" "vault_node" {
 resource "aws_instance" "vault" {
   count = var.vault_node_count
 
-  ami                         = coalesce(var.ami_id, one(data.aws_ssm_parameter.al2023[*].value))
+  ami                         = coalesce(var.ami_id, one(data.aws_ami.hc_base_al2023[*].image_id))
   instance_type               = var.instance_type
   key_name                    = var.key_name
   subnet_id                   = aws_subnet.public[local.vault_nodes[count.index].subnet_index].id
