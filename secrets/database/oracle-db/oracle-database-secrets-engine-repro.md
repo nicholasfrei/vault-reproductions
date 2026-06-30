@@ -346,42 +346,36 @@ The published plugin name on `releases.hashicorp.com` is `vault-plugin-database-
 ### 1. Download and Install the Plugin Manually
 
 ```bash
-# Create plugin directory
-sudo mkdir -p /etc/vault.d/plugins
+PLUGIN_VERSION="0.12.3+ent"
+PLUGIN_ARCHIVE="vault-plugin-database-oracle_${PLUGIN_VERSION}_linux_amd64"
+PLUGIN_DIR="/etc/vault.d/plugins"
 
-# Download plugin
-wget https://releases.hashicorp.com/vault-plugin-database-oracle/0.12.3+ent/vault-plugin-database-oracle_0.12.3+ent_linux_amd64.zip
+# Create plugin directory and download
+sudo mkdir -p "${PLUGIN_DIR}"
+wget "https://releases.hashicorp.com/vault-plugin-database-oracle/${PLUGIN_VERSION}/${PLUGIN_ARCHIVE}.zip"
 
-# Extract to versioned folder
-mkdir oracle-database-plugin_0.12.3+ent_linux_amd64
-sudo unzip vault-plugin-database-oracle_0.12.3+ent_linux_amd64.zip -d oracle-database-plugin_0.12.3+ent_linux_amd64
-
-# Move to plugins directory
-sudo mv oracle-database-plugin_0.12.3+ent_linux_amd64 /etc/vault.d/plugins/
-
-# Rename binary
-sudo mv /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/vault-plugin-database-oracle \
-        /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/oracle-database-plugin
+# Extract directly to plugins directory
+sudo unzip "${PLUGIN_ARCHIVE}.zip" -d "${PLUGIN_DIR}/${PLUGIN_ARCHIVE}"
 
 # Set permissions
-sudo chmod +x /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/oracle-database-plugin
-sudo chown ec2-user:ec2-user -R /etc/vault.d/plugins/
+sudo chmod +x "${PLUGIN_DIR}/${PLUGIN_ARCHIVE}/vault-plugin-database-oracle"
+sudo chown -R vault:vault "${PLUGIN_DIR}"
 ```
 
 To verify the plugin binary and its dependencies are correctly installed:
 
 ```bash
-ldd /etc/vault.d/plugins/oracle-database-plugin_0.12.3+ent_linux_amd64/oracle-database-plugin
+ldd "${PLUGIN_DIR}/${PLUGIN_ARCHIVE}/vault-plugin-database-oracle"
 ```
 
 ### 2. Register the Manually Installed Plugin
 
 ```bash
 vault plugin register \
-  -command="oracle-database-plugin" \
+  -command="vault-plugin-database-oracle" \
   -version="0.12.3+ent" \
   database \
-  oracle-database-plugin
+  vault-plugin-database-oracle
 ```
 
 If you use the manual registration path above, update the database connection configuration to use `plugin_name=oracle-database-plugin` instead of `plugin_name=vault-plugin-database-oracle`.
