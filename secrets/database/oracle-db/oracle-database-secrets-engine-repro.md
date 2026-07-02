@@ -346,7 +346,7 @@ The published plugin name on `releases.hashicorp.com` is `vault-plugin-database-
 ### 1. Download and Install the Plugin Manually
 
 ```bash
-PLUGIN_VERSION="0.12.3+ent"
+PLUGIN_VERSION="0.14.1+ent"
 PLUGIN_ARCHIVE="vault-plugin-database-oracle_${PLUGIN_VERSION}_linux_amd64"
 PLUGIN_DIR="/etc/vault.d/plugins"
 
