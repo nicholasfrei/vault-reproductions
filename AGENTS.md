@@ -72,8 +72,14 @@ If a document spans types (for example both theory and a long procedure), pick t
 ## AI tooling layout
 
 - `AGENTS.md` (this file) - shared workspace context and cross-repo guidance.
-- `.ai/skills/` - shared reusable skills.
+- `.opencode/commands/` - opencode slash-commands (self-contained; no external skill files required).
+  - `customer-reply.md` - draft Zendesk-ready Vault support replies.
+  - `document-reference.md` - structured Vault diagnosis and doc research report.
+  - `find-vault-bugs.md` - source-level Vault Enterprise bug and fix investigation.
+  - `support-agent.md` - interactive Vault support triage workflow.
+- `.ai/skills/` - Bob-specific skill definitions (Bob agent only).
   - `customer-reply/SKILL.md` - drafting Vault customer replies.
-  - `diagnose-issue/SKILL.md` - structured Vault diagnosis and doc research.
+  - `document-reference/SKILL.md` - structured Vault diagnosis and doc research.
   - `find-vault-bugs/SKILL.md` - source-level Vault Enterprise bug and fix investigation.
-  - `internal-tools/SKILL.md` - internal Vault tooling and local repo selection guidance.
+  - `support-agent/SKILL.md` - interactive Vault support triage workflow.
+- `.ai/instructions/internal-tools/SKILL.md` - internal Vault tooling and local repo selection guidance.
