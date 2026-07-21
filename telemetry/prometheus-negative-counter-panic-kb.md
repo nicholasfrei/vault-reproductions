@@ -5,10 +5,10 @@
 Vault Enterprise panics at startup with `panic: counter cannot decrease in value` when Prometheus
 telemetry is enabled and any metric code path emits a negative value to a Prometheus counter.
 
-This is not a single-line bug. It is the intersection of two independent problems: a missing
-defensive guard in Vault's telemetry layer, and an unidentified code path that produces a negative
-counter value. This article explains both, traces the exact call chain, and shows the panic
-mechanically using the same library versions Vault 1.19.8-ent ships.
+This is two independent problems: a missing defensive guard in Vault's telemetry layer, 
+and an unidentified code path that produces a negative counter value. This article explains 
+both, traces the exact call chain, and shows the panic mechanically using the same library 
+versions Vault 1.19.8-ent ships.
 
 ### Affected versions
 
