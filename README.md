@@ -738,6 +738,16 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Includes end-to-end setup and validation steps for metrics targets, Prometheus queries, and Grafana access.
   </details>
 
+- [Prometheus Negative Counter Panic (VAULT-46830)](telemetry/prometheus-negative-counter-panic-kb.md)
+  `kb` `telemetry` `prometheus` `panic` `enterprise`
+  <details>
+  <summary>Details</summary>
+
+  - Explains the `panic: counter cannot decrease in value` startup crash when Prometheus telemetry is enabled from Vault through armon/go-metrics to prometheus/client_golang.
+  - Surveys every non-literal `IncrCounter` call site in vault-enterprise with a negative-value assessment for each.
+  - Includes a self-contained Go program that reproduces the panic using the exact library versions Vault 1.19.8-ent ships, with no cluster required.
+  </details>
+
 ### Vault MCP Server
 
 - [Vault MCP Server Guide](vault-mcp-server/vault-mcp-server-guide.md)
