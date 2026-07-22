@@ -404,6 +404,16 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Covers Snowflake service account creation, AppRole auth configuration, credential rotation verification, and optional SnowSQL connection validation.
   </details>
 
+- [vault_database_secret_backend_role Partial Update Payload Repro](secrets/database/snowflake-db/vault-db-role-update-partial-payload-repro.md)
+  `repro` `secrets` `database` `terraform`
+  <details>
+  <summary>Details</summary>
+
+  - Reproduces the Terraform Vault provider bug (5.8.0–5.10.1) where `vault_database_secret_backend_role` Update only sends changed fields in the API payload.
+  - On Vault 2.0.x (full-replace endpoint), omitted fields are silently reset to zero values: `credential_type` reverts from `rsa_private_key` to `password`, TTLs reset to `0s`, and statement fields are cleared.
+  - See [hashicorp/terraform-provider-vault#2966](https://github.com/hashicorp/terraform-provider-vault/issues/2966) for the upstream issue.
+  </details>
+
 #### <img src="https://cdn.simpleicons.org/vault" alt="Vault" width="18" /> KV
 
 - [KV v1 Secret Recovery Runbook](secrets/kv/kv-v1-secret-recovery-runbook.md)
