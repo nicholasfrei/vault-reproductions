@@ -122,7 +122,7 @@ vault secrets enable database
 
 ### 5. Configure a Snowflake connection
 
-Reference: [How to Configure Snowflake](secrets/database/snowflake-db/approle-snowflake-db-runbook.md) for steps on how to configure Snowflake from scratch 
+Reference: [How to Configure Snowflake](../../../secrets/database/snowflake-db/approle-snowflake-db-runbook.md) for steps on how to configure Snowflake from scratch 
 
 Use the information from the guide above to create the snowflake configuration.
 
