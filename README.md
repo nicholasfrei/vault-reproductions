@@ -473,6 +473,16 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Covers static-role creation for 10 pre-existing LDAP users, automatic and manual `rotate-role` validation, and `rotate-root` bind-account rotation.
   </details>
 
+- [LDAP Dynamic Role Uppercase Name Bug Repro](secrets/ldap/ldap-dynamic-role-uppercase-bug-repro.md)
+  `repro` `secrets` `ldap`
+  <details>
+  <summary>Details</summary>
+
+  - Reproduces a bug where LDAP dynamic roles created with uppercase names appear in `vault list` but fail on `vault read`, `vault delete`, and credential generation.
+  - Demonstrates orphaned metadata accumulation that cannot be removed via normal CLI operations.
+  - Static roles are not affected; only dynamic roles at `ldap/role/` exhibit this behavior.
+  </details>
+
 #### <img src="https://cdn.simpleicons.org/letsencrypt" alt="PKI" width="18" /> PKI
 
 - [CMPv2 PKI Integration Guide](secrets/pki/cmpv2/cmpv2-pki-integration-guide.md)
@@ -791,6 +801,11 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
 	- `panic: not struct` in `storeCreateUpdateHandler` when writing a `sys/sync/destinations/azure-kv` destination with `disable_strict_networking=true` on `1.21.5+ent`.
 	- The request is forwarded via gRPC from a standby node; `github.com/fatih/structs.New()` receives a nil value at `logical_system_sync_stores_ent.go:622`.
 	- Resolved in `2.0.0+ent`.
+
+- [LDAP Dynamic Role Uppercase Name Bug (`1.16.x`, `1.19.x`, `1.21.x`)](secrets/ldap/ldap-dynamic-role-uppercase-bug-repro.md)
+	- Dynamic roles created with uppercase names at `ldap/role/` succeed on write and appear in `vault list`, but `vault read`, `vault delete`, and `vault read ldap/creds/` all fail silently.
+	- The list index retains the original casing while storage uses a lowercased key, causing all subsequent lookups to miss and leaving an orphaned entry that cannot be removed via normal CLI operations.
+	- Static roles (`ldap/static-role/`) are not affected; names are auto-normalized to lowercase on write.
 
 ----
 
