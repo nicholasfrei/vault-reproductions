@@ -119,6 +119,17 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
 
 ### Auth
 
+#### AWS
+
+- [Terraform Provider AWS Auth in `1.10.11`](auth/aws/terraform-provider-aws-auth-put-runbook.md)
+  `runbook` `auth` `aws` `terraform`
+  <details>
+  <summary>Details</summary>
+
+  - Reproduces the regression introduced in Vault Terraform Provider v5.7.0 where `auth_login` with `method = "aws"` sends a `PUT` to `auth/aws/login`, causing Vault to reject the request with a `400` error.
+  - Documents the workaround (pin to v5.6.0) or upgrade vault to `1.15.x` and newer
+  </details>
+
 #### <img src="https://cdn.simpleicons.org/jsonwebtokens" alt="JWT" width="18" /> JWT
 
 - [JWT Authentication Setup and Login Script](auth/jwt/jwt-authentication-setup-and-login.sh)
