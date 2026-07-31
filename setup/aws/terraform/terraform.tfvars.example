@@ -1,0 +1,17 @@
+aws_region     = "us-east-1"
+aws_profile    = null
+name_prefix    = "vault-repro"
+key_name       = "<ec2_key_pair_name>"
+admin_ssh_cidr = "<your_public_ip>/32"
+
+instance_type    = "t2.medium"
+root_volume_size = 30
+vault_version    = "1.20.2+ent"
+
+# Set the license via the environment instead of committing it:
+#   export TF_VAR_vault_license="$VAULT_LICENSE"
+vault_license = "<vault_license_text>"
+
+extra_tags = {
+  Owner = "<email_or_name>"
+}

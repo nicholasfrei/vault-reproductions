@@ -1,0 +1,42 @@
+#!/bin/bash
+set -euo pipefail
+
+exec > >(tee /var/log/vault-user-data.log | logger -t vault-user-data -s 2>/dev/console) 2>&1
+
+VAULT_VERSION="${vault_version}"
+VAULT_LICENSE_B64="${vault_license_b64}"
+
+export VAULT_ADDR="http://127.0.0.1:8200"
+export VAULT_TOKEN="root"
+
+printf '%s' "$VAULT_LICENSE_B64" | base64 -d > /tmp/vault.hclic
+export VAULT_LICENSE="$(cat /tmp/vault.hclic)"
+chmod 600 /tmp/vault.hclic
+
+cat >> /home/ec2-user/.bashrc <<'EOF'
+export VAULT_ADDR=http://127.0.0.1:8200
+export VAULT_TOKEN=root
+EOF
+chown ec2-user:ec2-user /home/ec2-user/.bashrc
+
+dnf install -y wget unzip
+
+cd /tmp
+wget "https://releases.hashicorp.com/vault/$${VAULT_VERSION}/vault_$${VAULT_VERSION}_linux_amd64.zip"
+unzip -o "vault_$${VAULT_VERSION}_linux_amd64.zip" vault
+mv vault /usr/local/bin/vault
+chmod 755 /usr/local/bin/vault
+vault --version
+
+mkdir -p /etc/vault.d/plugins
+
+vault server -dev \
+  -dev-root-token-id="root" \
+  -dev-plugin-dir=/etc/vault.d/plugins \
+  > /var/log/vault.log 2>&1 &
+
+until VAULT_ADDR=http://127.0.0.1:8200 vault status >/dev/null 2>&1; do
+  sleep 1
+done
+
+touch /var/log/vault-user-data-complete
