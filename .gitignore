@@ -13,6 +13,7 @@ drafts/
 .opencode/
 .github/
 .hermes/
+.archive/
 
 # Misc. files
 init.json

@@ -76,10 +76,9 @@ If a document spans types (for example both theory and a long procedure), pick t
   - `customer-reply.md` - draft Zendesk-ready Vault support replies.
   - `document-reference.md` - structured Vault diagnosis and doc research report.
   - `find-vault-bugs.md` - source-level Vault Enterprise bug and fix investigation.
-  - `support-agent.md` - interactive Vault support triage workflow.
-- `.ai/skills/` - Bob-specific skill definitions (Bob agent only).
+- `.agents/skills/` - Bob-specific skill definitions (Bob agent only).
   - `customer-reply/SKILL.md` - drafting Vault customer replies.
   - `document-reference/SKILL.md` - structured Vault diagnosis and doc research.
   - `find-vault-bugs/SKILL.md` - source-level Vault Enterprise bug and fix investigation.
-  - `support-agent/SKILL.md` - interactive Vault support triage workflow.
-- `.ai/instructions/internal-tools/SKILL.md` - internal Vault tooling and local repo selection guidance.
+  - `vault-unit-tests/SKILL.md` - formatting for vault unit tests
+- `.agents/instructions/internal-tools.md` - internal Vault tooling and local repo selection guidance.
