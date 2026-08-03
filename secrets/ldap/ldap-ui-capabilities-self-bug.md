@@ -25,7 +25,7 @@ This bug was introduced in `1.20.6` when the UI was updated to display hierarchi
 ### 1. Spin up the OpenLDAP container
 
 ```bash
-docker run -d \
+podman run -d \
     --name my-openldap-container \
     -p 389:389 \
     -e LDAP_DOMAIN="example.org" \
