@@ -14,6 +14,7 @@ drafts/
 .github/
 .hermes/
 .archive/
+.agents/instructions/
 
 # Misc. files
 init.json
