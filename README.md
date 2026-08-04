@@ -658,6 +658,18 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Covers failure modes, lag diagnosis via `sys/replication/status`, and tuning recommendations for both parameters.
   </details>
 
+#### Migrate
+
+- [`vault operator migrate -start` Incompatibility with Raft Destination KB](sys/migrate/operator-migrate-raft-start-kb.md)
+  `kb` `sys` `migrate` `raft` `storage`
+  <details>
+  <summary>Details</summary>
+
+  - Documents the confirmed bug where `vault operator migrate -start` always fails when the destination is integrated storage (Raft), with error `error bootstrapping cluster: cluster already has state`.
+  - Provides a two-phase workaround: PostgreSQL → `file` (resumable with `-start`) → `raft` (single complete pass).
+  - References GitHub issues #11026 and #10769.
+  </details>
+
 #### Raft
 
 - [Performance Secondary Raft Snapshot Loop — High Lease Volume KB](sys/raft/raft-snapshot-loop-high-lease-volume-kb.md)
@@ -794,6 +806,12 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
 ----
 
 ## Known Bugs & Regressions
+
+- [`vault operator migrate -start` Incompatibility with Raft Destination (all versions ≥ v1.2.0)](sys/migrate/operator-migrate-raft-start-kb.md)
+	- `vault operator migrate -start` always fails with `error bootstrapping cluster: cluster already has state` when the destination storage is integrated storage (Raft). The `-start` flag predates Raft support; `createDestinationBackend` unconditionally calls `Bootstrap` on every invocation, including resume runs, and `Bootstrap` rejects any directory that already contains Raft state.
+	- Resetting the migration lock (`-reset`) does not help — the lock and the Raft bootstrap state are independent.
+	- Workaround: use a two-phase migration with an intermediate `file` backend (source → file, then file → raft).
+	- No fix has been released. See GitHub issues [#11026](https://github.com/hashicorp/vault/issues/11026) and [#10769](https://github.com/hashicorp/vault/issues/10769).
 
 - [Azure Key Vault Auto-Unseal: US Gov Cloud Bug (`go-kms-wrapping` ≤ v2.0.14)](sys/seal/azure/azurekeyvault-auto-unseal-gov-cloud.md)
 	- Bug in `go-kms-wrapping` where the Azure AD authentication endpoint is hard-coded to public cloud, causing Vault startup failures for US Government Cloud tenants. Filed as [VAULT-44389](https://hashicorp.atlassian.net/browse/VAULT-44389).

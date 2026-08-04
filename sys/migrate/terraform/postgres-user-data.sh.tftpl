@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+exec > >(tee /var/log/postgres-user-data.log | logger -t postgres-user-data -s 2>/dev/console) 2>&1
+
+DB_NAME="${db_name}"
+DB_USER="${db_user}"
+DB_PASSWORD="${db_password}"
+
+# ─── System packages ──────────────────────────────────────────────────────────
+
+dnf -y update
+dnf -y install postgresql16-server postgresql16
+
+# ─── Initialize and start PostgreSQL ──────────────────────────────────────────
+
+/usr/bin/postgresql-setup --initdb
+
+systemctl enable postgresql
+systemctl start postgresql
+
+# ─── Create Vault database, user, and storage table ───────────────────────────
+
+sudo -u postgres psql <<SQL
+CREATE DATABASE $${DB_NAME};
+CREATE USER $${DB_USER} WITH ENCRYPTED PASSWORD '$${DB_PASSWORD}';
+GRANT ALL PRIVILEGES ON DATABASE $${DB_NAME} TO $${DB_USER};
+SQL
+
+sudo -u postgres psql -d "$${DB_NAME}" <<SQL
+CREATE TABLE IF NOT EXISTS vault_kv_store (
+  parent_path TEXT COLLATE "C" NOT NULL,
+  path        TEXT COLLATE "C",
+  key         TEXT COLLATE "C",
+  value       BYTEA,
+  CONSTRAINT pkey PRIMARY KEY (path, key)
+);
+
+CREATE INDEX IF NOT EXISTS parent_path_idx ON vault_kv_store (parent_path);
+
+GRANT ALL PRIVILEGES ON TABLE vault_kv_store TO $${DB_USER};
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO $${DB_USER};
+
+CREATE TABLE IF NOT EXISTS vault_ha_locks (
+  ha_key      TEXT COLLATE "C" NOT NULL,
+  ha_value    TEXT COLLATE "C",
+  ha_identity TEXT COLLATE "C",
+  valid_until TIMESTAMP WITH TIME ZONE,
+  CONSTRAINT ha_pkey PRIMARY KEY (ha_key)
+);
+
+GRANT ALL PRIVILEGES ON TABLE vault_ha_locks TO $${DB_USER};
+SQL
+
+# ─── Configure PostgreSQL to accept connections from the VPC ──────────────────
+# Allow password-authenticated connections from anywhere in the VPC (10.0.0.0/8).
+# -At: unaligned output, no header/footer — avoids whitespace that breaks path usage.
+
+PG_DATA=$(sudo -u postgres psql -At -c "SHOW data_directory;")
+
+echo "host    $${DB_NAME}    $${DB_USER}    10.0.0.0/8    scram-sha-256" >> "$${PG_DATA}/pg_hba.conf"
+
+# Listen on all interfaces so Vault nodes in the VPC can connect.
+echo "listen_addresses = '*'" >> "$${PG_DATA}/postgresql.conf"
+
+systemctl restart postgresql
+
+touch /var/log/postgres-user-data-complete
