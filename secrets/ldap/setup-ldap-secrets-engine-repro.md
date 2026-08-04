@@ -25,7 +25,7 @@ Verify connectivity from Vault pod:
 
 ```bash
 kubectl exec -ti vault-0 -n vault -- sh
-nc -zv openldap-service.vault.svc.cluster.local 389
+nc -zv openldap-service.vault-1.svc.cluster.local 389
 ```
 
 ## Step 2: Configure Vault LDAP Secrets Engine
@@ -44,7 +44,7 @@ vault secrets enable -path=openldap ldap
 vault write openldap/config \
   binddn="cn=admin,dc=example,dc=org" \
   bindpass="admin" \
-  url="ldap://openldap-service.vault.svc.cluster.local:389" \
+  url="ldap://openldap-service.vault-1.svc.cluster.local:389" \
   password_policy="default" \
   rotation_period="60s" \
   schema="openldap"
