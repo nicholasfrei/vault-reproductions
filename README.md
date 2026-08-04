@@ -757,6 +757,19 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Documents a support case where two Vault clusters were configured to transit-unseal each other.
   </details>
 
+#### Billing
+
+- [Consumption Billing KV Walk OOM Repro](sys/billing/consumption-billing-kv-walk-oom-repro.md)
+  `repro` `sys` `billing` `kv` `oom`
+  <details>
+  <summary>Details</summary>
+
+  - Reproduces active-node OOM caused by the unconditional `consumptionBillingMetricsWorker` introduced in Vault 2.0.x, which walks every key in every KV v2 mount every 10 minutes to count secrets for billing metrics.
+  - Demonstrates memory growth pattern (flat for 10 minutes, then rapid climb) using a single Vault 2.0.3 node with MySQL/MariaDB storage and `ha_enabled = "true"`.
+  - Includes a side-by-side comparison with Vault 1.21.3 where the worker is absent and memory stays flat.
+  - Covers the root cause (physical storage cache flooding), the `cache_size` workaround, and the relevant source locations in `consumption_billing.go` and `core_metrics.go`.
+  </details>
+
 #### Sync
 
 - [Azure KV Secrets Sync `panic: not struct` Repro](sys/sync/azure-kv-secrets-sync-panic-repro.md)
