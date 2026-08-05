@@ -95,7 +95,7 @@ SSH to node-1 and initialize the cluster:
 ```bash
 ssh -i "$SSH_PRIVATE_KEY" ec2-user@"$PRIMARY_1_PUBLIC_IP"
 export VAULT_ADDR=http://127.0.0.1:8200
-vault operator init -format=json -key-shares=1 -key-threshold=1 > /tmp/init.json
+vault operator init -format=json > /tmp/init.json
 export VAULT_TOKEN=$(jq -r '.root_token' /tmp/init.json)
 ```
 
@@ -108,7 +108,7 @@ for i in $(seq 1 500); do
   vault kv put secret/test-$i value="data-$i" > /dev/null
 done
 
-vault kv list secret/ | wc -l
+vault kv list secret/ | grep -c "test" 
 ```
 
 ## Workaround: Two-Phase Migration via Intermediate File Backend
@@ -191,7 +191,7 @@ Success! All of the keys have been migrated.
 Spot-check the destination directory to confirm data is present before proceeding:
 
 ```bash
-ls -lha /opt/vault/migrate/file-intermediate/
+sudo ls -lha /opt/vault/migrate/file-intermediate/
 ```
 
 The directory should contain subdirectories matching Vault's storage tree (`core/`, `logical/`, `sys/`, etc.).
@@ -234,7 +234,7 @@ storage_destination "raft" {
 Run the second phase in a single pass. Do not interrupt this step.
 
 ```bash
-sudo -u vault VAULT_CLIENT_TIMEOUT=3600s vault operator migrate \
+sudo -u vault VAULT_CLIENT_TIMEOUT=30s vault operator migrate \
   -config /opt/vault/migrate/phase2-file-to-raft.hcl \
   -log-level=info
 ```
