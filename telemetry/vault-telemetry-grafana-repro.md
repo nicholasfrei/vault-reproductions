@@ -20,7 +20,7 @@ You will:
 If needed, bootstrap Vault with:
 
 ```bash
-./setup/init.sh
+./setup/k8s/init.sh
 ```
 
 ## 1) Install Prometheus and Grafana locally

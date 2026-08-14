@@ -120,7 +120,7 @@ External Resources:
 Generic Resources:
 
 - Transit auto-unseal baseline: [sys/seal/transit/transit-auto-unseal-runbook.md](../../sys/seal/transit/transit-auto-unseal-runbook.md)
-- PGP recovery key setup helper: [setup/setup-pgp-keys-for-vault.sh](../../setup/setup-pgp-keys-for-vault.sh)
+- PGP recovery key setup helper: [setup/k8s/setup-pgp-keys-for-vault.sh](../../setup/k8s/setup-pgp-keys-for-vault.sh)
 - PostgreSQL secrets engine baseline: [secrets/database/postgresql-db/postgresql-database-secrets-engine-repro.md](../../secrets/database/postgresql-db/postgresql-database-secrets-engine-repro.md)
 - Replication concepts and recovery context: [sys/replication/vault-replication-merkle-corruption-reindex-kb.md](../../sys/replication/vault-replication-merkle-corruption-reindex-kb.md)
 - Namespace and policy-heavy examples: [auth/userpass/userpass-entity-metadata-dynamic-policy-repro.md](../../auth/userpass/userpass-entity-metadata-dynamic-policy-repro.md)
