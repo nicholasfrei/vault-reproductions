@@ -49,25 +49,58 @@ Common optional tools (scenario-dependent):
 
 ```text
 vault-reproductions/
-├── auth/ 
+├── ai-tools/
+├── auth/
+│   ├── aws/
+│   ├── jwt/
+│   ├── kubernetes/
+│   ├── ldap/
+│   ├── token/
+│   └── userpass/
 ├── certification/
+│   ├── vault-associate-cert/
+│   └── vault-professional-cert/
+├── drafts/
 ├── images/
 ├── kubernetes/
 │   ├── vault-csi-provider/
-│   └── vso/
+│   └── vso-k8s-auth-static-dynamic/
 ├── linux/
-│   ├── logrotate/
 ├── secrets/
+│   ├── artifactory/
+│   ├── aws/
+│   ├── database/
+│   │   ├── oracle-db/
+│   │   ├── postgresql-db/
+│   │   ├── rabbitmq-db/
+│   │   └── snowflake-db/
+│   ├── kv/
+│   ├── ldap/
+│   │   └── red-hat-directory-server/
+│   ├── pki/
+│   │   └── cmpv2/
+│   └── totp/
 ├── setup/
+│   ├── aws/
+│   └── k8s/
 ├── sys/
-│   ├── audit/
+│   ├── billing/
 │   ├── health/
+│   ├── migrate/
 │   ├── policies/
+│   ├── raft/
 │   ├── raw/
 │   ├── replication/
+│   │   └── performance/
 │   ├── rotate/
-│   └── seal/
+│   ├── seal/
+│   │   ├── awskms/
+│   │   ├── azure/
+│   │   ├── pkcs11/
+│   │   └── transit/
+│   └── sync/
 ├── telemetry/
+│   └── dashboards/
 └── vault-mcp-server/
 ```
 
@@ -526,15 +559,15 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
 
 ### Setup
 
-- [Vault Cluster Init Script](setup/init.sh)
+- [Vault Cluster Init Script](setup/k8s/init.sh)
   `script` `setup` `cluster`
   <details>
   <summary>Details</summary>
 
-  - Installs Vault via Helm (HA + Raft, 3 pods), initializes with 5 total key shares and threshold 3, saves init output to `setup/init.json`, unseals all nodes, and logs into `vault-0` with the root token.
+  - Installs Vault via Helm (HA + Raft, 3 pods), initializes with 5 total key shares and threshold 3, saves init output to `setup/k8s/init.json`, unseals all nodes, and logs into `vault-0` with the root token.
   </details>
 
-- [Vault PGP Key Setup Script](setup/setup-pgp-keys-for-vault.sh)
+- [Vault PGP Key Setup Script](setup/k8s/setup-pgp-keys-for-vault.sh)
   `script` `setup` `pgp`
   <details>
   <summary>Details</summary>
@@ -542,25 +575,15 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Generates PGP key pairs, copies public keys into the Vault pod, and runs `vault operator init` with PGP-encrypted unseal keys. Targets `vault-0` in namespace `vault` (configurable).
   </details>
 
-- [Vault Sandbox Cleanup Script](setup/cleanup.sh)
+- [Vault Sandbox Cleanup Script](setup/k8s/cleanup.sh)
   `script` `setup` `cleanup`
   <details>
   <summary>Details</summary>
 
-  - Cleans up sandbox state between runs: uninstalls the Vault Helm release, deletes the `vault` namespace, deletes the Minikube `vault` profile, and removes `setup/init.json`.
+  - Cleans up sandbox state between runs: uninstalls the Vault Helm release, deletes the `vault` namespace, deletes the Minikube `vault` profile, and removes `setup/k8s/init.json`.
   </details>
 
 ### System Backend (sys/)
-
-#### Audit
-
-- [Vault Audit Log JQ Queries KB](sys/audit/vault-audit-jq-queries-kb.md)
-  `kb` `sys` `audit`
-  <details>
-  <summary>Details</summary>
-
-  - Practical `jq` query cookbook for Vault audit logs to identify hot namespaces, busy paths, root usage, failing auth flows, and noisy clients.
-  </details>
 
 #### Health
 
@@ -820,34 +843,14 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
 
 ## Known Bugs & Regressions
 
-- [`vault operator migrate -start` Incompatibility with Raft Destination (all versions ≥ v1.2.0)](sys/migrate/operator-migrate-raft-start-kb.md)
-	- `vault operator migrate -start` always fails with `error bootstrapping cluster: cluster already has state` when the destination storage is integrated storage (Raft). The `-start` flag predates Raft support; `createDestinationBackend` unconditionally calls `Bootstrap` on every invocation, including resume runs, and `Bootstrap` rejects any directory that already contains Raft state.
-	- Resetting the migration lock (`-reset`) does not help — the lock and the Raft bootstrap state are independent.
-	- Workaround: use a two-phase migration with an intermediate `file` backend (source → file, then file → raft).
-	- No fix has been released. See GitHub issues [#11026](https://github.com/hashicorp/vault/issues/11026) and [#10769](https://github.com/hashicorp/vault/issues/10769).
-
-- [Azure Key Vault Auto-Unseal: US Gov Cloud Bug (`go-kms-wrapping` ≤ v2.0.14)](sys/seal/azure/azurekeyvault-auto-unseal-gov-cloud.md)
-	- Bug in `go-kms-wrapping` where the Azure AD authentication endpoint is hard-coded to public cloud, causing Vault startup failures for US Government Cloud tenants. Filed as [VAULT-44389](https://hashicorp.atlassian.net/browse/VAULT-44389).
-	- Covers two independent issues: an invalid `environment` config value and a hard-coded auth endpoint; both affect US Government Cloud tenants.
-	- Affected: all Vault versions using `go-kms-wrapping/wrappers/azurekeyvault/v2` ≤ v2.0.14; workarounds available.
-
-- [AWS Secrets Engine Upgrade Findings (`1.19.1` → `1.19.9/1.19.10`)](secrets/aws/aws-secrets-engine-upgrade-findings-kb.md)
-	- Multiple bugs introduced and inadvertently reintroduced across Vault `1.19.x`: STS client initialization failures, root config write timeouts, IAM signature/region failures, and `rotation_schedule`/window regressions in `1.19.9`.
-	- Impacted large enterprise customers across multiple support tickets.
-
-- [LDAP Secrets Engine UI `check-out` Regression in `1.20.6`–`1.20.10` and `1.21.5`](secrets/ldap/ldap-ui-capabilities-self-bug.md)
-	- Vault UI regression in `1.20.6`–`1.20.10` and `1.21.5` where the LDAP Library Set `check-out` action disappears from the browser GUI for scoped users.
-	- Resolved in `1.20.11`, `1.21.6`, `2.0.0` and onward.
-
-- [Azure KV Secrets Sync `panic: not struct` (`1.21.5+ent`)](sys/sync/azure-kv-secrets-sync-panic-repro.md)
-	- `panic: not struct` in `storeCreateUpdateHandler` when writing a `sys/sync/destinations/azure-kv` destination with `disable_strict_networking=true` on `1.21.5+ent`.
-	- The request is forwarded via gRPC from a standby node; `github.com/fatih/structs.New()` receives a nil value at `logical_system_sync_stores_ent.go:622`.
-	- Resolved in `2.0.0+ent`.
-
-- [LDAP Dynamic Role Uppercase Name Bug (`1.16.x`, `1.19.x`, `1.21.x`)](secrets/ldap/ldap-dynamic-role-uppercase-bug-repro.md)
-	- Dynamic roles created with uppercase names at `ldap/role/` succeed on write and appear in `vault list`, but `vault read`, `vault delete`, and `vault read ldap/creds/` all fail silently.
-	- The list index retains the original casing while storage uses a lowercased key, causing all subsequent lookups to miss and leaving an orphaned entry that cannot be removed via normal CLI operations.
-	- Static roles (`ldap/static-role/`) are not affected; names are auto-normalized to lowercase on write.
+| Name of Issue | Link to file | Impacted Versions | Fixed Versions | Description |
+| --- | --- | --- | --- | --- |
+| `vault operator migrate -start` incompatibility with Raft destination | [operator-migrate-raft-start-kb.md](sys/migrate/operator-migrate-raft-start-kb.md) | ≥ `v1.2.0` (through at least `1.21.x` / `2.0.x`) | `2.1.0+` | `-start` fails with `cluster already has state` when the destination is Raft; use a two-phase migration via an intermediate `file` backend. |
+| LDAP dynamic role uppercase name bug | [ldap-dynamic-role-uppercase-bug-repro.md](secrets/ldap/ldap-dynamic-role-uppercase-bug-repro.md) | `1.16.x`, `1.19.x`, `1.21.x` (reproduced through `2.0.4`) | `2.1.0+` | Uppercase dynamic role names list successfully but `read`/`delete`/`creds` miss because list casing and storage keys diverge; static roles are unaffected. |
+| Azure KV secrets sync `panic: not struct` | [azure-kv-secrets-sync-panic-repro.md](sys/sync/azure-kv-secrets-sync-panic-repro.md) | `1.21.4+ent`, `1.21.5+ent` | `1.20.12+`, `1.21.7+`, `2.0.0+` | Writing `sys/sync/destinations/azure-kv` with `disable_strict_networking=true` (often via standby) panics the process. |
+| LDAP secrets engine UI `check-out` missing | [ldap-ui-capabilities-self-bug.md](secrets/ldap/ldap-ui-capabilities-self-bug.md) | `1.20.6`–`1.20.10`, `1.21.5` | `1.20.11+`, `1.21.6+`, `2.0.0+` | UI hides Library Set `check-out` for scoped users after hierarchical library changes (`VAULT-44142`). |
+| AWS secrets engine upgrade regressions | [aws-secrets-engine-upgrade-findings-kb.md](secrets/aws/aws-secrets-engine-upgrade-findings-kb.md) | `1.19.x` (STS/`region` issues from `1.19.4+`; rotation regressions in `1.19.9`) | Partial: STS path in `1.19.4+` with config workarounds; rotation issues fixed in `1.19.10` | STS client init failures, root config timeouts, IAM signature/region errors, and `rotation_schedule`/`rotation_window` regressions across `1.19.x`. |
+| Azure Key Vault auto-unseal US Gov Cloud auth endpoint | [azurekeyvault-auto-unseal-gov-cloud.md](sys/seal/azure/azurekeyvault-auto-unseal-gov-cloud.md) | Vault builds using `go-kms-wrapping` azurekeyvault ≤ `v2.0.14` | None (workarounds available) | Azure AD auth endpoint is hard-coded to public cloud; Gov Cloud tenants fail startup (`VAULT-44389`). |
 
 ----
 
