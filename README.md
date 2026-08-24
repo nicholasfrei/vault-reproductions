@@ -98,7 +98,8 @@ vault-reproductions/
 │   │   ├── azure/
 │   │   ├── pkcs11/
 │   │   └── transit/
-│   └── sync/
+│   ├── sync/
+│   └── ui/
 ├── telemetry/
 │   └── dashboards/
 └── vault-mcp-server/
@@ -804,6 +805,20 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Includes Azure App Registration, Key Vault, and RBAC role setup using the Azure CLI.
   - Covers Secrets Sync activation, KV v2 test data, sync destination creation, association, and validation that the secret appears in Azure Key Vault.
   - Confirms the panic is resolved in `2.0.0+ent`.
+  </details>
+
+#### UI Login
+
+- [VAULT-40617: UI Default Auth `namespace_path` Canonicalization Repro](sys/ui/login/ui-default-auth-namespace-path-repro.md)
+  `repro` `sys` `ui` `enterprise`
+  <details>
+  <summary>Details</summary>
+
+  - Reproduces `sys/internal/ui/default-auth-methods` returning `data: null` after upgrading from 1.21.1+ent to 2.0.x+ent when a default auth rule was written with `namespace_path=""`.
+  - Root cause: `upsertRuleInTxn` normalizes empty `namespace_path` to `"root"` (no trailing slash) on pre-fix releases; fixed lookup paths use `"root/"`, causing a memdb key mismatch on the upgraded binary.
+  - Demonstrates that `vault read sys/config/ui/login/default-auth/<name>` (name-based lookup) continues to return data while the unauthenticated UI endpoint returns `data: null`.
+  - Uses Terraform to deploy a 3-node Vault 1.21.1+ent Raft cluster with AWS KMS auto-unseal on EC2.
+  - Affected: 1.20.0–1.20.7+ent, 1.21.0–1.21.2+ent. Fixed: 1.20.8+ent, 1.21.3+ent, 2.0.0+ent.
   </details>
 
 ### Telemetry
