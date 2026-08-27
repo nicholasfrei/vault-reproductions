@@ -706,6 +706,16 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Includes observed metrics: 40 GB `vault.db`, 1.5-hour snapshot cycles, 175k index lag, and sustained 90%+ RAM utilization with 10+ GB swap.
   </details>
 
+- [`vault recover` Panic on Missing Path Argument Repro](sys/raft/recover-no-path-panic-repro.md)
+  `repro` `sys` `raft` `enterprise` `recover` `snapshot`
+  <details>
+  <summary>Details</summary>
+
+  - Reproduces a panic (`index out of range [0] with length 0`) in `vault recover` when `-snapshot-id` is supplied but no path argument is provided on Vault Enterprise `2.0.3+ent`.
+  - Demonstrates that the same command with an invalid path returns a clean `400` error, confirming the missing input-validation guard on the no-path code path.
+  - Covers snapshot load, the panicking invocation, the structured-error comparison, and cleanup.
+  </details>
+
 #### Rotate
 
 - [Vault Encryption Key Rotation + Rekey Runbook](sys/rotate/vault-encryption-key-rotation-and-rekey-runbook.md)
