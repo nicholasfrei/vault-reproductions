@@ -633,6 +633,16 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Covers capability union vs. exact-match priority rules, namespace expansion, and common wild-card pitfalls.
   </details>
 
+- [Control Group Missing Audit Response Repro](sys/policies/control-group-missing-audit-response-repro.md)
+  `repro` `sys` `policies` `control-group` `audit` `enterprise`
+  <details>
+  <summary>Details</summary>
+
+  - Reproduces the bug where a control-group-blocked request writes an audit `request` entry but never writes the corresponding `response` entry.
+  - The missing response means the wrapped token accessor, caller HMAC'd token, TTL, and creation path are never logged, making it impossible to link an authorisation to the request that triggered it.
+  - Uses userpass auth, KV v2, and a two-user (bob/alice) setup to trigger and verify the missing log entry.
+  </details>
+
 #### Raw
 
 - [Vault sys/raw Endpoint KB](sys/raw/sys-raw-kb.md)
