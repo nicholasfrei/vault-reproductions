@@ -548,6 +548,15 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Validates that Vault can stay TLS-only while a front proxy handles plaintext listener and HTTPS re-encryption.
   </details>
 
+- [CMPv2 Sentinel Nil Map Panic Repro](secrets/pki/cmpv2/cmpv2-sentinel-nil-map-panic-repro.md)
+  `repro` `secrets` `pki` `cmpv2` `enterprise`
+  <details>
+  <summary>Details</summary>
+
+  - Reproduces a server panic (`assignment to entry in nil map`) triggered by submitting a CMP CR with an empty `SEQUENCE OF CertReqMessages` body when `enable_sentinel_parsing=true`.
+  - Includes a Go payload generator, full setup of mock origin PKI and cert auth, and the exact stack trace confirming the `path_cmpv2_ent.go` code path.
+  </details>
+
 #### TOTP
 
 - [TOTP Secrets Engine Repro](secrets/totp/totp-secrets-engine-repro.md)
