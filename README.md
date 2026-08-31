@@ -567,6 +567,18 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Reproduction runbook for the Vault TOTP secrets engine, including setup and validation flow.
   </details>
 
+#### Transit
+
+- [Transit CSR Re-Signing Drops Extension Critical Flag](secrets/transit/transit-csr-extension-drop-repro.md)
+  `repro` `secrets` `transit` `pki`
+  <details>
+  <summary>Details</summary>
+
+  - Reproduces the bug where `POST /transit/keys/:name/csr` silently strips the `Critical` flag from custom X.509 extensions in the re-signed output CSR.
+  - When SANs and additional extensions are both present, the re-signed CSR is structurally invalid (malformed ASN.1) and rejected by downstream tools.
+  - Covers root cause (stale `Attributes` field and duplicate SAN extension), affected versions (through `2.0.4`), and fix validation.
+  </details>
+
 ### Setup
 
 - [Vault Cluster Init Script](setup/k8s/init.sh)
