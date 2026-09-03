@@ -664,6 +664,18 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Uses userpass auth, KV v2, and a two-user (bob/alice) setup to trigger and verify the missing log entry.
   </details>
 
+#### Plugins
+
+- [`vault plugin reload -mounts` Fails in the Root Namespace Repro](sys/plugins/plugin-reload-mounts-root-namespace-repro.md)
+  `repro` `sys` `plugins`
+  <details>
+  <summary>Details</summary>
+
+  - Reproduces a confirmed bug where `vault plugin reload -mounts=<mount>` fails with a `404 unsupported path` error when run in the root namespace, because the CLI routes the request to the wrong API (`sys/plugins/reload/:type/:name` instead of `sys/plugins/reload/backend`) whenever no client namespace is set.
+  - Affects both Vault CE and Vault Enterprise from `v1.16.0`/`v1.16.0+ent` through `2.1.0`/`2.1.0+ent`.
+  - Covers two confirmed workarounds (direct API call to `sys/plugins/reload/backend`, and setting `VAULT_NAMESPACE` to any non-empty value), plus how to positively confirm a reload took effect via `-scope=global` + `vault plugin reload-status`
+  </details>
+
 #### Raw
 
 - [Vault sys/raw Endpoint KB](sys/raw/sys-raw-kb.md)
