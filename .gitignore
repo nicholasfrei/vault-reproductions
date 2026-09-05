@@ -17,7 +17,9 @@ drafts/**
 # AI related files
 .ai/
 .cursor/
-.opencode/
+.opencode/*
+!.opencode/commands/
+!.opencode/commands/*.md
 .github/
 .hermes/
 .archive/

@@ -77,7 +77,7 @@ If a document spans types (for example both theory and a long procedure), pick t
 - `.agents/workflows/` - authoring, review, maintenance, and release-index stage definitions.
 - `.agents/templates/` - standardized intake, brief, validation, review, and maintenance contracts.
 - `.agents/skills/` - specialist scenario and support task instructions.
-- `.agents/opencode/commands/` - OpenCode slash-command adapters.
+- `.opencode/commands/` - OpenCode slash-command adapters.
 - `.agents/instructions/internal-tools.md` - internal Vault tooling and local repo selection guidance.
 
 ## AI workflow handoffs
