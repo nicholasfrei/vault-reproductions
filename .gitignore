@@ -4,8 +4,15 @@ vault.hclic
 # Mac metadata files
 .DS_Store
 
-# Ignore Drafts
-drafts/
+# Ignore draft implementation artifacts, but retain workflow contracts
+drafts/**
+!drafts/**/
+!drafts/**/source-notes.md
+!drafts/**/links.md
+!drafts/**/scenario-brief.md
+!drafts/**/validation-report.md
+!drafts/**/review-report.md
+!drafts/**/maintenance-report.md
 
 # AI related files
 .ai/

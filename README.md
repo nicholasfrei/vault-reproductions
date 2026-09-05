@@ -113,6 +113,18 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
 
 ### AI Tools
 
+#### Vault Scenario Agent Workflow
+
+- [Vault Scenario Agent Workflow](.agents/README.md)
+  `guide` `ai-tools` `workflow`
+  <details>
+  <summary>Details</summary>
+
+  - Uses standardized YAML metadata and trackable Markdown contracts to hand work between specialized agents without relying on prior chat context.
+  - Records scenario identity, revision, predecessors, ownership, next action, and human approval consistently across intake, planning, validation, review, and maintenance.
+  - Includes Vault-specific planning, authoring, validation, review, maintenance, release-index, safety, and quality controls.
+  </details>
+
 #### IBM Bob
 
 - [IBM Bob Getting Started Guide](ai-tools/00-ibm-bob-getting-started.md)

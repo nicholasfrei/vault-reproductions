@@ -71,14 +71,23 @@ If a document spans types (for example both theory and a long procedure), pick t
 
 ## AI tooling layout
 
-- `AGENTS.md` (this file) - shared workspace context and cross-repo guidance.
-- `.opencode/commands/` - opencode slash-commands (self-contained; no external skill files required).
-  - `customer-reply.md` - draft Zendesk-ready Vault support replies.
-  - `document-reference.md` - structured Vault diagnosis and doc research report.
-  - `find-vault-bugs.md` - source-level Vault Enterprise bug and fix investigation.
-- `.agents/skills/` - Bob-specific skill definitions (Bob agent only).
-  - `customer-reply/SKILL.md` - drafting Vault customer replies.
-  - `document-reference/SKILL.md` - structured Vault diagnosis and doc research.
-  - `find-vault-bugs/SKILL.md` - source-level Vault Enterprise bug and fix investigation.
-  - `vault-unit-tests/SKILL.md` - formatting for vault unit tests
+- `AGENTS.md` (this file) - authoritative repository rules.
+- `.agents/README.md` - durable AI workflow interface and handoff model.
+- `.agents/shared/` - contract metadata, repository conventions, scenario schema, safety rules, and quality rubric.
+- `.agents/workflows/` - authoring, review, maintenance, and release-index stage definitions.
+- `.agents/templates/` - standardized intake, brief, validation, review, and maintenance contracts.
+- `.agents/skills/` - specialist scenario and support task instructions.
+- `.agents/opencode/commands/` - OpenCode slash-command adapters.
 - `.agents/instructions/internal-tools.md` - internal Vault tooling and local repo selection guidance.
+
+## AI workflow handoffs
+
+- Store multi-stage work under `drafts/<scenario-slug>/`.
+- Agents communicate through the Markdown contracts, not prior chat context.
+- Preserve sanitized source material in `source-notes.md` and references in `links.md`.
+- Apply `.agents/shared/contract-metadata.md` to every contract and read every declared predecessor before continuing.
+- Keep one stable `scenario_id`; increment `scenario_revision` whenever scenario or supporting files change.
+- Agents must not approve their own artifacts or continue while required human approval is pending.
+- Do not author before the scenario brief is `ready-for-authoring`.
+- Do not update the README index before the review report is `ready` for the current scenario revision.
+- Keep non-contract draft artifacts ignored; the Markdown contracts remain trackable for provenance.
