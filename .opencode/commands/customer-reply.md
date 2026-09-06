@@ -1,5 +1,5 @@
 ---
-description: EXAMPLE / TEMPLATE — Draft a Zendesk-ready Vault support reply (customer-reply skill). Not part of default vault-reproductions workflows.
+description: EXAMPLE / TEMPLATE — Draft a customer-facing support reply (customer-reply skill).
 ---
 
 Example / template only. This command wraps a shareable customer-reply skill for other support engineers; it is not required for this repository's default workflows.
