@@ -49,6 +49,8 @@ Common optional tools (scenario-dependent):
 
 ```text
 vault-reproductions/
+├── ai/
+│   └── vault-mcp-server/
 ├── ai-tools/
 ├── auth/
 │   ├── aws/
@@ -102,7 +104,6 @@ vault-reproductions/
 │   └── ui/
 ├── telemetry/
 │   └── dashboards/
-└── vault-mcp-server/
 ```
 
 ----
@@ -856,8 +857,8 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
 
 ### Vault MCP Server
 
-- [Vault MCP Server Guide](vault-mcp-server/vault-mcp-server-guide.md)
-  `guide` `vault-mcp-server` `integration`
+- [Vault MCP Server Guide](ai/vault-mcp-server/vault-mcp-server-guide.md)
+  `guide` `ai` `vault-mcp-server` `integration`
   <details>
   <summary>Details</summary>
 
