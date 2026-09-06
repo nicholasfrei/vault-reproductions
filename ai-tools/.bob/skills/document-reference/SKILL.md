@@ -1,9 +1,9 @@
 ---
-name: diagnose-issue
-description: Diagnose a Vault issue using evidence, exact errors, and official documentation.  This file should be placed in .bob/skills/diagnose-issue/SKILL.md within your repo.
+name: document-reference
+description: Diagnose a Vault issue using evidence, exact errors, and official documentation. This file should be placed in .bob/skills/document-reference/SKILL.md within your repo.
 ---
 
-# Diagnose Issue
+# Document Reference
 
 Use this skill when the user asks to troubleshoot, root-cause, or explain a Vault error or unexpected behavior.
 
@@ -20,3 +20,7 @@ Use this skill when the user asks to troubleshoot, root-cause, or explain a Vaul
 - Produce a structured internal report.
 - Separate confirmed evidence from assumptions.
 - Redact sensitive values with placeholders such as `<token>` or `<hostname>`.
+
+## Source of truth
+
+Prefer the full skill at `.agents/skills/document-reference/SKILL.md` when available in the repository.
