@@ -47,11 +47,11 @@ Use this skill when the user asks for <task type>.
 
 ## Sample Skills to Reference
 
-In this repo, I've created very basic templates of sample skills and placed them in `ai-tools/.bob/skills/`. Each skill has a `SKILL.md` file with instructions and steps for the AI to follow. You can use these as a starting point for creating your own skills, or as examples to share with your team.
+In this repo, I've created very basic templates of sample skills and placed them in `ai/bob/skills/`. Each skill has a `SKILL.md` file with instructions and steps for the AI to follow. You can use these as a starting point for creating your own skills, or as examples to share with your team.
 
-- [Customer Reply Skill Template](../ai-tools/.bob/skills/customer-reply/SKILL.md)
-- [Document Reference Skill Template](../ai-tools/.bob/skills/document-reference/SKILL.md)
-- [Find Vault Bugs Skill Template](../ai-tools/.bob/skills/find-vault-bugs/SKILL.md)
+- [Customer Reply Skill Template](../ai/bob/skills/customer-reply/SKILL.md)
+- [Document Reference Skill Template](../ai/bob/skills/document-reference/SKILL.md)
+- [Find Vault Bugs Skill Template](../ai/bob/skills/find-vault-bugs/SKILL.md)
 
 If you want Bob to discover these automatically in a real repo, place them at the repo root under `.bob/skills/`.
 
