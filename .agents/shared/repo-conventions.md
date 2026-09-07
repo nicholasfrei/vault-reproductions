@@ -4,7 +4,7 @@ The root `AGENTS.md` is authoritative. This file identifies the conventions that
 
 ## Placement and naming
 
-- Search `README.md` and neighboring topic directories before adding content.
+- Search the matching topic-folder `README.md`, `KNOWN_BUGS.md`, and neighboring topic directories before adding content.
 - Place the scenario under the narrowest existing domain, such as `auth/jwt/`, `secrets/kv/`, or `sys/raft/`.
 - Use `*-repro.md`, `*-runbook.md`, `*-kb.md`, or `*-guide.md` according to the primary intent.
 - Treat scripts as supporting files unless the script itself is the indexed scenario.
@@ -26,7 +26,7 @@ The root `AGENTS.md` is authoritative. This file identifies the conventions that
 - Require approved brief metadata before authoring and keep all handoff artifacts on the same scenario revision.
 - Increment `scenario_revision` before changing scenario or supporting files.
 - Match nearby file patterns before introducing a new pattern or dependency.
-- Update `README.md` only after validation and review are complete.
+- Update the topic-folder `README.md` and `KNOWN_BUGS.md` only after validation and review are complete.
 - Preserve every existing index entry unless removal was explicitly requested.
 - Do not commit, push, or add AI coauthor attribution.
 

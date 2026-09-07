@@ -13,7 +13,7 @@ Read:
 
 - Root `AGENTS.md`
 - All files under `.agents/shared/`
-- The published scenario and its `README.md` entry
+- The published scenario and its topic-folder `README.md` entry
 - `drafts/<scenario-slug>/source-notes.md`
 - `drafts/<scenario-slug>/links.md`
 - `drafts/<scenario-slug>/scenario-brief.md`; bootstrap it from the published scenario when absent
@@ -52,5 +52,5 @@ Set metadata status and next action to:
 
 Use `ready-for-update` for the accepted assessment before editing. After applying and recording a bounded change, move to `ready-for-validation`.
 
-Hand `maintenance-report.md` with changed scenarios to the validator, reviewer, and index curator. Update `README.md` only through the release index workflow.
+Hand `maintenance-report.md` with changed scenarios to the validator, reviewer, and index curator. Update topic-folder `README.md` files and `KNOWN_BUGS.md` only through the release index workflow.
 

@@ -47,7 +47,7 @@ Output:
 
 Set `scenario_revision` to `"1"` for the first implementation. Increment it in `scenario-brief.md` before every later change to the scenario or supporting files. A revision change invalidates prior validation and review decisions.
 
-The author must not update `README.md`.
+The author must not update a topic-folder `README.md`, the root `README.md`, or `KNOWN_BUGS.md`.
 
 ## 3. Validate
 

@@ -46,7 +46,7 @@ Set metadata status and next action to:
 - `needs-changes` and `remediate` when the author can resolve blocking findings
 - `blocked` and `collect-input` when required evidence or an unplanned human decision is unavailable
 
-Copy the exact reviewed scenario revision into the report. Provide a precise README and Known Bugs action when status is `ready`. A partial, not-run, or stale validation report cannot produce a `ready` decision.
+Copy the exact reviewed scenario revision into the report. Provide a precise topic-folder README and Known Bugs (`KNOWN_BUGS.md`) action when status is `ready`. A partial, not-run, or stale validation report cannot produce a `ready` decision.
 
 When an otherwise-ready report reaches a planned human gate, keep status `ready`, set `next_action: human-approve`, set aggregate approval to `pending`, and stop. After explicit approval is recorded, set the next action to `index` or `close`. Do not record `approved` without an explicit human decision.
 

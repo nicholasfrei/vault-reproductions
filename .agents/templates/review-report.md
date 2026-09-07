@@ -63,12 +63,12 @@ human_approval:
 
 ## Index recommendation
 
-- Include in `README.md`: `yes` | `no`
+- Include in the topic-folder `README.md`: `yes` | `no`
 - Suggested section:
 - Suggested title:
 - Suggested tags:
 - Summary bullets:
-- Known Bugs & Regressions action: `none` | `add` | `update` | `remove`
+- Known Bugs & Regressions action (`KNOWN_BUGS.md`): `none` | `add` | `update` | `remove`
 
 ## Human approvals
 

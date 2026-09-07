@@ -41,7 +41,7 @@ Stop unless the brief metadata is `ready-for-authoring`, its human approval is `
 
 - Create or update the scenario at the path in `scenario-brief.md`.
 - Add only supporting files required by the brief.
-- Do not update `README.md`.
+- Do not update a topic-folder `README.md`, the root `README.md`, or `KNOWN_BUGS.md`.
 - Do not claim validation; the validator records that independently.
 
 The scenario files, `scenario-brief.md`, and any remediation report are the validator handoff. Their scenario identity and revision must match.

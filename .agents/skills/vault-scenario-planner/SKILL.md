@@ -19,7 +19,7 @@ Read:
 - `drafts/<scenario-slug>/source-notes.md`
 - `drafts/<scenario-slug>/links.md`, when present
 - Existing `validation-report.md`, `review-report.md`, or `maintenance-report.md` when one triggered replanning
-- Similar entries in `README.md` and neighboring topic files
+- Similar entries in the matching topic-folder `README.md`, `KNOWN_BUGS.md`, and neighboring topic files
 
 ## Process
 

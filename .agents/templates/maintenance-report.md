@@ -61,6 +61,7 @@ human_approval:
 
 ## Publication decision
 
-- README update required: `yes` | `no`
+- Topic-folder README update required: `yes` | `no`
+- `KNOWN_BUGS.md` update required: `yes` | `no`
 - Reason:
 

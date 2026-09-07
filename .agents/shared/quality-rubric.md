@@ -35,7 +35,7 @@ Review each category as `pass`, `needs-work`, or `not-applicable`. A scenario is
 - Location, filename, headings, and formatting follow `AGENTS.md`.
 - Neighboring scenario conventions are reused.
 - Changes are narrowly scoped.
-- The `README.md` entry is accurate and correctly placed.
+- The topic-folder `README.md` entry is accurate and correctly placed.
 - Contract metadata follows `.agents/shared/contract-metadata.md`.
 
 ## Evidence

@@ -4,7 +4,7 @@
 
 This repository is a support and troubleshooting library for HashiCorp Vault. It contains reproducible runbooks, KBs, and helper scripts that can be used to learn, diagnose, or troubleshoot various Vault issues.
 
-For the scenario list and lab prerequisites, see [README.md](./README.md). The README is the source of truth for how content is grouped.
+For lab prerequisites and the category map, see [README.md](./README.md). Each top-level topic folder has its own `README.md` scenario index. Confirmed version-specific defects live in [KNOWN_BUGS.md](./KNOWN_BUGS.md).
 
 ## Document naming conventions
 
@@ -41,21 +41,23 @@ This repository is designed to be a living library of support and troubleshootin
 - Follow a rough outline: Overview/Objective, Prerequisites, Steps, References.
 - Include exact error strings when documenting failures so users can search logs quickly.
 
-## README scenario index formatting
+## Scenario index formatting
 
-- Keep `README.md` as the scenario index
-- In `## Scenario Index`, keep the legend line for content type terms (`runbook`, `kb`, `repro`, `guide`).
+- Keep the root `README.md` as the front door: intro, Start Here, prerequisites, category map, and a pointer to Known Bugs. Do not put the full scenario catalog or a directory tree in the root README.
+- Keep each top-level topic folder's `README.md` as the scenario index for that domain (`auth/README.md`, `secrets/README.md`, `sys/README.md`, and so on).
+- Keep `KNOWN_BUGS.md` as the version matrix for confirmed Vault, provider, or wrapping-library defects. Include the `VAULT-XXXXX` key when the scenario records one.
+- In each folder index, keep the legend line for content type terms (`runbook`, `kb`, `repro`, `guide`, `script`).
 - For each scenario item, use this structure:
-	1. Link line (the scenario title and path)
+	1. Link line (the scenario title and path, relative to that folder)
 	2. Inline backtick tags (for example: ``runbook`` ``sys`` ``seal``)
 	3. Collapsible details block:
 	   - `<details>`
 	   - `<summary>Details</summary>`
 	   - Original description bullets
 	   - `</details>`
-- Preserve the existing section hierarchy (for example `###`, `####`, `#####`) and do not flatten categories.
+- Preserve the existing section hierarchy inside the folder README and do not flatten categories.
 - Keep content changes minimal when reformatting: prefer structural changes for readability, not rewriting scenario meaning.
-- When adding new scenarios, follow the same index entry pattern and place them in the correct existing section.
+- When adding new scenarios, follow the same index entry pattern and place them in the correct topic-folder README.
 	- As this project grows, it's important to make sure we don't have overlapping content. 
 
 ## Scope guardrails
@@ -88,7 +90,7 @@ Read [`.agents/README.md`](.agents/README.md) first when choosing a path. Use th
 3. Author: `vault-scenario-author` (brief must be `ready-for-authoring`)
 4. Validate: `vault-scenario-validator` → `validation-report.md`
 5. Review: `vault-scenario-reviewer` → `review-report.md`
-6. Index: `scenario-index-curator` updates `README.md` only when review is `ready` and `next_action` is `index`
+6. Index: `scenario-index-curator` updates the topic-folder `README.md` and `KNOWN_BUGS.md` only when review is `ready` and `next_action` is `index`
 
 Workflow docs: `.agents/workflows/scenario-authoring.md` → `scenario-review.md` → `release-index.md`
 
@@ -126,5 +128,5 @@ Full trees and handoffs into create/maintain: `.agents/workflows/support-workflo
 - Keep one stable `scenario_id`; increment `scenario_revision` whenever scenario or supporting files change.
 - Agents must not approve their own artifacts or continue while required human approval is pending.
 - Do not author before the scenario brief is `ready-for-authoring`.
-- Do not update the README index before the review report is `ready` for the current scenario revision.
+- Do not update a topic-folder README or `KNOWN_BUGS.md` before the review report is `ready` for the current scenario revision.
 - Keep non-contract draft artifacts ignored; the Markdown contracts remain trackable for provenance.

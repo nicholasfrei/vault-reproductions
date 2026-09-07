@@ -37,7 +37,7 @@ source-notes.md + links.md
             |
           ready
             v
-      README index or close  (scenario-index-curator)
+      topic-folder README / KNOWN_BUGS or close  (scenario-index-curator)
 ```
 
 Skills in order: `vault-scenario-planner` → `vault-scenario-author` → `vault-scenario-validator` → `vault-scenario-reviewer` → `scenario-index-curator`.
@@ -85,7 +85,7 @@ Full trees, handoffs, and OpenCode mapping: [workflows/support-workflows.md](wor
 | `vault-scenario-author` | Implement approved brief | create / remediate | via `vault-workflow` |
 | `vault-scenario-validator` | Execute and record evidence | create / maintain | via `vault-workflow` |
 | `vault-scenario-reviewer` | Quality and release gate | create / maintain | via `vault-workflow` |
-| `scenario-index-curator` | Update `README.md` index | release-index | via `vault-workflow` |
+| `scenario-index-curator` | Update topic-folder README and `KNOWN_BUGS.md` | release-index | via `vault-workflow` |
 | `scenario-maintainer` | Assess / update drift | maintain | via `vault-workflow` |
 | `document-reference` | Docs-based diagnosis | support | `document-reference` |
 | `find-vault-bugs` | Source / issue / version hunt | support | `find-vault-bugs` |
@@ -156,7 +156,7 @@ Scenario pipeline:
 - `vault-scenario-author` implements only the approved brief.
 - `vault-scenario-validator` executes checks and writes `validation-report.md`.
 - `vault-scenario-reviewer` applies the quality gate and writes `review-report.md`.
-- `scenario-index-curator` updates `README.md` after approval.
+- `scenario-index-curator` updates the topic-folder `README.md` and `KNOWN_BUGS.md` after approval.
 - `scenario-maintainer` assesses drift and writes `maintenance-report.md`.
 
 Support specialists:

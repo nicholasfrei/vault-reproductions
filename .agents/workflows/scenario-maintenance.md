@@ -69,5 +69,5 @@ Required outputs:
 
 Run the release index workflow when the title, location, tags, description, affected versions, fixed versions, or known-bug status changed.
 
-For deprecation, supersession, or rename, the review report must explicitly approve the README and Known Bugs action before indexing.
+For deprecation, supersession, or rename, the review report must explicitly approve the topic-folder README and Known Bugs action before indexing.
 
