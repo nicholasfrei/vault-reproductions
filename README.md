@@ -18,14 +18,14 @@ If you are new to this repo, pick one path:
 
 Topic indexes:
 
-- [AI Tools](ai/README.md) — IBM Bob, Vault MCP server, scenario-agent workflow
-- [Auth](auth/README.md) — AWS, JWT, Kubernetes, LDAP, token, userpass
+- [AI](ai/README.md) — IBM Bob, Vault MCP server
+- [Auth](auth/README.md) — AWS, JWT, Kubernetes, LDAP, token, userpass, etc.
 - [Certification](certification/README.md) — Associate and Professional exam labs
 - [Kubernetes](kubernetes/README.md) — CSI, VSO, probes, Raft quorum
-- [Linux](linux/README.md) — logrotate
-- [Secrets](secrets/README.md) — database, KV, LDAP, PKI, transit, TOTP, AWS, Artifactory
+- [Linux](linux/README.md) — logrotate, etc.
+- [Secrets](secrets/README.md) — database, KV, LDAP, PKI, transit, TOTP, AWS, Artifactory, etc.
 - [Setup](setup/README.md) — local Kubernetes cluster init and cleanup
-- [System Backend](sys/README.md) — health, policies, plugins, raft, replication, seal, sync, SCIM, UI
+- [System Backend](sys/README.md) — health, policies, plugins, raft, replication, seal, sync, SCIM, UI, etc.
 - [Telemetry](telemetry/README.md) — Prometheus and Grafana
 
 Helpful Vault external links:
