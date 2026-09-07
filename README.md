@@ -49,7 +49,9 @@ Common optional tools (scenario-dependent):
 
 ```text
 vault-reproductions/
-├── ai-tools/
+├── ai/
+│   ├── bob/
+│   └── vault-mcp-server/
 ├── auth/
 │   ├── aws/
 │   ├── jwt/
@@ -102,7 +104,6 @@ vault-reproductions/
 │   └── ui/
 ├── telemetry/
 │   └── dashboards/
-└── vault-mcp-server/
 ```
 
 ----
@@ -113,10 +114,22 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
 
 ### AI Tools
 
+#### Vault Scenario Agent Workflow
+
+- [Vault Scenario Agent Workflow](.agents/README.md)
+  `guide` `ai` `workflow`
+  <details>
+  <summary>Details</summary>
+
+  - Uses standardized YAML metadata and trackable Markdown contracts to hand work between specialized agents without relying on prior chat context.
+  - Records scenario identity, revision, predecessors, ownership, next action, and human approval consistently across intake, planning, validation, review, and maintenance.
+  - Includes Vault-specific planning, authoring, validation, review, maintenance, release-index, safety, and quality controls.
+  </details>
+
 #### IBM Bob
 
-- [IBM Bob Getting Started Guide](ai-tools/00-ibm-bob-getting-started.md)
-  `guide` `ai-tools` `bob`
+- [IBM Bob Getting Started Guide](ai/bob/00-ibm-bob-getting-started.md)
+  `guide` `ai` `bob`
   <details>
   <summary>Details</summary>
 
@@ -124,8 +137,8 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Covers installation, project instructions, and skills as a progressive onboarding flow.
   </details>
 
-- [IBM Bob Guide #1 - Install Bob, Bobshell, and Open Your First Repository](ai-tools/01-install-ibm-bob-guide.md)
-  `guide` `ai-tools` `bob`
+- [IBM Bob Guide #1 - Install Bob, Bobshell, and Open Your First Repository](ai/bob/01-install-ibm-bob-guide.md)
+  `guide` `ai` `bob`
   <details>
   <summary>Details</summary>
 
@@ -133,8 +146,8 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Includes references for Bob IDE quickstart, Bob Shell docs, and Bob token guidance.
   </details>
 
-- [IBM Bob Guide #2 - Create AGENTS.md and Project Rules](ai-tools/02-create-agents-guide.md)
-  `guide` `ai-tools` `bob`
+- [IBM Bob Guide #2 - Create AGENTS.md and Project Rules](ai/bob/02-create-agents-guide.md)
+  `guide` `ai` `bob`
   <details>
   <summary>Details</summary>
 
@@ -142,8 +155,8 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Covers starter examples, project-specific rules, `/init`, and mode-specific instruction files.
   </details>
 
-- [IBM Bob Guide #3 - Skills and Templates Guide](ai-tools/03-create-skills-guide.md)
-  `guide` `ai-tools` `bob`
+- [IBM Bob Guide #3 - Skills and Templates Guide](ai/bob/03-create-skills-guide.md)
+  `guide` `ai` `bob`
   <details>
   <summary>Details</summary>
 
@@ -897,8 +910,8 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
 
 ### Vault MCP Server
 
-- [Vault MCP Server Guide](vault-mcp-server/vault-mcp-server-guide.md)
-  `guide` `vault-mcp-server` `integration`
+- [Vault MCP Server Guide](ai/vault-mcp-server/vault-mcp-server-guide.md)
+  `guide` `ai` `vault-mcp-server` `integration`
   <details>
   <summary>Details</summary>
 

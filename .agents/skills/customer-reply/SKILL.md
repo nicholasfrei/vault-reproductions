@@ -1,11 +1,13 @@
 ---
 name: customer-reply
-description: Draft a Zendesk-ready support reply for a HashiCorp Vault customer ticket. Use this when the user asks to write, draft, or compose a customer-facing response, acknowledgement, follow-up, log request, bug-filed notice, or ticket closure for Vault support. Enforces extreme brevity, plain text (no markdown headers or bold), break-fix-only scope, and clipboard-safe code blocks. Includes nine reusable templates (acknowledgement, follow-up, no-response follow-up, request for info, request logs, schedule session, bug filed, known issue, closing, closing with feedback request).
+description: EXAMPLE / TEMPLATE skill for sharing with other support engineers. Draft a customer-facing reply for a HashiCorp Vault support ticket. Use this when the user asks to write, draft, or compose a customer-facing response, acknowledgement, follow-up, log request, bug-filed notice, or ticket closure for Vault support. Enforces extreme brevity, plain text (no markdown headers or bold), break-fix-only scope, and clipboard-safe code blocks. Includes nine reusable templates (acknowledgement, follow-up, no-response follow-up, request for info, request logs, schedule session, bug filed, known issue, closing, closing with feedback request). Not part of the default vault-reproductions scenario workflows.
 ---
 
 # Customer Reply Skill
 
-Draft a customer-facing reply to a HashiCorp Vault support ticket. Output must be safe to paste directly into Zendesk.
+> **Example / template only.** I built this skill to help other engineers and teach them how to write an AI skill. I don't recommend using AI for this type of work. 
+
+Draft a customer-facing reply to a HashiCorp Vault support ticket.
 
 ## When to use
 

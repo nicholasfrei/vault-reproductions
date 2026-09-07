@@ -1,9 +1,9 @@
 ---
 name: find-vault-bugs
-description: Investigate suspected Vault Enterprise bugs using the local enterprise repo, official docs, issues, and git history.
+description: Investigate suspected Vault Enterprise bugs using the local enterprise repo, official docs, issues, and git history. This skill can also be used to find information about a specific feature, function, package, error string, or behavior in the vault-enterprise codebase.
 ---
 
-Investigate whether a Vault Enterprise behavior is a known bug or code-path issue by searching the local vault-enterprise repo, official docs, GitHub issues/PRs, and git history to identify root code locations, candidate fixes, and the versions that contain them.
+Investigate whether a Vault Enterprise behavior is a known bug or code-path issue by searching the vault-enterprise codebase, official docs, GitHub issues/PRs, and git history. This information can be used to identify code locations, candidate fixes, and the versions that contain them, as well as to determine if a behavior is expected or a bug.
 
 ## When to use
 
@@ -16,7 +16,7 @@ Use this skill when the request involves any of:
 - Version mapping: which releases are affected, which release first contains a fix, whether a fix was backported
 - Correlation between an observed issue and official GitHub issues, PRs, changelog notes, or docs
 
-Do not use for general troubleshooting from runtime evidence alone. Use `diagnose-issue` first unless the user explicitly wants source-level confirmation.
+Use `document-reference` in conjunction with this skill when it's required to reference official HashiCorp product documentation.
 
 ## Inputs to gather
 
@@ -47,7 +47,7 @@ Do not rely on third-party blogs, forum posts, Reddit, or Stack Overflow as proo
 
 ## Search method
 
-### 1. Anchor the symptom
+### 1. Symptom(s) and context
 
 Start with the most specific artifact available: exact error string, package/function name, endpoint, feature flag, panic text, or behavior description. Prefer exact-string search first, then broaden.
 
