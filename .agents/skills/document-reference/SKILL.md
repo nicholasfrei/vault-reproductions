@@ -3,24 +3,22 @@ name: document-reference
 description: Reference HashiCorp Vault documentation. Supports cross-product issues (Terraform, Consul, Nomad, Boundary).
 ---
 
-Produce a structured documentation report for a HashiCorp Vault question. Vault is the primary subject; pull from other HashiCorp product docs (Terraform, Boundary, Nomad, Consul, Packer, Waypoint) only when the issue spans products.
+Produce a structured documentation report for a HashiCorp Product questions. Vault is the most common product; pull from other HashiCorp product docs (Terraform, Boundary, Nomad, Consul, Packer, Waypoint) when required.
 
-## Required evidence (ask if missing)
+## Useful Information to Ask For
 
-Before replying, confirm you have:
+This is a list of information that can be extremely helpful to have before answering a question.
 
-1. Vault version (`vault status` / `vault version`) and edition (CE vs Enterprise).
-2. Storage backend (assume Integrated Storage / Raft unless stated otherwise).
+1. Product version (`vault status` / `vault version`) and edition (CE vs Enterprise).
+2. If required, Vault Storage backend (assume Integrated Storage (e.g. Raft) unless stated otherwise).
 3. Deployment shape (single node, HA cluster, replication, performance standby, DR).
 4. Recent changes (upgrades, config changes, policy changes, infra changes, scale events).
 5. Reproducibility (always, intermittent, first time, after specific action).
 6. For cross-product issues: the other product's version and the relevant resource/config.
 
-Do not invent or assume specific versions, backends, or configurations.
-
 ## Starting Point
 
-Use the internally cloned repos in `~/repos/` before going to the web. More info about the internal-tools are including in `.agents/instructions/internal-tools.md` 
+Use the internally cloned repos in `~/repos/` before going to the web. Local repo selection guidance lives in `.agents/instructions/internal-tools.md`.
 
 ## Web research policy
 
@@ -81,5 +79,4 @@ Produce a single Markdown report using this structure:
 - No architectural design suggestions. If the root cause is structural, name it and point to relevant docs.
 - Never invent a Vault version, error string, or config value. If unknown, ask or mark as "unconfirmed."
 - Never include public IPs, hostnames, customer names, tokens, or other sensitive values. Use placeholders such as `<hostname>`, `<token>`, `<namespace>`.
-- No ETAs for fixes or releases.
 - Use fenced code blocks with explicit language tags (`bash`, `hcl`, `json`, `text` for log output).
