@@ -14,8 +14,6 @@ Use this skill when the request involves any of:
 - Reviewing whether a Vault test is in the right place, named correctly, or asserting the right thing
 - Confirming whether a test truly exercises a code path or is accidentally skipped, too weak, or masked by unrelated failures
 
-Do not use this skill for general product troubleshooting without changing tests. Use a diagnosis command first unless the user explicitly wants test work.
-
 ## Primary repo
 
 - Repository: `~/repos/vault-enterprise`
@@ -26,10 +24,11 @@ If that path is missing, ask the user to confirm the correct repo location befor
 
 Before writing or moving a test:
 
-1. Find the production code path being exercised.
-2. Find at least 3 to 5 comparable tests already in the repo.
-3. Match the nearest existing package, naming pattern, setup style, and assertion style.
-4. Prefer the smallest correct change.
+1. Verify the unit tests skill in the `vault-enterprise` repo for up-to-date information and rules. 
+2. Find the production code path being exercised.
+3. Find at least 3 to 5 comparable tests already in the repo.
+4. Match the nearest existing package, naming pattern, setup style, and assertion style.
+5. Prefer the smallest correct change.
 
 Do not invent a new test area or helper unless the repo already points there or the existing structure clearly does not fit.
 
