@@ -1,6 +1,6 @@
 # Vault Reproductions
 
-This repository is a vault (wink) of various scenarios I've worked with during my time as a Software Engineer. The goal with this project is to share various scripts, guides, and reproductions for different Vault integrations. Some of these are based on real support cases or incidents, while others are smaller scripts to assist with learning Vault.
+This repository is a vault (wink) of various scenarios I've worked with during my time as a Software Engineer on Vault. The goal with this project is to share various scripts, guides, and reproductions for different Vault integrations. Some of these are created from real escalations and incidents, while others are smaller scripts to assist with learning Vault. 
 
 I hope you find this repository helpful in your journey with Vault.
 
