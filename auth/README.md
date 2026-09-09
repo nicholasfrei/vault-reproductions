@@ -15,6 +15,17 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
 
   - Reproduces the regression introduced in Vault Terraform Provider v5.7.0 where `auth_login` with `method = "aws"` sends a `PUT` to `auth/aws/login`, causing Vault to reject the request with a `400` error.
   - Documents the workaround (pin to v5.6.0) or upgrade vault to `1.15.x` and newer
+   </details>
+
+## Cloud Foundry
+
+- [Global Plugin Reload Cleanup: OOM and Quorum Loss at Namespace Scale](cf/global-plugin-reload-cleanup-kb.md)
+  `kb` `auth` `cf` `plugins` `raft`
+  <details>
+  <summary>Details</summary>
+
+   - Root-cause analysis of how a supported `-scope=global` CF plugin reload, issued once per namespace, caused OOM and full quorum loss on a Vault Enterprise cluster with zero client traffic.
+   - Documents the delayed-cleanup mechanism (per-request timers, a full-barrier scan, and un-pruned request records inherited by each new Raft leader) and the pre-fix/post-fix stress evidence.
   </details>
 
 ## <img src="https://cdn.simpleicons.org/jsonwebtokens" alt="JWT" width="18" /> JWT
