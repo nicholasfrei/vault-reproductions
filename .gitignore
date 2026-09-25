@@ -4,15 +4,8 @@ vault.hclic
 # Mac metadata files
 .DS_Store
 
-# Ignore draft implementation artifacts, but retain workflow contracts
+# Ignore drafts
 drafts/**
-!drafts/**/
-!drafts/**/source-notes.md
-!drafts/**/links.md
-!drafts/**/scenario-brief.md
-!drafts/**/validation-report.md
-!drafts/**/review-report.md
-!drafts/**/maintenance-report.md
 
 # Saved local reproductions
 out/
