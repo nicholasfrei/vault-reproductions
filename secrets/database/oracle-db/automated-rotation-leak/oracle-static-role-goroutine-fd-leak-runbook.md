@@ -1,12 +1,12 @@
-# Oracle Automatic Static-Role Rotation Resource-Growth Runbook
+# Oracle Automatic Static-Role Rotation Resource-Growth Investigation Runbook
 
 ## Overview
 
-This runbook reproduces the resource-growth pattern behind `VAULT-50722` using the Oracle database plugin in Vault `1.21.9+ent`. It also demonstrates an interim mitigation for this resource growth.
+This runbook creates a lab for investigating the resource-growth pattern behind `VAULT-50722` using Vault `1.21.9+ent` and the Oracle Enterprise database plugin. 
 
-The pattern traces back to `VAULT-43596`, where a hanging MySQL handshake stalled an entire static-role rotation queue. The fix for that ticket (`vault-enterprise` [PR #13697](https://github.com/hashicorp/vault-enterprise/pull/13697)) added a goroutine-plus-timeout race around the plugin's `UpdateUser` and `Initialize` calls so one hung connection could not block rotation for every other role in the mount.
+Our investigation identified incomplete cleanup of Enterprise database-plugin callback resources after failed initialization combined with the Oracle Enterprise plugin not broadcasting its version as the root-cause of unbounded resource growth. Vault sets up a callback gRPC server for Enterprise plugins, but graceful cleanup is gated on the plugin-reported version. A missing version can therefore leave callback sockets/resources behind. The May 2026 static-role timeout/retry behavior from [PR #13697](https://github.com/hashicorp/vault-enterprise/pull/13697) amplified the issue by allowing failed rotations to retry and continue rather than remaining blocked.
 
-In this runbook, the goal is to provision an AWS lab for investigating `VAULT-50722`: automatic static-role rotation against an unreachable Oracle database after restarting Vault. Terraform installs a persistent, single-node Raft server, Oracle in Docker, and ten roles with `rotation_period=10s`. 
+The lab investigates automatic static-role rotation against an unreachable Oracle database after restarting Vault. Terraform installs a persistent, single-node Raft server, Oracle in Docker, and ten roles with `rotation_period=10s`. This is much smaller than the reported customer environment (at least 82 mounts and thousands of Oracle errors per hour), so absence of growth in the lab does not disprove the RCA.
 
 The bootstrap script leaves Oracle reachable and verifies that every role rotates automatically. The outage is an explicit later step: stop Vault, block Oracle, then restart Vault with an empty connection cache and the existing roles intact.
 
@@ -20,21 +20,25 @@ The bootstrap script leaves Oracle reachable and verifies that every role rotate
 | Oracle Instant Client | Basic `19.32` |
 | Oracle plugin | `vault-plugin-database-oracle` `0.11.0+ent`, downloaded through Vault |
 | Static roles | `leak-repro-01` through `leak-repro-10`, ten distinct Oracle users, 10-second periods |
-| Network | Dedicated VPC/subnet; SSH from `0.0.0.0/0`; Vault API and published Oracle port on loopback |
+| Network | Dedicated VPC/subnet; SSH ingress controlled by Terraform `ssh_cidr`; Vault API and published Oracle port on loopback |
 
-Vault connects directly to Oracle's fixed private Docker bridge address, `172.30.250.10:1521`, to make fault injection independent of published-port NAT. Oracle is not exposed by the EC2 security group. Vault's API is `http://127.0.0.1:8200`; use SSH or a tunnel to access it.
+Vault connects directly to Oracle's fixed private Docker bridge address, `172.30.250.10:1521`, to make fault injection independent of published-port NAT. Oracle is not exposed by the EC2 security group. Vault's API is `http://127.0.0.1:8200`; use SSH or a tunnel to access it. The Terraform example currently permits SSH from any IPv4 source by default; set `ssh_cidr` in `terraform.tfvars` to a trusted workstation CIDR (for example, `<trusted_cidr>/32`) before provisioning.
 
 ### Investigation
 
-Source inspection identified these candidate mechanisms:
+RCA and source inspection identify these mechanisms:
 
-- PR [#13697](https://github.com/hashicorp/vault-enterprise/pull/13697), backported in [#14352](https://github.com/hashicorp/vault-enterprise/pull/14352), added a ten-second cache-miss initialization timeout. Failed initialization is not cached, allowing another due role to create another plugin client.
-- The automatic queue advances synchronously through due roles, requeuing failures for ten seconds after failure.
+- `plugin_client_ent.go` starts the Enterprise callback server based on configured plugin tier/version. `grpc_client_ent.go` only performs graceful callback-server cleanup when the plugin-reported version identifies it as Enterprise. The Oracle Enterprise plugin's missing version broadcast can bypass that cleanup after a failed initialization.
+- The May 2026 static-role changes added a ten-second timeout/retry path and were present in Vault `1.19.17`, `1.20.11`, `1.21.6`, and `2.0.1`. They increased repeated failed initialization attempts and amplified accumulation; they did not create the underlying cleanup defect.
+- The reported customer upgraded both Vault (`1.19.9+ent` to `1.21.9+ent`) and the Oracle plugin (community `0.7.0` to Enterprise `0.11.0+ent`). 
+
+The reported environment had at least 82 database mounts generating thousands of Oracle client errors per hour. Resource growth scaled with the number of stale/unreachable configurations and affected roles and ultimately caused OOM termination and leadership loss/Raft election. Two custom candidate fixes were tested, but customer testing continued to show FD and goroutine growth; neither is established as a fix. Engineering follow-ups described in the RCA are improved plugin lifecycle management and a boolean option to disable static-role retries. No fixed release is identified here. Remove stale/unreachable database configurations and roles to reduce repeated failures. The RCA recommends remaining on Oracle Instant Client `19.32`, which includes the TNS aliasing memory-leak patch.
 
 ## Prerequisites
 
 - Terraform 1.5 or later and AWS credentials authorized to create VPC/network resources, EC2/EBS, IAM role/profile/policy, and a KMS key/alias; permission to pass the instance role and read the public AMI SSM parameter.
 - AWS region/profile selected for this disposable lab; defaults are configurable in `terraform.tfvars`.
+- Set `ssh_cidr` in `terraform.tfvars` to a trusted administrator source before creating the VM; do not keep the unrestricted example default.
 - An existing shell variable `VAULT_LICENSE` containing your Enterprise license. Do not paste it into this runbook or a tracked file.
 - Oracle registry/download access.
 
@@ -133,7 +137,7 @@ journalctl -u vault --since '-2 minutes' --no-pager |
   grep 'successfully rotated static role'
 ```
 
-The CSV records each process's PID, threads, FDs, RSS, and Vault goroutines. Plugin goroutines are `NA`. Stack/socket snapshots are under `/var/log/oracle-lab/current/snapshot-*`.
+The CSV records each process's PID, threads, FDs, RSS, and Vault goroutines. Plugin goroutines are `NA`; collect available plugin stacks/socket state separately when needed. Stack/socket snapshots are under `/var/log/oracle-lab/current/snapshot-*`.
 
 The monitor continues after logout and across Vault restarts. Connection errors to `127.0.0.1:8200` are expected while Vault is stopped; they do not mean the monitor failed.
 
@@ -203,12 +207,12 @@ timeout exceeded during Initialize: context deadline exceeded
 unable to initialize: rpc error: code = DeadlineExceeded desc = context deadline exceeded
 ```
 
-Initialization attempts may recur roughly every ten seconds. Compare against the healthy baseline:
+Initialization attempts may recur as the automatic queue retries failed rotations. Compare against the healthy baseline and record actual observations:
 
-- Look for sustained FD, goroutine, or RSS growth. With a fixed binary, these should plateau rather than grow continuously.
+- Track FD, goroutine, thread, and RSS trends over repeated attempts. Growth, a plateau, or no material change are all possible observations in this small lab; do not treat any one outcome as preordained.
 - Compare within the same PID. A restart resetting counts does not prove the leak is fixed.
-- Distinguish Vault from plugin rows; a new socket does not necessarily mean a new plugin process.
-- Record what actually happens, including a plateau. `UpdateUser` timeouts instead of initialization errors may indicate a cached connection.
+- Distinguish Vault from plugin rows and callback-server resources from plugin process count; a new socket does not necessarily mean a new plugin process.
+- Record exact errors and the number of affected mounts/roles. `UpdateUser` timeouts are a separate code path and do not alone establish the failed-initialization cleanup issue.
 
 ## Step 6: Finish the test
 
@@ -231,7 +235,7 @@ Confirm auto-unseal and successful automatic rotations in the Vault logs.
 
 ## Step 7: Optional client-timeout comparison
 
-This optional comparison tests whether Oracle connect timeouts change the growth trend. It is not a verified fix for callback cleanup.
+This optional comparison tests whether Oracle connect timeouts change attempt duration or the measured growth trend. It is not a verified fix for the Vault callback cleanup defect. The RCA recommends Oracle Instant Client `19.32`, which includes the TNS aliasing memory-leak patch; this comparison does not replace that recommendation.
 
 From a healthy lab, configure the timeouts in the VM's root shell:
 
@@ -256,7 +260,7 @@ plugin_pid="<plugin_pid>"
 tr '\0' '\n' < "/proc/$plugin_pid/environ" | grep '^TNS_ADMIN='
 ```
 
-Compare attempt duration, Oracle `ORA-` errors versus Vault timeouts, and per-PID resource growth. Record the result rather than assuming growth is bounded.
+Compare attempt duration, Oracle `ORA-` errors versus Vault timeouts, and per-PID resource growth. Record the result rather than assuming growth is bounded or the callback resources are cleaned up.
 
 To return to the original no-client-timeout experiment, stop Vault, remove only `/etc/systemd/system/vault.service.d/oracle-timeouts.conf`, run `systemctl daemon-reload`, and start Vault. Preserve the fault if comparing unreachable-database runs.
 
@@ -296,6 +300,8 @@ The KMS key is scheduled for deletion after seven days. Dispose of local Terrafo
 - [Vault 1.21 backport #14352](https://github.com/hashicorp/vault-enterprise/pull/14352)
 - [Automatic rotation queue at v1.21.9+ent](https://github.com/hashicorp/vault-enterprise/blob/v1.21.9%2Bent/builtin/logical/database/rotation.go)
 - [Connection initialization at v1.21.9+ent](https://github.com/hashicorp/vault-enterprise/blob/v1.21.9%2Bent/builtin/logical/database/backend.go)
+- [Enterprise database plugin callback setup at v1.21.9+ent](https://github.com/hashicorp/vault-enterprise/blob/v1.21.9%2Bent/sdk/database/dbplugin/v5/plugin_client_ent.go#L47-L82)
+- [Enterprise database plugin callback cleanup at v1.21.9+ent](https://github.com/hashicorp/vault-enterprise/blob/v1.21.9%2Bent/sdk/database/dbplugin/v5/grpc_client_ent.go#L48-L72)
 - [Oracle plugin v0.11.0+ent](https://github.com/hashicorp/vault-plugin-database-oracle-enterprise/tree/v0.11.0%2Bent)
 - [Oracle Net timeout parameters](https://docs.oracle.com/en/database/oracle/oracle-database/21/netrf/parameters-for-the-sqlnet.ora.html)
 - [go-oci8 cancellation discussion](https://github.com/mattn/go-oci8/issues/419)
