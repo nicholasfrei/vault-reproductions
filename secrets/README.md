@@ -37,6 +37,24 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Rapid Oracle environment setup for testing Vault database plugin behavior with dynamic and static credentials.
   </details>
 
+- [Oracle Enterprise Plugin Callback Resource Leak During Static-Role Rotation](database/oracle-db/oracle-database-updateuser-initialize-goroutine-fd-leak-kb.md)
+  `kb` `secrets` `database` `oracle`
+  <details>
+  <summary>Details</summary>
+
+  - Explains goroutine, file descriptor, and memory growth from failed Oracle Enterprise plugin initialization during automated static-role rotation.
+  - Distinguishes the callback cleanup/version-reporting root cause from the May 2026 timeout/retry amplifier and summarizes RCA-based triage and recommendations.
+  </details>
+
+- [Oracle Automatic Static-Role Rotation Resource-Growth Investigation Runbook](database/oracle-db/automated-rotation-leak/oracle-static-role-goroutine-fd-leak-runbook.md)
+  `runbook` `secrets` `database` `oracle`
+  <details>
+  <summary>Details</summary>
+
+  - Provides a disposable AWS lab for measuring resources during automatic static-role rotation against an unreachable Oracle database.
+  - Compares healthy and outage observations, captures per-process metrics, and avoids assuming a leak trend or presenting an unverified fix.
+  </details>
+
 - [PostgreSQL Database Secrets Engine Repro](database/postgresql-db/postgresql-database-secrets-engine-repro.md)
   `repro` `secrets` `database`
   <details>
