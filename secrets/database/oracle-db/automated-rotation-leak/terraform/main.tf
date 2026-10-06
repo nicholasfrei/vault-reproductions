@@ -4,18 +4,12 @@ resource "random_id" "suffix" {
   byte_length = 3
 }
 
-resource "random_password" "ssh" {
-  length  = 32
-  special = false
-}
-
 locals {
   name = "${var.name_prefix}-${random_id.suffix.hex}"
   user_data = templatefile("${path.module}/user-data.sh.tftpl", {
-    region_b64   = base64encode(var.aws_region)
-    kms_b64      = base64encode(aws_kms_key.unseal.key_id)
-    license_b64  = base64encode(trimspace(var.vault_license))
-    password_b64 = base64encode(random_password.ssh.result)
+    region_b64  = base64encode(var.aws_region)
+    kms_b64     = base64encode(aws_kms_key.unseal.key_id)
+    license_b64 = base64encode(trimspace(var.vault_license))
     scripts = {
       "bootstrap.sh" = filebase64("${path.module}/../scripts/bootstrap.sh")
       "configure.sh" = filebase64("${path.module}/../scripts/configure.sh")
@@ -72,7 +66,7 @@ resource "aws_security_group" "lab" {
 
 resource "aws_vpc_security_group_ingress_rule" "ssh" {
   security_group_id = aws_security_group.lab.id
-  cidr_ipv4         = var.ssh_cidr
+  cidr_ipv4         = var.admin_ssh_cidr
   ip_protocol       = "tcp"
   from_port         = 22
   to_port           = 22
@@ -127,6 +121,7 @@ resource "aws_iam_instance_profile" "lab" {
 resource "aws_instance" "lab" {
   ami                         = data.aws_ssm_parameter.ami.value
   instance_type               = var.instance_type
+  key_name                    = var.key_name
   subnet_id                   = aws_subnet.lab.id
   vpc_security_group_ids      = [aws_security_group.lab.id]
   associate_public_ip_address = true

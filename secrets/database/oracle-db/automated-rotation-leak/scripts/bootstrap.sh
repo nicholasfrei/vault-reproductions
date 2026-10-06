@@ -9,20 +9,22 @@ dnf install -y docker jq unzip lsof procps-ng util-linux openssl tar gzip libaio
 
 # Set up the handoff login before lengthy Oracle downloads and initialization.
 id lab >/dev/null 2>&1 || useradd --create-home --shell /bin/bash lab
-printf 'lab:%s\n' "$(cat /root/oracle-lab/ssh-password)" | chpasswd
-rm /root/oracle-lab/ssh-password
+install -d -o lab -g lab -m 0700 /home/lab/.ssh
+install -o lab -g lab -m 0600 /home/ec2-user/.ssh/authorized_keys /home/lab/.ssh/authorized_keys
 printf 'lab ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/oracle-lab
 chmod 0440 /etc/sudoers.d/oracle-lab
 visudo -cf /etc/sudoers.d/oracle-lab
 cat > /etc/ssh/sshd_config.d/00-oracle-lab.conf <<'EOF'
-PasswordAuthentication yes
+PasswordAuthentication no
+PubkeyAuthentication yes
 KbdInteractiveAuthentication no
 PermitRootLogin no
 EOF
 chmod 0644 /etc/ssh/sshd_config.d/00-oracle-lab.conf
 sshd -t
 # Consume all output so an early grep exit cannot give sshd SIGPIPE under pipefail.
-sshd -T -C user=lab,host=localhost,addr=127.0.0.1 | grep -x 'passwordauthentication yes' >/dev/null
+sshd -T -C user=lab,host=localhost,addr=127.0.0.1 | grep -x 'passwordauthentication no' >/dev/null
+sshd -T -C user=lab,host=localhost,addr=127.0.0.1 | grep -x 'pubkeyauthentication yes' >/dev/null
 systemctl reload sshd
 
 install -d -m 0755 /etc/systemd/journald.conf.d /var/log/journal

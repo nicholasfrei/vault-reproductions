@@ -20,9 +20,9 @@ The bootstrap script leaves Oracle reachable and verifies that every role rotate
 | Oracle Instant Client | Basic `19.32` |
 | Oracle plugin | `vault-plugin-database-oracle` `0.11.0+ent`, downloaded through Vault |
 | Static roles | `leak-repro-01` through `leak-repro-10`, ten distinct Oracle users, 10-second periods |
-| Network | Dedicated VPC/subnet; SSH ingress controlled by Terraform `ssh_cidr`; Vault API and published Oracle port on loopback |
+| Network | Dedicated VPC/subnet; SSH ingress limited to Terraform `admin_ssh_cidr`; Vault API and published Oracle port on loopback |
 
-Vault connects directly to Oracle's fixed private Docker bridge address, `172.30.250.10:1521`, to make fault injection independent of published-port NAT. Oracle is not exposed by the EC2 security group. Vault's API is `http://127.0.0.1:8200`; use SSH or a tunnel to access it. The Terraform example currently permits SSH from any IPv4 source by default; set `ssh_cidr` in `terraform.tfvars` to a trusted workstation CIDR (for example, `<trusted_cidr>/32`) before provisioning.
+Vault connects directly to Oracle's fixed private Docker bridge address, `172.30.250.10:1521`, to make fault injection independent of published-port NAT. Oracle is not exposed by the EC2 security group. Vault's API is `http://127.0.0.1:8200`; use SSH or a tunnel to access it. SSH requires an existing EC2 key pair and is restricted to the `admin_ssh_cidr` in `terraform.tfvars`.
 
 ### Investigation
 
@@ -38,11 +38,12 @@ The reported environment had at least 82 database mounts generating thousands of
 
 - Terraform 1.5 or later and AWS credentials authorized to create VPC/network resources, EC2/EBS, IAM role/profile/policy, and a KMS key/alias; permission to pass the instance role and read the public AMI SSM parameter.
 - AWS region/profile selected for this disposable lab; defaults are configurable in `terraform.tfvars`.
-- Set `ssh_cidr` in `terraform.tfvars` to a trusted administrator source before creating the VM; do not keep the unrestricted example default.
+- An existing EC2 key pair, with its private key available to your SSH client.
+- Set `admin_ssh_cidr` in `terraform.tfvars` to a trusted administrator source (for example, `<trusted_cidr>/32`) before creating the VM.
 - An existing shell variable `VAULT_LICENSE` containing your Enterprise license. Do not paste it into this runbook or a tracked file.
 - Oracle registry/download access.
 
-The `lab` user has passwordless sudo. Share its generated SSH password through your team's credential-sharing channel. Terraform state and EC2 user data contain credentials; protect state and do not commit licenses or `terraform.tfvars`.
+The `lab` user has passwordless sudo and accepts the configured EC2 key pair; password-based SSH authentication is disabled. Terraform state and EC2 user data contain credentials; protect state and do not commit licenses or `terraform.tfvars`.
 
 ## Step 1: Create the VM with Terraform
 
@@ -56,7 +57,7 @@ umask 077
 cp terraform.tfvars.example terraform.tfvars
 ```
 
-Edit the region/profile in `terraform.tfvars`, then create the lab. On an existing lab, changed user data replaces the VM and its local data; export evidence before applying such changes.
+Edit the region/profile, `key_name`, and `admin_ssh_cidr` in `terraform.tfvars`, then create the lab. On an existing lab, changed user data replaces the VM and its local data; export evidence before applying such changes.
 
 ```bash
 : "${VAULT_LICENSE:?Set VAULT_LICENSE in this shell first}"
@@ -72,11 +73,10 @@ Retrieve the handoff details locally:
 
 ```bash
 terraform output -raw ssh_command
-terraform output -raw ssh_password
 terraform output -raw instance_id
 ```
 
-Use the printed SSH command and enter the password at its prompt. No personal private key is required.
+Use the printed SSH command. Ensure your SSH client can access the private key for the configured EC2 key pair, such as through `ssh-agent` or your local SSH configuration.
 
 ## Step 2: Confirm provisioning and healthy automatic rotations
 

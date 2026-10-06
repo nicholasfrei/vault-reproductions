@@ -9,12 +9,7 @@ output "public_ip" {
 }
 
 output "ssh_command" {
-  value = "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no lab@${aws_instance.lab.public_ip}"
-}
-
-output "ssh_password" {
-  value     = random_password.ssh.result
-  sensitive = true
+  value = "ssh lab@${aws_instance.lab.public_ip}"
 }
 
 output "kms_key_id" {

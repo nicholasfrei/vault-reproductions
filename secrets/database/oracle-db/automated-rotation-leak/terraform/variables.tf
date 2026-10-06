@@ -36,14 +36,18 @@ variable "root_volume_size" {
   }
 }
 
-variable "ssh_cidr" {
+variable "admin_ssh_cidr" {
   type        = string
-  default     = "0.0.0.0/0"
-  description = "IPv4 SSH access for the shared-password lab user."
+  description = "IPv4 CIDR allowed to SSH to the lab instance."
   validation {
-    condition     = can(cidrnetmask(var.ssh_cidr))
-    error_message = "ssh_cidr must be an IPv4 CIDR."
+    condition     = can(cidrnetmask(var.admin_ssh_cidr))
+    error_message = "admin_ssh_cidr must be an IPv4 CIDR."
   }
+}
+
+variable "key_name" {
+  type        = string
+  description = "Existing EC2 key pair name for SSH access."
 }
 
 variable "vault_license" {
