@@ -26,7 +26,7 @@ Use this skill when:
 Do not use this skill as the primary workflow when:
 
 - The task requires Vault source-code analysis, bug confirmation, fix commits, or affected/fixed release mapping; use `find-vault-bugs`. This skill can supply supporting documentation.
-- The user wants a new reproduction, runbook, KB, or guide; use `vault-scenario-planner` to enter the scenario workflow.
+- The user wants a new or updated reproduction, runbook, KB, or guide; use `vault-scenario-author`.
 - The user wants architecture design or implementation work rather than a documentation answer.
 
 ## Step 1 — Establish the Question and Context

@@ -38,8 +38,19 @@ This repository is designed to be a living library of support and troubleshootin
 - Use backticks for literal command names, flags, paths, versions, and error strings.
 - Avoid bold text. Do not bold individual words or phrases.
 - Prefer headings, lists, and normal prose for emphasis.
-- Follow a rough outline: Overview/Objective, Prerequisites, Steps, References.
+- Use the outline that fits the document type; combine sections when that reads more clearly.
 - Include exact error strings when documenting failures so users can search logs quickly.
+- State each fact once. Keep background relevant to execution or diagnosis, and show only decisive output lines.
+- Omit inapplicable sections and generic conclusions. Preserve the detail needed to reproduce or understand the behavior.
+
+## Evidence and execution
+
+- Cite the documentation, source, or supplied evidence that supports important claims. Distinguish reported observations, results you actually observed, and illustrative expected output.
+- Keep tested versions separate from affected/fixed ranges. Do not infer release coverage or a shipped fix from one test or an unmerged change.
+- Default to local, disposable resources. Confirm the target and obtain explicit authorization before using shared/non-local infrastructure or taking destructive actions outside the requested scope.
+- State the impact and available recovery path beside destructive commands. Scope cleanup to resources created by the scenario.
+- Record checks actually performed and relevant blockers. Syntax checks and printed success messages are not proof of runtime behavior.
+- Keep raw customer evidence and credentials out of tracked files; retain only sanitized excerpts needed to explain the result.
 
 ## Scenario index formatting
 
@@ -71,62 +82,24 @@ This repository is designed to be a living library of support and troubleshootin
 ## AI tooling layout
 
 - `AGENTS.md` (this file) - authoritative repository rules.
-- `.agents/README.md` - AI workflow navigation hub (trees, skill matrix, layout).
-- `.agents/shared/` - contract metadata, repository conventions, scenario schema, safety rules, and quality rubric.
-- `.agents/workflows/` - stage definitions for create, review, maintain, release-index, and support investigation.
-- `.agents/templates/` - standardized intake, brief, validation, review, and maintenance contracts.
-- `.agents/skills/` - specialist scenario and support task instructions (source of truth for skills).
+- `.agents/README.md` - skill selection and the author/review workflow.
+- `.agents/skills/` - scenario and support skills, with their own templates and conditional references.
 - `.opencode/commands/` - OpenCode slash-command adapters.
-- `.agents/instructions/internal-tools.md` - Vault tooling selection guidance.
+- `.agents/instructions/internal-tools.md` - optional, gitignored context for local repositories and tools. Read the relevant sections when the task uses those tools; allow for this file to be absent in other checkouts.
 
-## AI workflow map
+## Scenario workflow
 
-Read [`.agents/README.md`](.agents/README.md) first when choosing a path. Use the matching workflow file; do not invent a parallel process.
+Use two skills for new and existing scenarios:
 
-### Scenario create
+1. `vault-scenario-author`: scope the requested work, create or update the scenario, perform focused checks, and include relevant topic-index and Known Bugs edits in the proposed change.
+2. `vault-scenario-reviewer`: review the current files, diff, and evidence; report actionable findings and whether the change is ready.
 
-1. Intake: `drafts/<scenario-slug>/source-notes.md` + `links.md`
-2. Plan: `vault-scenario-planner` → `scenario-brief.md` → human approval
-3. Author: `vault-scenario-author` (brief must be `ready-for-authoring`)
-4. Validate: `vault-scenario-validator` → `validation-report.md`
-5. Review: `vault-scenario-reviewer` → `review-report.md`
-6. Index: `scenario-index-curator` updates the topic-folder `README.md` and `KNOWN_BUGS.md` only when review is `ready` and `next_action` is `index`
+- Use the request and supplied evidence as the starting point. Ask only for missing information that changes correctness, scope, or execution safety.
+- Keep maintenance proportional to the change. Repeat checks affected by edits; do not rebuild a lab for prose-only corrections.
+- Review index edits with the scenario. A review decision applies only to the files and evidence examined; revisit affected findings and checks after changes.
+- Use existing draft notes and reports as evidence when relevant. New planning contracts, approval metadata, and revision counters are not required.
+- Save concise notes under `drafts/<scenario-slug>/` only when needed for a handoff or requested by the user. This directory is gitignored; required reader-facing evidence belongs in the scenario or its references.
 
-Workflow docs: `.agents/workflows/scenario-authoring.md` → `scenario-review.md` → `release-index.md`
+OpenCode entry: `/vault-workflow`. For review-only requests, use the reviewer directly.
 
-OpenCode entry: `/vault-workflow`
-
-### Scenario maintain
-
-1. Intake with `workflow: maintain`
-2. Assess: `scenario-maintainer` → `maintenance-report.md`
-3. Bounded update, replan, validate-only, deprecate, or close per report status
-4. Revalidate and review when published content changes
-5. Re-index when discovery metadata or Known Bugs status changes
-
-Workflow doc: `.agents/workflows/scenario-maintenance.md`
-
-OpenCode entry: `/vault-workflow`
-
-### Support and investigation (no scenario required)
-
-| Intent | Skill | OpenCode |
-| --- | --- | --- |
-| Docs / evidence diagnosis | `document-reference` | `/document-reference` |
-| Source bug / fix / version mapping | `find-vault-bugs` | `/find-vault-bugs` |
-| Vault Enterprise unit tests | `vault-unit-tests` | `/vault-unit-tests` |
-| Bug triage orchestrator (WIP) | (to be defined) | `/bug-triage` |
-
-Full trees and handoffs into create/maintain: `.agents/workflows/support-workflows.md`
-
-## AI workflow handoffs
-
-- Store multi-stage work under `drafts/<scenario-slug>/`.
-- Agents communicate through the Markdown contracts, not prior chat context.
-- Preserve sanitized source material in `source-notes.md` and references in `links.md`.
-- Apply `.agents/shared/contract-metadata.md` to every contract and read every declared predecessor before continuing.
-- Keep one stable `scenario_id`; increment `scenario_revision` whenever scenario or supporting files change.
-- Agents must not approve their own artifacts or continue while required human approval is pending.
-- Do not author before the scenario brief is `ready-for-authoring`.
-- Do not update a topic-folder README or `KNOWN_BUGS.md` before the review report is `ready` for the current scenario revision.
-- Keep non-contract draft artifacts ignored; the Markdown contracts remain trackable for provenance.
+For documentation answers, source investigations, bug drafts, and unit tests, select the relevant support skill from [`.agents/README.md`](.agents/README.md#support-skills).

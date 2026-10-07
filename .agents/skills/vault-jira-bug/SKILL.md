@@ -22,7 +22,7 @@ Use when asked to draft, revise, or file a Vault bug ticket from an existing rep
 Do not use for:
 - Investigating whether behavior is a bug or finding affected/fixed versions: use `find-vault-bugs`.
 - Answering documentation questions: use `document-reference`.
-- Authoring or publishing a reproduction/runbook: use the scenario workflow beginning with `vault-scenario-planner`.
+- Authoring or updating a reproduction/runbook: use `vault-scenario-author`, followed by `vault-scenario-reviewer`.
 
 ## Step 1 — Read the evidence
 

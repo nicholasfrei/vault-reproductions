@@ -33,4 +33,4 @@ OpenCode: `.opencode/commands/bug-triage.md` (`/bug-triage`)
 ## Notes
 
 - This is intentionally incomplete.
-- Until this file is filled in, use [support-workflows.md](support-workflows.md) and invoke skills directly.
+- Until this file is filled in, select a [support skill](../README.md#support-skills) and invoke it directly. Use `vault-scenario-author` when the outcome should become a scenario.
