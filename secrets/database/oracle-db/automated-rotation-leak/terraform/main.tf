@@ -19,8 +19,19 @@ locals {
   })
 }
 
-data "aws_ssm_parameter" "ami" {
-  name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+data "aws_ami" "hc_base_al2023" {
+  most_recent = true
+  owners      = ["888995627335"] # ami-prod account
+
+  filter {
+    name   = "name"
+    values = ["hc-base-al2023-x86_64-*"]
+  }
+
+  filter {
+    name   = "state"
+    values = ["available"]
+  }
 }
 
 data "aws_availability_zones" "available" {
@@ -119,7 +130,7 @@ resource "aws_iam_instance_profile" "lab" {
 }
 
 resource "aws_instance" "lab" {
-  ami                         = data.aws_ssm_parameter.ami.value
+  ami                         = data.aws_ami.hc_base_al2023.image_id
   instance_type               = var.instance_type
   key_name                    = var.key_name
   subnet_id                   = aws_subnet.lab.id

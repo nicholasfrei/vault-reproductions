@@ -37,9 +37,20 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
-data "aws_ssm_parameter" "al2023_ami" {
-  count = var.ami_id == null ? 1 : 0
-  name  = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+data "aws_ami" "hc_base_al2023" {
+  count       = var.ami_id == null ? 1 : 0
+  most_recent = true
+  owners      = ["888995627335"] # ami-prod account
+
+  filter {
+    name   = "name"
+    values = ["hc-base-al2023-x86_64-*"]
+  }
+
+  filter {
+    name   = "state"
+    values = ["available"]
+  }
 }
 
 # ─── Networking ───────────────────────────────────────────────────────────────
@@ -247,7 +258,7 @@ resource "aws_iam_instance_profile" "vault_node" {
 # ─── PostgreSQL Node ──────────────────────────────────────────────────────────
 
 resource "aws_instance" "postgres" {
-  ami                         = coalesce(var.ami_id, one(data.aws_ssm_parameter.al2023_ami[*].value))
+  ami                         = coalesce(var.ami_id, one(data.aws_ami.hc_base_al2023[*].image_id))
   instance_type               = var.postgres_instance_type
   key_name                    = var.key_name
   subnet_id                   = aws_subnet.public[0].id
@@ -285,7 +296,7 @@ resource "aws_instance" "postgres" {
 resource "aws_instance" "vault" {
   count = length(local.vault_nodes)
 
-  ami                         = coalesce(var.ami_id, one(data.aws_ssm_parameter.al2023_ami[*].value))
+  ami                         = coalesce(var.ami_id, one(data.aws_ami.hc_base_al2023[*].image_id))
   instance_type               = var.vault_instance_type
   key_name                    = var.key_name
   subnet_id                   = aws_subnet.public[local.vault_nodes[count.index].subnet_index].id

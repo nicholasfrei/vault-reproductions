@@ -44,7 +44,7 @@ variable "key_name" {
 }
 
 variable "ami_id" {
-  description = "Optional AMI ID override. Leave null to auto-resolve the latest Amazon Linux 2023 AMI."
+  description = "Optional AMI ID override. Leave null to auto-resolve the latest hc-base-al2023 x86_64 AMI."
   type        = string
   default     = null
 }

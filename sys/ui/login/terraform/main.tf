@@ -1,10 +1,10 @@
 locals {
   common_tags = merge(
     {
-      Project      = var.name_prefix
-      Scenario     = "vault-ui-login-default-auth-repro"
-      ManagedBy    = "terraform"
-      Environment  = "repro"
+      Project       = var.name_prefix
+      Scenario      = "vault-ui-login-default-auth-repro"
+      ManagedBy     = "terraform"
+      Environment   = "repro"
       "vault-repro" = "true"
     },
     var.extra_tags,
@@ -33,8 +33,19 @@ data "aws_subnet" "default" {
   default_for_az    = true
 }
 
-data "aws_ssm_parameter" "al2023_ami" {
-  name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+data "aws_ami" "hc_base_al2023" {
+  most_recent = true
+  owners      = ["888995627335"] # ami-prod account
+
+  filter {
+    name   = "name"
+    values = ["hc-base-al2023-x86_64-*"]
+  }
+
+  filter {
+    name   = "state"
+    values = ["available"]
+  }
 }
 
 resource "aws_kms_key" "vault_unseal" {
@@ -144,7 +155,7 @@ resource "aws_vpc_security_group_egress_rule" "all" {
 resource "aws_instance" "vault" {
   for_each = local.nodes
 
-  ami                         = data.aws_ssm_parameter.al2023_ami.value
+  ami                         = data.aws_ami.hc_base_al2023.image_id
   instance_type               = var.instance_type
   key_name                    = var.key_name
   subnet_id                   = data.aws_subnet.default.id

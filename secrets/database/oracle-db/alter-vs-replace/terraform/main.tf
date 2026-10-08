@@ -1,16 +1,11 @@
-data "aws_ami" "al2023" {
+data "aws_ami" "hc_base_al2023" {
   count       = var.ami_id == null ? 1 : 0
   most_recent = true
-  owners      = ["amazon"]
+  owners      = ["888995627335"] # ami-prod account
 
   filter {
     name   = "name"
-    values = ["al2023-ami-2023.*-kernel-6.1-x86_64"]
-  }
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
+    values = ["hc-base-al2023-x86_64-*"]
   }
 
   filter {
@@ -109,7 +104,7 @@ resource "aws_vpc_security_group_egress_rule" "downloads" {
 resource "aws_instance" "lab" {
   depends_on = [aws_route_table_association.lab]
 
-  ami                         = var.ami_id == null ? data.aws_ami.al2023[0].id : var.ami_id
+  ami                         = var.ami_id == null ? data.aws_ami.hc_base_al2023[0].id : var.ami_id
   instance_type               = var.instance_type
   key_name                    = var.key_name
   subnet_id                   = aws_subnet.lab.id

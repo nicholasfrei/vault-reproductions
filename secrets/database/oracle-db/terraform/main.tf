@@ -40,34 +40,19 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
-data "aws_ami" "al2023" {
+data "aws_ami" "hc_base_al2023" {
   count       = var.ami_id == null ? 1 : 0
   most_recent = true
-  owners      = ["amazon"]
+  owners      = ["888995627335"] # ami-prod account
 
   filter {
     name   = "name"
-    values = ["al2023-ami-2023.*-kernel-6.1-x86_64"]
-  }
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
+    values = ["hc-base-al2023-x86_64-*"]
   }
 
   filter {
     name   = "state"
     values = ["available"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
   }
 }
 
@@ -233,7 +218,7 @@ resource "aws_iam_instance_profile" "vault_node" {
 resource "aws_instance" "vault" {
   count = length(local.vault_nodes)
 
-  ami                         = coalesce(var.ami_id, one(data.aws_ami.al2023[*].image_id))
+  ami                         = coalesce(var.ami_id, one(data.aws_ami.hc_base_al2023[*].image_id))
   instance_type               = var.instance_type
   key_name                    = var.key_name
   subnet_id                   = aws_subnet.public[local.vault_nodes[count.index].subnet_index].id

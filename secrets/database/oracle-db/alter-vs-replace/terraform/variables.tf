@@ -92,7 +92,7 @@ variable "oracle_plugin_version" {
 }
 
 variable "ami_id" {
-  description = "Optional x86_64 Amazon Linux 2023 AMI; null selects the latest matching AMI."
+  description = "Optional AMI ID override; null selects the latest hc-base-al2023 x86_64 AMI."
   type        = string
   default     = null
 }
