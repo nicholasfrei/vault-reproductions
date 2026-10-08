@@ -1,181 +1,112 @@
 ---
 name: vault-unit-tests
-description: Write or review Vault Enterprise unit tests using repo-native patterns. Covers test placement, external vs internal test selection, path and platform edge cases, assertions, and required verification.
+description: Write or review Vault Go unit and regression tests using the target checkout's authoritative go-test skill; route frontend tests to its ui skill. Use when asked to "add a Vault unit test", "write a regression test", "review this Vault test", or "check whether this test actually ran". Check assertions, regression evidence, and execution results without duplicating repository standards.
 ---
 
-Write, move, or review a Vault Enterprise unit test in `~/repos/vault-enterprise` using existing repo conventions first, with minimal changes and explicit verification.
+# Vault Unit Tests
 
-## When to use
+Use this adapter to connect a support investigation or test review to the target Vault checkout's native testing guidance.
 
-Use this skill when the request involves any of:
+## Quick Start
 
-- Adding a new unit test or regression test in `vault-enterprise`
-- Moving a test between internal package tests and `vault/external_tests/`
-- Reviewing whether a Vault test is in the right place, named correctly, or asserting the right thing
-- Confirming whether a test truly exercises a code path or is accidentally skipped, too weak, or masked by unrelated failures
+1. Identify the requested mode: write, move, review, or verify tests, and the behavior to prove.
+2. Resolve the Vault checkout and revision; read its `AGENTS.md` and the native Go or UI skill below.
+3. Inspect the production path, relevant existing tests, and supplied results.
+4. Make only requested changes; verify with the repository's appropriate commands when execution is in scope.
+5. Report findings or changes, the behavior established, actual check statuses, and remaining gaps.
 
-## Primary repo
+## When to Use
 
-- Repository: `~/repos/vault-enterprise`
+Use this skill when:
+- Adding or moving a Vault Go unit or regression test.
+- Reviewing test placement, assertions, stability, or whether a regression is exercised.
+- Verifying that selected tests actually execute on the intended build and platform.
 
-If that path is missing, ask the user to confirm the correct repo location before making claims about test placement or conventions.
+Do not use this skill when:
+- Diagnosing a defect or mapping affected/fixed versions without a test task; use [find-vault-bugs](../find-vault-bugs/SKILL.md).
+- Drafting an implementation handoff or Jira bug; use [create-implementation-doc](../create-implementation-doc/SKILL.md) or [vault-jira-bug](../vault-jira-bug/SKILL.md).
+- Creating or reviewing a troubleshooting scenario; use [vault-scenario-author](../vault-scenario-author/SKILL.md) or [vault-scenario-reviewer](../vault-scenario-reviewer/SKILL.md).
 
-## Core rule: inspect existing tests first
+For Vault UI tests, use Step 1 to load the native `ui` guidance, then follow that workflow. Do not apply Go package rules or commands to frontend tests.
 
-Before writing or moving a test:
+## Step 1 — Resolve the Checkout and Load Its Authority
 
-1. Verify the unit tests skill in the `vault-enterprise` repo for up-to-date information and rules. 
-2. Find the production code path being exercised.
-3. Find at least 3 to 5 comparable tests already in the repo.
-4. Match the nearest existing package, naming pattern, setup style, and assertion style.
-5. Prefer the smallest correct change.
+1. Use the checkout named in the task. Otherwise inspect the current repository; if it is not the Vault source checkout, consult the optional `.agents/instructions/internal-tools.md` in the support repository for local mappings. Confirm the candidate contains the requested source. Do not assume a personal absolute path or silently choose between multiple checkouts.
+2. Record the relevant revision and inspect working-tree changes before editing. Preserve existing work.
+3. Read the target checkout's `AGENTS.md`, applicable nested instructions, and the preferences, always-on skills, and file-type instructions it requires.
+4. Load the authority for the requested work, resolving every path below from that checkout:
 
-Do not invent a new test area or helper unless the repo already points there or the existing structure clearly does not fit.
+   | Work | Read before proceeding |
+   | --- | --- |
+   | Go tests | `.agents/skills/go-test/SKILL.md` and its required `.agents/instructions/go-tests.instructions.md`; also load `.agents/instructions/testing.instructions.md` as directed by the instruction index. |
+   | UI tests | `.agents/skills/ui/SKILL.md`, its required `.agents/instructions/ember-general.instructions.md`, and applicable UI test/file-type instructions, including `.agents/instructions/ember-tests.instructions.md`. |
 
-## Placement rules
+Use those sources for placement, package selection, naming, helpers, cleanup, parallelism, formatting, and required checks. Nearby tests are examples, not permission to bypass current restrictions. Do not reproduce those standards here or substitute remembered rules. If authorities are missing or disagree in a way that affects the task, follow Handling Missing Information.
 
-Choose the test location based on the behavior under test, not the file you first found.
+## Step 2 — Establish What the Test Must Prove
 
-### Use internal package tests when:
+1. Trace the supplied symptom or requirement to the production behavior and relevant existing tests. Read enough comparable tests and helper implementations to justify the approach; do not impose a fixed sample count.
+2. State the setup, triggering action, and observable outcome. Identify a meaningful control or boundary case that distinguishes the defect from intended behavior. Confirm build tags, edition, platform, and prerequisites that determine whether the case can execute.
+3. Evaluate placement and fixtures using the loaded authority. Do not infer that all public-API tests belong in one directory or copy a prohibited helper from an older test.
+4. For review-only requests, inspect source and supplied results without automatically editing or running tests. Execute checks only when verification is part of the requested review; report unexecuted checks as such. For write or move requests, make the smallest useful change and check for duplicate coverage before removing an old test.
 
-- The test must call unexported functions or methods.
-- The test must construct internal types directly and there is no stable public path.
-- The test is tightly coupled to implementation details rather than externally visible behavior.
+## Step 3 — Check Assertions and Stability
 
-Examples:
+- Require an observable success result for acceptance cases. For rejection cases, assert the specific error identity, code, or stable diagnostic supported by the code, plus relevant state or side effects. Check setup errors before exercising the behavior.
+- Reject assertions that merely exclude one error string: an unrelated permission, transport, or backend error must not make an acceptance test pass. If the target is only a validation stage, isolate it through a repository-approved test boundary and assert its explicit result; do not claim that proves the complete operation succeeds.
+- Check that the test reaches the intended branch and would detect the reported defect. Avoid tautologies, unchecked mock expectations, and assertions that only prove setup or framework behavior.
+- Apply the native isolation and waiting guidance. Look for shared state, uncontrolled time, filesystem/platform assumptions, and external dependencies that could mask the outcome. Use isolated fixtures and deterministic synchronization or bounded condition waits; do not fix flakes by adding sleeps, swallowing errors, skipping the failing case, or retrying until one run passes.
+- Keep platform-specific claims limited to platforms actually exercised. A skip on the current host does not validate behavior on the target host.
 
-- `vault/audit_test.go`
-- `vault/logical_system_test.go`
+## Step 4 — Verify the Regression and Inspect Actual Results
 
-### Use `vault/external_tests/...` when:
+For test additions, moves, or edits, run verification unless the user explicitly requests a draft/source-only change or execution is blocked. For reviews, use the execution scope established in Step 2.
 
-- The behavior is exercised through the public API, a test cluster, or externally visible server behavior.
-- The test should validate behavior at the package boundary, not implementation internals.
-- There is already a feature-area external test package that fits.
+When execution is in scope:
 
-Examples:
+1. Derive commands from the target repository's instructions and build/test configuration, including the correct module, edition/build tags, prerequisites, and test selector. Run the narrow relevant target first, then required repository checks. Broaden or repeat beyond those only for new changes, failures, or unresolved concerns.
+2. For a bug regression, run the same test against the relevant pre-fix code when practical, then the fixed code with equivalent fixtures and configuration. Preserve working-tree changes; do not reset or overwrite user work to construct a baseline. Require a failure at the intended behavioral assertion before the fix and a pass after it. A compilation error, missing license, setup failure, or unrelated assertion failure is not regression evidence. If a safe baseline or fix is unavailable, report the missing comparison explicitly.
+3. Inspect output for the named test and required subtests, not just exit status or a package-level `ok`. For direct `go test` runs, use `-count=1` for fresh execution and `-v` or `-json` to observe selection and outcomes, while retaining required repository flags. Use the native runner's equivalent evidence for UI tests.
+4. Distinguish `passed`, `failed`, `skipped`, `cached`, `no tests matched`, `blocked`, and `not run`. A cached result is historical evidence, not a fresh run; skipped cases and empty selections do not prove the target behavior. Correct selectors or prerequisites within scope and rerun affected checks; otherwise record the gap.
+5. Investigate unrelated failures without weakening the expected behavior. Report environmental blockers separately from assertion failures. Do not infer affected release ranges or a shipped fix from a successful local test.
 
-- `vault/external_tests/audit/`
-- `vault/external_tests/router/`
-- `vault/external_tests/core/`
+## Step 5 — Report the Result
 
-### Placement heuristics
+For changes, state the files changed, why the placement follows the loaded authority, and exactly what the test proves. For reviews, lead with actionable findings: severity, file/line, the missed behavior or false-confidence risk, and the smallest correction; say when no actionable findings were found.
 
-- If the behavior is audit-related and there is already a package under `vault/external_tests/audit`, prefer that over creating a new directory.
-- If the test uses `minimal.NewTestSoloCluster` or `vault.NewTestCluster` and makes real API calls, that is usually a strong sign it belongs in `external_tests`.
-- If the test requires `TestCoreUnsealed`, pause and check whether the same behavior can be tested externally first. In Vault, external cluster-based tests are often preferred for new work.
+Include the authority paths consulted and a concise verification record: checkout/revision, command and working directory, relevant build/platform settings, actual status and decisive output. Separate observed runs from supplied evidence and proposed commands. State before-fix/after-fix results, skipped cases, blockers, or checks not run. Scope any readiness conclusion to the files and evidence examined. Save a report only when requested or needed for a handoff.
 
-## How to choose internal vs external for path validation
+## Examples
 
-For path-validation behavior, decide what you actually need to prove.
+### Review a Weak Path-Validation Test
 
-### Use an internal test if you need to prove:
+Request: "Review this audit-path test; it accepts any error other than the path-rejection message."
 
-- An unexported validation helper or method returns a precise result before backend creation.
-- A path is classified a certain way independent of later file creation or backend init.
+Resolve the checkout, load `go-test` and required instructions, and trace validation through backend creation. If a permission error can satisfy the assertion, report that acceptance is unproven with the offending file/line. Recommend a controlled valid-path case that asserts successful creation and the relevant state, plus an invalid-path control that asserts the specific rejection. If only helper validation is intended, use a boundary permitted by the native guidance and narrow the stated guarantee. For a static review, finish with `not run — source review only` rather than claiming a passing test.
 
-### Use an external test if you need to prove:
+### Add a Regression Test and Evaluate Its Evidence
 
-- The public API path accepts or rejects a configuration in the real server path.
-- The regression is about externally observable behavior, not just helper internals.
+Request: "Add a regression test for a rejected valid configuration."
 
-Important: external audit tests can fail for reasons unrelated to the target validation, such as real file backend creation, permissions, or filesystem semantics. When that happens, assert on the specific error you care about instead of demanding unconditional success.
+Load the native guidance, choose the existing feature test location it supports, and assert acceptance for the valid fixture and the appropriate rejection for its control. Run the selected case against pre-fix and fixed code when available. An illustrative valid evidence pair is `failed — valid fixture rejected at the acceptance assertion` before the fix and `passed — named case and control executed` after it. If the fixed run reports `no tests to run`, correct the selection/build configuration before claiming a pass; if the baseline cannot execute, report that regression sensitivity remains unverified.
 
-## Test writing checklist
+### Route a Frontend Test Request
 
-Before editing:
+Request: "Review a Vault UI component test."
 
-1. Identify the exact production file and lines under test.
-2. Find 3 to 5 comparable tests in the same feature area.
-3. Check whether `external_tests` already has a matching package.
-4. Confirm whether the test should exercise the public API or an internal helper.
+Load the checkout's `ui` skill and its Ember test instructions. Review the component's observable behavior using those conventions. For requested execution, follow the UI verification requirements and report the selected tests and any required build/full-suite checks with their actual statuses.
 
-While writing:
+## Handling Missing Information
 
-1. Keep the change minimal.
-2. Reuse existing helpers and cluster builders.
-3. Use table-driven subtests when the behavior varies by path or option.
-4. Use comments only when they clarify the test's purpose or an environment-specific nuance.
-5. Prefer `require.*` assertions when failure should stop the subtest.
-6. Assert on the exact behavior you care about. Do not require success if a later unrelated phase can legitimately fail.
+If the checkout, revision, expected behavior, or required native guidance is missing, ask for the specific missing input before repository-dependent edits or execution. Continue any source-only review that the supplied material supports, clearly identifying provisional conclusions. If an older checkout lacks the skills, request an authoritative guidance location; do not silently apply another revision's standards. Resolve conflicting guidance by instruction precedence; if still ambiguous, cite the conflicting paths and ask before dependent changes. Treat the optional local mapping file's absence as a discovery gap, not a product failure.
 
-After writing:
+## Anti-Patterns to Avoid
 
-1. Confirm the test name describes what is truly being guaranteed.
-2. Confirm the comments state the control case and the platform nuance clearly.
-3. Run the narrowest relevant test command first.
-4. If practical, compare with at least one similar test file to ensure style consistency.
-
-## Formatting and style expectations
-
-- Match the nearest local package's style and imports.
-- Use ASCII unless the file already requires otherwise.
-- Prefer concise, behavior-oriented test names.
-- Avoid over-abstracting helpers for one small test.
-- Use `t.Run(...)` for case matrices.
-- Prefer the existing setup style in that package:
-  - `minimal.NewTestSoloCluster(...)`
-  - `vault.NewTestCluster(...)`
-  - `TestCoreUnsealed(...)`
-- Keep comments factual. Explain what the test proves, not what the code obviously does.
-
-## Review checklist for an existing test
-
-When reviewing a Vault test, explicitly check:
-
-1. Is it in the right package and directory?
-2. Does it use the right test style for that subsystem: external cluster test vs internal helper test?
-3. Does it assert the intended behavior, or a weaker side effect?
-4. Could unrelated backend creation or filesystem behavior mask the intended assertion?
-5. Are platform-specific claims accurate?
-6. Is there a control case proving the check still works?
-7. Does the test name and comment match what is truly guaranteed?
-8. Is there unnecessary duplication with an existing test in a better location?
-
-## Suggested tool workflow
-
-1. Search for the production code path with `grep`.
-2. Search for comparable tests with `glob` and `grep`.
-3. Read 3 to 5 nearby tests before editing.
-4. If moving a test, remove the old duplicate after the new one is in place.
-5. Run a narrow `go test` command first.
-6. If the user asked for review, report findings first with file references.
-
-## Verification requirements
-
-At minimum, run the narrowest test command that proves the changed test compiles and executes.
-
-Examples:
-
-```bash
-go test ./vault/external_tests/audit -run TestAudit_PluginDirectorySecurityCheck_WithPathOrFilePath
-```
-
-```bash
-go test ./vault -run TestAudit_enableAudit
-```
-
-If a test fails for an unrelated reason:
-
-- explain the unrelated blocker clearly
-- tighten the assertion or test scope if appropriate
-- rerun the smallest relevant command
-
-Do not report a test as validated unless you actually ran it and saw it pass, or you clearly label what prevented verification.
-
-## Output expectations
-
-When finishing the task, provide:
-
-1. What changed
-2. Why the test belongs in that location
-3. What exact behavior the test now proves
-4. The command run for verification
-5. Whether it passed
-6. Any remaining limitations, especially platform-specific ones
-
-## Common Vault patterns to prefer
-
-- For external audit behavior, look in `vault/external_tests/audit/` first.
-- For path and public API behavior, cluster-based tests are often preferred over direct internal helpers if the public path is the real target.
-- Keep one real host-path control case that proves the rejection still works.
+| Anti-pattern | Symptom | Correction |
+| --- | --- | --- |
+| Cloned or remembered standards | Placement or helpers conflict with the current repository | Load native skills and their required instructions from the resolved checkout. |
+| Weak negative assertion | Any error except the expected rejection passes | Assert the actual success or specific failure and relevant outcome. |
+| Flake suppression | Sleeps, skips, or retries hide nondeterminism | Fix fixtures or synchronization under the native guidance; retain failure evidence. |
+| False-green verification | Cached, skipped, or unmatched tests are called validated | Inspect named cases and report actual execution statuses. |
+| Invalid regression baseline | Build/setup failure is called proof of the bug | Require failure at the targeted behavioral assertion before the fix. |
+| Review expands into implementation | Tests are edited or run without that scope | Return findings and explicit verification gaps for a source-only review. |

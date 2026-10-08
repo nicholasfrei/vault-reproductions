@@ -1,4 +1,4 @@
-# Vault Scenario Skills
+# Vault Scenario and Support Skills
 
 Use two skills to create, maintain, and review Vault troubleshooting content. [AGENTS.md](../AGENTS.md) defines repository-wide rules; each skill owns its procedure and supporting resources.
 
@@ -31,9 +31,22 @@ Support investigations can feed evidence directly into authoring without a separ
 | --- | --- | --- |
 | [document-reference](skills/document-reference/SKILL.md) | Official documentation and evidence-based answers | `/document-reference` |
 | [find-vault-bugs](skills/find-vault-bugs/SKILL.md) | Source investigation, fixes, and version mapping | `/find-vault-bugs` |
-| [create-implementation-doc](skills/create-implementation-doc/SKILL.md) | Bounded engineering handoff with customer impact, code paths, and a minimal implementation plan | none |
+| [escalation-canvas](skills/escalation-canvas/SKILL.md) | Living escalation record: environment, affected workflow, timestamped investigations, working theories, and regional handoff | invoke the skill |
+| [create-implementation-doc](skills/create-implementation-doc/SKILL.md) | Evidence-based engineering handoff with issue context, candidate fixes, implementation steps, and validation | invoke the skill |
 | [vault-jira-bug](skills/vault-jira-bug/SKILL.md) | Concise Vault bug titles and descriptions | invoke the skill |
-| [vault-unit-tests](skills/vault-unit-tests/SKILL.md) | Vault Enterprise unit test work | `/vault-unit-tests` |
-| [customer-reply](skills/customer-reply/SKILL.md) | Customer-facing support reply template | `/customer-reply` |
+| [vault-unit-tests](skills/vault-unit-tests/SKILL.md) | Go regression-test work using Vault's native `go-test` skill; routes UI work to native `ui` guidance | `/vault-unit-tests` |
+| [vault-support-reply](skills/vault-support-reply/SKILL.md) | Evidence-based customer reply drafts for Vault support engineers | invoke the skill |
 
-[`/bug-triage`](../.opencode/commands/bug-triage.md) remains a [work-in-progress placeholder](workflows/bug-triage.md).
+## CE troubleshooting and fix workflow
+
+Use [`/bug-triage`](../.opencode/commands/bug-triage.md) to follow the [triage and fix workflow](workflows/bug-triage.md), or invoke a specialist directly for a narrow request:
+
+1. Establish documented expectations with `document-reference` and trace implementation with `find-vault-bugs` as needed.
+2. Reproduce at the appropriate layer: a focused Go/UI test or a scenario through the author/reviewer workflow.
+3. Use `create-implementation-doc` for a requested plan or durable engineering handoff.
+4. For a requested fix, follow the owning source repository's implementation guidance and verify with native Go/UI tests.
+5. Use `vault-jira-bug` or `vault-support-reply` when the requested outcome includes a ticket or customer update.
+
+Carry source revisions, evidence, actual test outcomes, and unresolved questions between stages. Load only the relevant skills and finish at the requested outcome. `vault-support-reply` replaces the former `customer-reply` skill.
+
+For an ongoing escalation spanning engineers or regions, use `escalation-canvas` to maintain the shared investigation record. Feed established findings into `create-implementation-doc` when a bounded fix plan is needed.
