@@ -24,7 +24,7 @@ Do not use this skill when:
 
 For Vault UI tests, follow the checkout's `.agents/skills/ui/SKILL.md` instead of Go test rules.
 
-## Step 1 — Resolve the Checkout and Load Its Authority
+## Step 1 — Instructions
 
 1. Read `vault-enterprise/AGENTS.md`, applicable instructions, and `.agents/skills/go-test/SKILL.md`. Follow the additional instructions, if applicable.
 2. Defer to those files for placement, helpers, isolation, formatting, and verification. Do not copy a pattern from an older test when it conflicts with current rules.
