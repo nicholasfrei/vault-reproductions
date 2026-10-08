@@ -1,25 +1,11 @@
 ---
-description: WIP — Orchestrate Vault bug triage (document-reference, find-vault-bugs, and related handoffs). Work in progress; will be updated later.
+description: Investigate a Vault issue and route evidence into reproduction, implementation planning, or a tested fix.
 ---
 
-# Bug Triage (work in progress)
-
-This command is a blank template. It will be expanded later into a full triage orchestrator.
-
-Do not treat this file as a complete workflow yet.
+Read and follow `.agents/workflows/bug-triage.md` and root `AGENTS.md`.
 
 Request:
 
 $ARGUMENTS
 
-## Placeholder steps (to be defined)
-
-1. Collect evidence (version, edition, error, deployment, changes).
-2. Run docs reference (`document-reference`) when appropriate.
-3. Run source / issue investigation (`find-vault-bugs`) when appropriate.
-4. Run local reproductions when appropriate.
-5. Decide next handoff (scenario create/maintain, etc.).
-
-## Status
-
-Work in progress. Update this file when the bug-triage workflow is designed.
+Load the relevant skills at each stage, reuse established evidence, and continue to the requested deliverable. Keep reported, inferred, and executed results distinct.
