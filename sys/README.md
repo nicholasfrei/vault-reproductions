@@ -145,6 +145,16 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - References GitHub issues #11026 and #10769.
   </details>
 
+## Namespaces
+
+- [Terraform Import Under an Already-Managed Namespace Runbook](namespaces/terraform-namespace-import-runbook.md)
+  `runbook` `sys` `namespaces` `terraform` `enterprise`
+  <details>
+  <summary>Details</summary>
+
+  - Reproduces the unexpected `test/test` namespace creation plan when importing a mount beneath an already-managed namespace with Vault provider `4.7.0`.
+  </details>
+
 ## Raft
 
 - [Performance Secondary Raft Snapshot Loop — High Lease Volume KB](raft/raft-snapshot-loop-high-lease-volume-kb.md)
