@@ -39,7 +39,7 @@ Support investigations can feed evidence directly into authoring without a separ
 
 ## CE troubleshooting and fix workflow
 
-Use [`/bug-triage`](../.opencode/commands/bug-triage.md) to follow the [triage and fix workflow](workflows/bug-triage.md), or invoke a specialist directly for a narrow request:
+Use [`/engineering-bug-triage`](../.opencode/commands/engineering-bug-triage.md) to follow the [triage and fix workflow](workflows/engineering-bug-triage.md), or invoke a specialist directly for a narrow request:
 
 1. Establish documented expectations with `document-reference` and trace implementation with `find-vault-bugs` as needed.
 2. Reproduce at the appropriate layer: a focused Go/UI test or a scenario through the author/reviewer workflow.

@@ -5,7 +5,7 @@ doc_type: escalation_canvas_template
 
 # Canvas Template
 
-Use the body below for a new canvas. The metadata and these instructions are not part of the output. For updates, preserve an existing useful structure and stable evidence/theory labels. Keep the core topics, but omit irrelevant subfields, remove editorial placeholders, and state material missing facts concisely. Use as many investigation/theory entries as the evidence requires, not a fixed number.
+Use the body below for a new canvas. The metadata and these instructions are not part of the output. For updates, preserve an existing useful structure and stable evidence/theory. Keep the core topics, but omit irrelevant subfields, remove editorial placeholders, and state material missing facts concisely. Use as many investigation/theory entries as the evidence requires, not a fixed number.
 
 ```markdown
 # <Escalation: concise symptom or operation>

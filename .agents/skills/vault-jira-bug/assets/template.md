@@ -10,7 +10,7 @@ Keep the description order: observed behavior/impact, expected behavior, then su
 
 ## Description
 
-<Observed behavior and practical impact.>
+Description: <Observed behavior and practical impact.>
 
 Expected behavior: <What should happen under the same conditions.>
 
@@ -18,9 +18,12 @@ Vault version: <tested version/edition, or not provided>.
 
 ### Reproduction or observation
 
+```bash
+# Use a code block when necessary
 <Minimal supported steps and relevant configuration, or the reported observation if steps are unavailable. Identify whether this was reported or independently reproduced.>
 
 <Include commands and decisive output in separate language-tagged blocks when available.>
+```
 
 ### Workaround (optional)
 

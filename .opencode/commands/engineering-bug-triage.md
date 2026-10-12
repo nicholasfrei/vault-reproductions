@@ -2,7 +2,7 @@
 description: Investigate a Vault issue and route evidence into reproduction, implementation planning, or a tested fix.
 ---
 
-Read and follow `.agents/workflows/bug-triage.md` and root `AGENTS.md`.
+Read and follow `.agents/workflows/engineering-bug-triage.md` and root `AGENTS.md`.
 
 Request:
 
