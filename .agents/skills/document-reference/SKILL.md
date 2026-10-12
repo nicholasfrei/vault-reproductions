@@ -20,12 +20,11 @@ Produce a concise documentation-based answer to a HashiCorp product question, wi
 Use this skill when:
 
 - The user needs official documentation for a product feature, API, configuration, or error.
-- The user wants observed behavior compared with documented behavior.
 - The question spans HashiCorp products or the HashiCorp Terraform Vault provider.
 
 Do not use this skill as the primary workflow when:
 
-- The task requires Vault source-code analysis, bug confirmation, fix commits, or affected/fixed release mapping; use `find-vault-bugs`. This skill can supply supporting documentation.
+- The task requires code analysis, fix commits; use `find-vault-bugs`.
 - The user wants a new or updated reproduction, runbook, KB, or guide; use `vault-scenario-author`.
 - The user wants architecture design or implementation work rather than a documentation answer.
 
@@ -42,9 +41,9 @@ Use existing version output when supplied (`vault version` or `vault status` for
 
 ## Step 2 — Locate Authoritative Evidence
 
-Use locally cloned documentation in `~/repos/` before going to the web. If available, read the relevant repository mappings in `.agents/instructions/internal-tools.md`, relative to the project root. This file is machine-local and may be absent in another checkout.
+Reference `.agents/instructions/internal-tools.md`.
 
-- Prefer `~/repos/web-unified-docs` for official documentation and changelog content when that clone exists.
+- Prefer `web-unified-docs` for official documentation and changelog content when that clone exists.
 - Search the relevant product directory for the exact error, endpoint, configuration key, or feature; read the matching section and its prerequisites.
 - Record the file path and available version/ref context. Do not treat a local checkout as proof of what is currently published or supported in every release.
 - If the local guidance or docs are missing, use a supplied repository path or proceed to official web sources. Do not require internal repositories to answer the question.
@@ -58,7 +57,7 @@ Allowed domains:
 - `developer.hashicorp.com` — primary docs, API docs, tutorials, changelogs
 - `support.hashicorp.com` — KB articles (need authentication to view)
 - `registry.terraform.io/providers/hashicorp/` — official HashiCorp provider documentation
-- `github.com/hashicorp/vault` (and all github.com/hashicorp/* repos) — issues, changelog, source — only to confirm a known bug or behavior, never as the sole source for a fix
+- `github.com/hashicorp/*` — issues, changelog, source — only to confirm a known bug or behavior
 
 Do not cite public blogs, Stack Overflow, Reddit, Medium, or third-party sites. If the fetch tool reports a redirect, check that the destination remains within the allowed sources before following it. If fetching is unavailable or fails, use verified local evidence or user-provided excerpts, state the limitation, and request the relevant excerpt if needed. Do not imply an inaccessible page was checked.
 
@@ -82,7 +81,7 @@ Other product docs:
 - Consul docs: https://developer.hashicorp.com/consul/docs
 - Support KB: https://support.hashicorp.com/hc/en-us
 
-## Step 3 — Verify and Synthesize
+## Step 3 — Verify
 
 1. Check whether each source applies to the product version, edition, provider, and deployment in question. Prefer version-matched documentation when available; identify when only current documentation was consulted.
 2. Separate user-reported observations, documented behavior, and your inference. A documented default does not establish the user's configuration.
@@ -97,7 +96,7 @@ Return one Markdown report in the response. Save it to a file only when requeste
 ## Question
 <one or two sentences paraphrasing the original question>
 
-## Evidence on hand
+## Overview
 - Product(s), version(s), edition(s): <values or "unknown">
 - Relevant deployment/configuration: <values or "unknown">
 - Reported symptom or exact error: <sanitized observation or string>
@@ -110,34 +109,27 @@ Return one Markdown report in the response. Save it to a file only when requeste
 
 ## References
 - <consulted source title and URL, local path with available version/ref, or supplied excerpt identifier>
+- [Quick Title](https://example.com)
 ```
 
 Before returning the report, check that conclusions are supported, assumptions are visible, citations identify consulted sources, and sensitive values are redacted.
 
-## Handling Missing Information
-
-- Proceed with a general documentation answer when missing deployment details do not affect it. Do not turn a simple lookup into an intake questionnaire.
-- Ask a targeted question when a missing version, edition, configuration, or symptom changes the conclusion. Continue any independent research while awaiting the answer.
-- If the answer remains conditional, explain the condition and mark the relevant facts as `unknown`. Do not assume Raft or any other backend, version, edition, or configuration.
-- If no authoritative evidence is accessible, state that the answer is unverified and request a relevant documentation excerpt or repository path. Do not fill gaps from memory and present them as researched findings.
-
 ## Example
 
-User request: "What status code does Vault's `/sys/health` return by default when Vault is sealed?"
+User request: "What status code does Vault's `/sys/health` return by default when Vault is sealed in `2.2.0+ent`?"
 
-Research: Read the official health API documentation. Confirm the default sealed status code and the `sealedcode` override. A deployment version is unnecessary for this general lookup; identify the source as current documentation and do not infer a live cluster's state.
+Research: Read the official health API documentation. Confirm the default sealed status code.
 
 Expected report:
 
 ```markdown
 ## Question
-What HTTP status code does Vault's `/sys/health` return by default when sealed?
+What HTTP status code does Vault's `/sys/health` return by default when Vault is sealed in `2.2.0+ent`?
 
-## Evidence on hand
-- Product: Vault; deployment version and edition unknown.
-- The question concerns the documented default, not an observed cluster response.
+## Overview
+- Product: Vault `2.2.0+ent`
 
-## Answer
+## `sys/health` Status Code for Sealed Nodes
 The current [health API documentation](https://developer.hashicorp.com/vault/api-docs/system/health#read-health-information) lists `503` as the default status code when Vault is sealed. The `sealedcode` parameter can override this code, so a customized request may return a different value. This answers the default-behavior question; no cluster state was checked.
 
 ## References
