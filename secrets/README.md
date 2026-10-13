@@ -37,6 +37,15 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Rapid Oracle environment setup for testing Vault database plugin behavior with dynamic and static credentials.
   </details>
 
+- [Oracle Self-Managed Static-Role Rotation Requiring REPLACE](database/oracle-db/alter-vs-replace/oracle-rotate-root-replace-required-repro.md)
+  `repro` `secrets` `database` `oracle`
+  <details>
+  <summary>Details</summary>
+
+  - Provisions a disposable Terraform lab for `ORA-28221` during import and manual rotation of a self-managed Oracle account without `ALTER USER`.
+  - Compares the released plugin with a candidate supporting `{{current_password}}` in role-level `rotation_statements` (VAULT-51145).
+  </details>
+
 - [Oracle Enterprise Plugin Callback Resource Leak During Static-Role Rotation](database/oracle-db/oracle-database-updateuser-initialize-goroutine-fd-leak-kb.md)
   `kb` `secrets` `database` `oracle`
   <details>
