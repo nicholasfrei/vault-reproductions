@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Prepare the restricted account and self-managed Vault config on the lab VM.
 set -euo pipefail
 set +x
 umask 077
@@ -20,6 +21,16 @@ for i in $(seq 1 60); do
   sleep 2
 done
 
+if vault secrets list -format=json | python3 -c 'import json,sys; sys.exit("oracle-db/" not in json.load(sys.stdin))'; then
+  if vault read -format=json oracle-db/config/oracle >/dev/null 2>&1; then
+    echo 'oracle-db/ already has a connection; refusing to reset an engineer’s test account or configuration.' >&2
+    exit 1
+  fi
+  echo 'Resuming the existing oracle-db/ mount after an incomplete setup.'
+else
+  vault secrets enable -path=oracle-db database >/dev/null
+fi
+
 echo 'Waiting for Oracle XE and XEPDB1 (up to 30 minutes).'
 for i in $(seq 1 180); do
   if result=$(docker exec --user oracle -i oracle-lab sqlplus -L -s / as sysdba 2>/dev/null <<'SQL'
@@ -35,10 +46,11 @@ SQL
   sleep 10
 done
 
-if [[ ! -s /root/oracle-lab/root-password ]]; then
-  openssl rand -hex 12 > /root/oracle-lab/root-password
+if [[ ! -s /root/oracle-lab/role-password ]]; then
+  password=$(openssl rand -hex 12)
+  printf '%s' "$password" > /root/oracle-lab/role-password
 fi
-password=$(cat /root/oracle-lab/root-password)
+password=$(cat /root/oracle-lab/role-password)
 control_old=$(openssl rand -hex 12)
 control_new=$(openssl rand -hex 12)
 trap 'unset password control_old control_new VAULT_TOKEN' EXIT
@@ -114,6 +126,12 @@ if ! printf 'WHENEVER SQLERROR EXIT FAILURE\nCONNECT LAB_CONTROL/%s@//127.0.0.1:
 fi
 echo 'Oracle self-rotation with REPLACE succeeded without ALTER USER.'
 
+if ! printf 'WHENEVER SQLERROR EXIT FAILURE\nCONNECT VAULT_LAB/%s@//127.0.0.1:1521/XEPDB1\nSELECT 1 FROM dual;\nEXIT\n' "$password" |
+  docker exec --user oracle -i oracle-lab sqlplus -L -s /nolog >/dev/null 2>&1; then
+  echo 'The self-managed test account could not authenticate with its initial password.' >&2
+  exit 1
+fi
+
 if ! vault plugin info -version="$ORACLE_PLUGIN_VERSION" database vault-plugin-database-oracle >/dev/null 2>&1; then
   vault plugin register -version="$ORACLE_PLUGIN_VERSION" -download=true database vault-plugin-database-oracle >/dev/null
 fi
@@ -133,23 +151,15 @@ if [[ $dependencies == *'not found'* ]]; then
   exit 1
 fi
 
-if vault secrets list -format=json | python3 -c 'import json,sys; sys.exit("oracle-db/" not in json.load(sys.stdin))'; then
-  if vault read -format=json oracle-db/config/oracle >/dev/null 2>&1; then
-    echo 'oracle-db/ already has a connection; refusing to overwrite an engineer’s test configuration.' >&2
-    exit 1
-  fi
-  echo 'Resuming the existing oracle-db/ mount after an incomplete setup.'
-else
-  vault secrets enable -path=oracle-db database >/dev/null
-fi
-if ! printf '%s' "$password" | vault write oracle-db/config/oracle \
+if ! vault write oracle-db/config/oracle \
   plugin_name=vault-plugin-database-oracle \
   plugin_version="$ORACLE_PLUGIN_VERSION" \
   connection_url='{{username}}/{{password}}@127.0.0.1:1521/XEPDB1' \
-  username=VAULT_LAB password=- verify_connection=true >/dev/null 2>&1; then
-  echo 'Vault Oracle connection verification failed; check plugin and Instant Client privately.' >&2
+  allowed_roles=account-password-rotator \
+  self_managed=true verify_connection=true >/dev/null 2>&1; then
+  echo 'Vault self-managed Oracle configuration failed; check plugin and Instant Client privately.' >&2
   exit 1
 fi
 
 date -u +%FT%TZ > /root/oracle-lab/READY
-echo 'Oracle lab ready: stock Oracle connection at oracle-db/config/oracle.'
+echo 'Oracle lab ready: self-managed config at oracle-db/config/oracle; follow the runbook to create the static role.'

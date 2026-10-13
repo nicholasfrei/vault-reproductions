@@ -70,7 +70,7 @@ variable "root_volume_size" {
 }
 
 variable "vault_version" {
-  description = "Vault Enterprise Linux AMD64 release. Default matches the verified custom plugin test."
+  description = "Vault Enterprise Linux AMD64 release for the self-managed static-role lab."
   type        = string
   default     = "2.1.1+ent"
 

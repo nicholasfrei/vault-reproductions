@@ -89,7 +89,7 @@ UNIT
 
 cat > /etc/systemd/system/oracle-lab-setup.service <<'UNIT'
 [Unit]
-Description=Prepare Oracle root-rotation lab
+Description=Prepare Oracle self-managed static-role rotation lab
 Requires=docker.service vault.service
 After=docker.service vault.service network-online.target
 
