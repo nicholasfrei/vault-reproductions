@@ -37,7 +37,7 @@ Legend: `runbook` = procedural, `kb` = break-fix analysis, `repro` = focused beh
   - Rapid Oracle environment setup for testing Vault database plugin behavior with dynamic and static credentials.
   </details>
 
-- [Oracle Self-Managed Static-Role Rotation Requiring REPLACE](database/oracle-db/alter-vs-replace/oracle-rotate-root-replace-required-repro.md)
+- [Oracle Self-Managed Static-Role Rotation Requiring REPLACE](database/oracle-db/alter-vs-replace/oracle-rotate-requires-replace-repro.md)
   `repro` `secrets` `database` `oracle`
   <details>
   <summary>Details</summary>
