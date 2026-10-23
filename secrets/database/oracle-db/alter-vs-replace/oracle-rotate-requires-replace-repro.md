@@ -164,4 +164,5 @@ The pre-existing EC2 key pair is not managed or deleted by this module. Terrafor
 - [Vault Oracle plugin requirements](https://developer.hashicorp.com/vault/docs/secrets/databases/oracle)
 - [Vault database static-role API](https://developer.hashicorp.com/vault/api-docs/secret/databases#create-static-role)
 - [VAULT-51145](https://hashicorp.atlassian.net/browse/VAULT-51145) and [Oracle plugin PR #34](https://github.com/hashicorp/vault-plugin-database-oracle-enterprise/pull/34)
-- [Neighboring Oracle Terraform lab](../terraform/README.md)
+- [Reusable Oracle integration baseline](../oracle-ec2-setup-runbook.md)
+- [External Oracle plugin installation guide](../plugin-installation/oracle-external-plugin-installation-guide.md)
