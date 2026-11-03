@@ -8,14 +8,14 @@ Legend: `runbook` = ordered procedure, `kb` = explanation and diagnosis, `repro`
 
 ## Build a healthy integration
 
-- [Oracle on EC2 setup runbook](oracle-ec2-setup-runbook.md)
+- [Oracle on EC2 setup runbook](golden-image/oracle-ec2-setup-runbook.md)
   `runbook` `setup` `oracle` `ec2`
   <details>
   <summary>Details</summary>
 
   - Terraform provisions one or three persistent Vault Raft nodes with AWS KMS auto-unseal. Oracle runs on node 1; every Vault node receives Instant Client and the selected Enterprise Oracle plugin.
   - Defaults to 100 Oracle static users and matching Vault static roles, plus 100 dynamic-role definitions. Bootstrap checks real Oracle logins, a manual static rotation, and dynamic issuance/revocation.
-  - [Terraform](lab/terraform/) and [guest scripts](lab/scripts/) own this baseline. Runtime validation is pending; see the runbook's verification record.
+  - [Terraform](golden-image/lab/terraform/) and [guest scripts](golden-image/lab/scripts/) own this baseline. Runtime validation is pending; see the runbook's verification record.
   </details>
 
 ## Investigate specific issues
