@@ -44,7 +44,7 @@ rm /root/oracle-lab/license
 
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
-vault_version='1.21.9+ent'
+vault_version=$(cat /root/oracle-lab/vault-version)
 archive="vault_${vault_version}_linux_amd64.zip"
 curl --fail --silent --show-error --location --retry 5 \
   "https://releases.hashicorp.com/vault/${vault_version}/${archive}" -o "$work/$archive"

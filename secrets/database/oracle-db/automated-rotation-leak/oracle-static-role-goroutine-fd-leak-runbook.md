@@ -15,10 +15,10 @@ The bootstrap script leaves Oracle reachable and verifies that every role rotate
 | Component | Configuration |
 | --- | --- |
 | AWS host | Amazon Linux 2023, x86-64, `t3.large`, 8 GiB RAM, encrypted 80-GiB root disk |
-| Vault | Enterprise `1.21.9+ent`, systemd, single-node Raft, AWS KMS auto-unseal |
+| Vault | Enterprise `1.21.9+ent` by default (Terraform `vault_version`), systemd, single-node Raft, AWS KMS auto-unseal |
 | Oracle | XE `21.3.0-xe`, Docker volume, restart enabled |
 | Oracle Instant Client | Basic `19.32` |
-| Oracle plugin | `vault-plugin-database-oracle` `0.11.0+ent`, downloaded through Vault |
+| Oracle plugin | `vault-plugin-database-oracle` `0.11.0+ent` by default (Terraform `plugin_version`), downloaded through Vault |
 | Static roles | `leak-repro-01` through `leak-repro-10`, ten distinct Oracle users, 10-second periods |
 | Network | Dedicated VPC/subnet; SSH ingress limited to Terraform `admin_ssh_cidr`; Vault API and published Oracle port on loopback |
 
@@ -57,7 +57,7 @@ umask 077
 cp terraform.tfvars.example terraform.tfvars
 ```
 
-Edit the region/profile, `key_name`, and `admin_ssh_cidr` in `terraform.tfvars`, then create the lab. On an existing lab, changed user data replaces the VM and its local data; export evidence before applying such changes.
+Edit the region/profile, `key_name`, and `admin_ssh_cidr` in `terraform.tfvars`, then create the lab. To test another build, also set `vault_version` and `plugin_version` there (defaults `1.21.9+ent` and `0.11.0+ent`). On an existing lab, changed user data replaces the VM and its local data; export evidence before applying such changes.
 
 ```bash
 : "${VAULT_LICENSE:?Set VAULT_LICENSE in this shell first}"
@@ -110,7 +110,7 @@ source /root/oracle-lab/admin.env
 vault status
 ```
 
-Expected: Vault `1.21.9+ent`, unsealed, with Raft storage and `awskms` seal type.
+Expected: the configured `vault_version` (default Vault `1.21.9+ent`), unsealed, with Raft storage and `awskms` seal type.
 
 Inspect the database connection and the ten static roles:
 

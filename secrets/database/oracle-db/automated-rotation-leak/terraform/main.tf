@@ -10,6 +10,8 @@ locals {
     region_b64  = base64encode(var.aws_region)
     kms_b64     = base64encode(aws_kms_key.unseal.key_id)
     license_b64 = base64encode(trimspace(var.vault_license))
+    vault_b64   = base64encode(var.vault_version)
+    plugin_b64  = base64encode(var.plugin_version)
     scripts = {
       "bootstrap.sh" = filebase64("${path.module}/../scripts/bootstrap.sh")
       "configure.sh" = filebase64("${path.module}/../scripts/configure.sh")
@@ -19,13 +21,13 @@ locals {
   })
 }
 
-data "aws_ami" "hc_base_al2023" {
+data "aws_ami" "base" {
   most_recent = true
-  owners      = ["888995627335"] # ami-prod account
+  owners      = [var.ami_owner]
 
   filter {
     name   = "name"
-    values = ["hc-base-al2023-x86_64-*"]
+    values = [var.ami_name_pattern]
   }
 
   filter {
@@ -130,7 +132,7 @@ resource "aws_iam_instance_profile" "lab" {
 }
 
 resource "aws_instance" "lab" {
-  ami                         = data.aws_ami.hc_base_al2023.image_id
+  ami                         = data.aws_ami.base.image_id
   instance_type               = var.instance_type
   key_name                    = var.key_name
   subnet_id                   = aws_subnet.lab.id

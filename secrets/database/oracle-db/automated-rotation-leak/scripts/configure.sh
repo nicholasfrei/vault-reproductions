@@ -79,11 +79,12 @@ EOF
 if ! vault secrets list -format=json | jq -e 'has("database/")' >/dev/null; then
   vault secrets enable database
 fi
-vault plugin register -version='0.11.0+ent' -download=true database vault-plugin-database-oracle
+plugin_version=$(cat /root/oracle-lab/plugin-version)
+vault plugin register -version="$plugin_version" -download=true database vault-plugin-database-oracle
 
-jq -n --arg password "$db_password" '{
+jq -n --arg password "$db_password" --arg plugin_version "$plugin_version" '{
   plugin_name: "vault-plugin-database-oracle",
-  plugin_version: "0.11.0+ent",
+  plugin_version: $plugin_version,
   allowed_roles: ["leak-repro-*"],
   verify_connection: true,
   connection_url: "{{username}}/{{password}}@172.30.250.10:1521/XEPDB1",
@@ -119,7 +120,7 @@ for i in $(seq -w 1 10); do
   printf '%s automatic rotation advanced: %s -> %s\n' "$role" "$baseline" "$current"
 done
 
-plugin_binary=/opt/vault/plugins/.runtime/vault-plugin-database-oracle_0.11.0+ent_linux_amd64/vault-plugin-database-oracle
+plugin_binary=/opt/vault/plugins/.runtime/vault-plugin-database-oracle_${plugin_version}_linux_amd64/vault-plugin-database-oracle
 ldd "$plugin_binary" > plugin-linker.txt
 if grep -Fq 'not found' plugin-linker.txt; then
   echo 'Unresolved plugin dependencies; inspect /root/oracle-lab/plugin-linker.txt.' >&2

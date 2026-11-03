@@ -36,6 +36,7 @@ Legend: `runbook` = ordered procedure, `kb` = explanation and diagnosis, `repro`
 
   - Records healthy rotations before explicitly blocking Oracle traffic and observing resource growth.
   - The existing fixture owns its bridge-network fault, ten-second rotation settings, and monitoring services. These are investigation conditions, rather than baseline defaults.
+  - The Vault and Oracle plugin versions are Terraform inputs (`vault_version`, default `1.21.9+ent`, and `plugin_version`, default `0.11.0+ent`), so the same lab can test another Vault build.
   </details>
 
 - [Oracle plugin callback resource-growth explanation](automated-rotation-leak/oracle-database-updateuser-initialize-goroutine-fd-leak-kb.md)

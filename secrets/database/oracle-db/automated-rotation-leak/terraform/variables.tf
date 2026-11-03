@@ -21,6 +21,18 @@ variable "name_prefix" {
   }
 }
 
+variable "ami_owner" {
+  type        = string
+  default     = "888995627335"
+  description = "Account that owns the base image (default: HashiCorp ami-prod). Use \"amazon\" in accounts that cannot see hc-base images."
+}
+
+variable "ami_name_pattern" {
+  type        = string
+  default     = "hc-base-al2023-x86_64-*"
+  description = "Name filter for the base image; it must be Amazon Linux 2023 x86-64 (bootstrap.sh uses dnf and ec2-user)."
+}
+
 variable "instance_type" {
   type        = string
   default     = "t3.large"
@@ -48,6 +60,18 @@ variable "admin_ssh_cidr" {
 variable "key_name" {
   type        = string
   description = "Existing EC2 key pair name for SSH access."
+}
+
+variable "vault_version" {
+  type        = string
+  default     = "1.21.9+ent"
+  description = "Vault Enterprise version installed by bootstrap.sh (read from /root/oracle-lab/vault-version)."
+}
+
+variable "plugin_version" {
+  type        = string
+  default     = "0.11.0+ent"
+  description = "Oracle database plugin version registered by configure.sh (read from /root/oracle-lab/plugin-version)."
 }
 
 variable "vault_license" {
