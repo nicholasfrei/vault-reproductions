@@ -1,4 +1,4 @@
-# Vault `2.2.0` - `2.2.2` UI Error on Lease Revoke Reproduction
+# Vault `2.2.0` - `2.2.2` UI Lease Revocation Error Reproduction
 
 ## Objective
 
